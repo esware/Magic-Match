@@ -9,9 +9,9 @@ namespace Dev.Scripts.Tiles
         public override void OnMatch()
         {
             base.OnMatch();
-            transform.DOScale(Vector3.one*2f, 0.5f).OnComplete((() =>
+            transform.DOScale(Vector3.one*1.5f, 0.5f).OnComplete((() =>
             {
-                transform.DOScale(Vector3.zero, 0.5f).OnComplete(()=>Destroy(gameObject));
+                transform.DOScale(Vector3.zero, 0.5f).OnComplete(()=>TilePoolManager.Instance.ReturnTileToPool(this));
             }));
         }
     }

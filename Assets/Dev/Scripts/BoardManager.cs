@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Dev.Scripts;
 using Dev.Scripts.Tiles;
 using DG.Tweening;
 using Unity.VisualScripting;
@@ -11,8 +12,8 @@ public class BoardManager : MonoBehaviour
     public int width = 8;
     public int height = 8; 
     public float tileSize = 100f;
-    public float spacing = 10f; 
-    public List<BaseTile> tilePrefabs;
+    public float spacing = 10f;
+    
     private BaseTile[,] tiles;
 
     private void Start()
@@ -25,34 +26,31 @@ public class BoardManager : MonoBehaviour
         tiles = new BaseTile[width, height];
         float totalWidth = (tileSize * width) + (spacing * (width - 1));
         float totalHeight = (tileSize * height) + (spacing * (height - 1));
-        var cellSize = new Vector2(tileSize, tileSize);
-        
+
         gridTransform.sizeDelta = new Vector2(totalWidth, totalHeight);
         
-        Vector2 startPosition = -gridTransform.sizeDelta / 2f + cellSize / 2f;
-
+        Vector2 startPosition = -gridTransform.sizeDelta / 2f + new Vector2(tileSize,tileSize) / 2f;
+        
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                var tilePrefab = tilePrefabs[Random.Range(0, tilePrefabs.Count)];
-                GameObject tileGo = Instantiate(tilePrefab.gameObject, gridTransform.GetChild(0));
-
-                var position = new Vector2(startPosition.x + x * (cellSize.x + spacing),
-                    startPosition.y + y * (cellSize.y + spacing));
-                var tile = tileGo.GetComponent<BaseTile>();
+                var position = new Vector2(startPosition.x + x * (tileSize + spacing),
+                    startPosition.y + y * (tileSize + spacing));
+                
+                BaseTile tile = TilePoolManager.Instance.GetRandomTile();
+                tile.transform.SetParent(gridTransform.GetChild(0));
                 tile.Position = position;
                 tile.X = x;
                 tile.Y = y;
+                tile.name = $"Tile {x} {y}";
+                tiles[x, y] = tile;
                 
                 RectTransform tileRT = tile.GetComponent<RectTransform>();
                 
                 tileRT.anchoredPosition = position;
-                tileRT.sizeDelta = cellSize * 0.8f; 
+                tileRT.sizeDelta = new Vector2(tileSize,tileSize) * 0.8f; 
                 tileRT.localScale = Vector3.one;
-
-                tile.name = $"Tile {x} {y}";
-                tiles[x, y] = tile;
             }
         }
     }
@@ -66,6 +64,8 @@ public class BoardManager : MonoBehaviour
         
         tile1.transform.DOMove(tile1TargetPosition, duration);
         tile2.transform.DOMove(tile2TargetPosition, duration);
+        tile1.Position = new Vector2(tile1TargetPosition.x, tile1TargetPosition.y);
+        tile2.Position = new Vector2(tile2TargetPosition.x, tile2TargetPosition.y);
         
         DOVirtual.DelayedCall(duration, () =>
         {
@@ -78,8 +78,6 @@ public class BoardManager : MonoBehaviour
             (tile2.X, tile2.Y) = (x1, y1);
         }).OnComplete(CheckForMatches);
         
-        StartCoroutine(RefillBoard());
-
     }
     private void CheckForMatches()
     {
@@ -93,15 +91,20 @@ public class BoardManager : MonoBehaviour
                     foreach (BaseTile tile in matchList)
                     {
                         tile.OnMatch();
+                        tiles[tile.X, tile.Y] = null;
                     }
                 }
             }
         }
+        
+        StartCoroutine(RefillBoard());
     }
     private List<BaseTile> FindHorizontalMatches(int startX, int y)
     {
         List<BaseTile> matchList = new List<BaseTile>();
         BaseTile startTile = tiles[startX, y];
+        
+        if (startTile == null) return matchList;
         matchList.Add(startTile);
 
         for (int x = startX + 1; x < width; x++)
@@ -133,30 +136,9 @@ public class BoardManager : MonoBehaviour
 
         return matchList;
     }
-    
-    private IEnumerator RefillBoard()
+    IEnumerator RefillBoard()
     {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = height - 1; y >= 0; y--)
-            {
-                if (tiles[x, y].IsUnityNull())
-                {
-                    for (int i = y + 1; i < height; i++)
-                    {
-                        if (tiles[x, i] != null)
-                        {
-                            tiles[x, i].GetComponent<RectTransform>().DOAnchorPos(new Vector2(tiles[x, i].X, tiles[x, i].Y - 1) * tileSize, 0.5f);
-                            tiles[x, i - 1] = tiles[x, i];
-                            tiles[x, i] = null;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         
         for (int x = 0; x < width; x++)
         {
@@ -164,30 +146,71 @@ public class BoardManager : MonoBehaviour
             {
                 if (tiles[x, y] == null)
                 {
-                    
-                    var newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Count)], gridTransform.GetChild(0));
-                    newTile.X = x;
-                    newTile.Y = y;
-                    var cellSize = new Vector2(tileSize, tileSize);
-                    Vector2 startPosition = -gridTransform.sizeDelta / 2f + cellSize / 2f;
-                    var position = new Vector2(startPosition.x + x * (cellSize.x + spacing),
-                        startPosition.y + y * (cellSize.y + spacing));
-                    
-                    var tile = newTile.GetComponent<BaseTile>();
-                    tiles[x, y] = tile;
-                    tile.name = $"Tile {x} {y}";
-                    
-                    var rectTransform = newTile.GetComponent<RectTransform>();
-                    rectTransform.sizeDelta = cellSize * 0.8f; 
-                    rectTransform.localScale = Vector3.one;
-                    rectTransform.DOAnchorPos(position, 0.5f);
-                    
-                    tile.Position = position;
-                    tile.X = x;
-                    tile.Y = y;
+                    for (int i = y + 1; i < height; i++)
+                    {
+                        if (tiles[x, i] != null)
+                        {
+                            float totalWidth = (tileSize * width) + (spacing * (width - 1));
+                            float totalHeight = (tileSize * height) + (spacing * (height - 1));
+
+                            gridTransform.sizeDelta = new Vector2(totalWidth, totalHeight);
+        
+                            Vector2 startPosition = -gridTransform.sizeDelta / 2f + new Vector2(tileSize,tileSize) / 2f;
+                            var position = new Vector2(startPosition.x + x * (tileSize + spacing),
+                                startPosition.y + y * (tileSize + spacing));
+                            
+                            tiles[x, i].GetComponent<RectTransform>().DOAnchorPos(position, 1f);
+                            tiles[x, y] = tiles[x, i];
+                            tiles[x, y].Position = new Vector2(position.x , position.y);
+                            tiles[x, y].X = x;
+                            tiles[x, y].Y = y;
+                            tiles[x, i] = null;
+                            break;
+                        }
+                    }
                 }
             }
         }
+
+        yield return new WaitForSeconds(1f);
+        
+         for (int x = 0; x < width; x++)
+         {
+             for (int y = 0; y < height; y++)
+             {
+                 if (tiles[x, y] == null)
+                 {
+                     float totalWidth = (tileSize * width) + (spacing * (width - 1));
+                     float totalHeight = (tileSize * height) + (spacing * (height - 1));
+
+                     gridTransform.sizeDelta = new Vector2(totalWidth, totalHeight);
+        
+                     Vector2 startPosition = -gridTransform.sizeDelta / 2f + new Vector2(tileSize,tileSize) / 2f;
+                     var position = new Vector2(startPosition.x + x * (tileSize + spacing),
+                         startPosition.y + y * (tileSize + spacing));
+                     
+                     BaseTile newTile = TilePoolManager.Instance.GetRandomTile();
+                     newTile.transform.SetParent(gridTransform.GetChild(0), false);
+                     newTile.Position = position;
+                     newTile.X = x;
+                     newTile.Y = y;
+                     Vector2 spawnPosition = new Vector2(position.x,-startPosition.y+50f);
+                     
+                     RectTransform tileRT = newTile.GetComponent<RectTransform>();
+                     
+                     tileRT.sizeDelta = new Vector2(tileSize,tileSize) * 0.8f; 
+                     tileRT.localScale = Vector3.one;
+                     tileRT.anchoredPosition = spawnPosition;
+                     tileRT.DOAnchorPos(position, 1f);
+  
+                     tiles[x, y] = newTile;
+                     yield return new WaitForSeconds(0.1f);
+                 }
+                 
+             }
+         }
+
+         CheckForMatches();
     }
 
 
