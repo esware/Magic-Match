@@ -5,15 +5,15 @@ namespace Dev.Scripts.Tiles
 {
     public enum TileType
     {
-        Water,
-        Fire,
-        Earth,
-        Air,
+        Blue,
+        Green,
+        Purple,
     }
 
     public class BaseTile : MonoBehaviour
     {
         public Vector2 Position { get; set; }
+        public int X, Y; 
 
         [Header("Tile Settings")]
         public TileType tileType;
