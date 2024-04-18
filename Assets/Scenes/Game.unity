@@ -1262,10 +1262,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80628bbe88a261d45916a83f4edb9346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _prevPosition: {x: 0, y: 0}
+  _transform: {fileID: 0}
   Camera: {fileID: 0}
   Bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  firstV: {x: 0, y: 0}
+  deltaV: {x: 0, y: 0}
+  currentTime: 0
+  speed: 0
+  touched: 0
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1280,6 +1287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boostCount: {fileID: 0}
   type: 8
+  check: 0
 --- !u!114 &330585550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1292,13 +1300,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b04bb4abd8356e04894093fdaaa1805b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loginForSharing: 0
   currentReward: 0
   CapOfLife: 5
   TotalTimeForRestLifeHours: 0
   TotalTimeForRestLifeMin: 15
   TotalTimeForRestLifeSec: 60
   FirstGems: 20
+  BoostExtraMoves: 0
+  BoostPackages: 0
+  BoostStripes: 0
+  BoostExtraTime: 0
+  BoostBomb: 0
+  BoostColorful_bomb: 0
+  BoostHand: 0
+  BoostRandom_color: 0
   adsEvents: []
+  adsReady: 0
   enableUnityAds: 0
   enableGoogleMobileAds: 0
   enableChartboostAds: 0
@@ -1309,6 +1327,7 @@ MonoBehaviour:
   dailyRewardedFrequency: 0
   dailyRewardedFrequencyTime: 0
   dailyRewardedShown: 
+  leftControl: 0
   admobUIDAndroid: 
   admobUIDIOS: 
   admobRewardedUIDAndroid: 
@@ -1316,9 +1335,12 @@ MonoBehaviour:
   LoginEnable: 0
   ShowRateEvery: 0
   RateURL: 
+  rate: {fileID: 0}
   rewardedGems: 5
   losingLifeEveryGame: 0
   facebookButton: {fileID: 0}
+  lastResponse: 
+  status: Ready
   RateURLIOS: 
 --- !u!114 &330585551
 MonoBehaviour:
@@ -1372,7 +1394,9 @@ MonoBehaviour:
   gemsProducts: []
   InAppIDs: []
   GoogleLicenseKey: 
+  line: {fileID: 0}
   thrivingBlockDestroyed: 0
+  dragBlocked: 0
   BoostColorfullBomb: 0
   BoostPackage: 0
   BoostStriped: 0
@@ -1407,6 +1431,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   stars: 0
+  linePoint: 0
   star1: 0
   star2: 0
   star3: 0
@@ -1427,12 +1452,15 @@ MonoBehaviour:
   ingrObject: {fileID: 0}
   blocksObject: {fileID: 0}
   scoreTargetObject: {fileID: 0}
+  matchesGot: 0
+  ingredientFly: 0
   gratzWords: []
   Level: {fileID: 0}
   LevelsMap: {fileID: 0}
   InGameBoosts: []
   passLevelCounter: 0
   target: 0
+  GameStatus: 0
   itemsHided: 0
   moveID: 0
   lastRandColor: 0
@@ -1440,6 +1468,7 @@ MonoBehaviour:
   levelLoaded: 0
   doubleBlock: {fileID: 0}
   FacebookEnable: 0
+  latstMatchColor: 0
   targetObject: []
 --- !u!1 &386456296
 GameObject:
@@ -2946,73 +2975,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &974286473
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 974286475}
-  - component: {fileID: 974286474}
-  m_Layer: 0
-  m_Name: Item
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &974286474
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 974286473}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223971e160f17a249b14e1f247b7cbb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  items: []
-  prefabs: []
-  stripedItems: []
-  packageItems: []
-  bombItems: []
-  ingredientItems: []
-  sprRenderer: {fileID: 0}
-  square: {fileID: 0}
-  dragThis: 0
-  mousePos: {x: 0, y: 0, z: 0}
-  deltaPos: {x: 0, y: 0, z: 0}
-  switchDirection: {x: 0, y: 0, z: 0}
-  falling: 0
-  currentType: 0
-  debugType: 0
-  COLORView: 0
-  anim: {fileID: 0}
-  destroying: 0
-  appeared: 0
-  animationFinished: 0
-  justCreatedItem: 0
-  boost: 0
-  moveDirection: {x: 0, y: 0}
---- !u!4 &974286475
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 974286473}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1011165337
 GameObject:
@@ -36647,6 +36609,7 @@ MonoBehaviour:
   col: 0
   type: 0
   block: []
+  ccc: 0
 --- !u!224 &6770559406511394310
 RectTransform:
   m_ObjectHideFlags: 0

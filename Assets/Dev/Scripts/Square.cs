@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Dev.Scripts.Manager;
 using UnityEngine;
 
 namespace Dev.Scripts
@@ -28,7 +30,13 @@ namespace Dev.Scripts
         public int col;
         public SquareTypes type;
         public List<GameObject> block = new List<GameObject>();
-        
-        
+
+        private void Start()
+        {
+            if (row == LevelManager.Instance.maxRows-1)
+            {
+                
+            }
+        }
     }
 }
