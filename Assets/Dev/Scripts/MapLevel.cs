@@ -29,10 +29,6 @@ namespace Dev.Scripts
             _originalScale = transform.localScale;
         }
 
-        #region Enable click
-        
-        #endregion
-        
         public void UpdateState(int starsCount,bool isLocked)
         {
             this.starsCount = starsCount;

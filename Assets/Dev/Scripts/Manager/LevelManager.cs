@@ -76,7 +76,7 @@ namespace Dev.Scripts.Manager
         public Square[] squaresArray;
 
         [Header("Combined items")]
-        List<List<Item>> combinedItems = new List<List<Item>>();
+        private List<List<Item>> _combinedItems = new List<List<Item>>();
 
         [Header("Last dragged and switched items")]
         public Item lastDraggedItem;
@@ -97,38 +97,38 @@ namespace Dev.Scripts.Manager
 
         [Header("Game limit")]
         public LIMIT limitType;
-        public int Limit = 30;
+        public int limit = 30;
 
         [Header("Target score")]
-        public int TargetScore = 1000;
+        public int targetScore = 1000;
 
         [Header("Current level")]
         public int currentLevel = 1;
 
         [Header("Failed cost")]
-        public int FailedCost;
+        public int failedCost;
 
         [Header("Extra failed moves and seconds")]
-        public int ExtraFailedMoves = 5;
-        public int ExtraFailedSecs = 30;
+        public int extraFailedMoves = 5;
+        public int extraFailedSecs = 30;
 
         [Header("In-app purchase IDs")]
-        public string[] InAppIDs;
+        public string[] inAppIDs;
 
         [Header("Google license key")]
-        public string GoogleLicenseKey;
+        public string googleLicenseKey;
 
         [Header("Line renderer")]
-        LineRenderer line;
+        private LineRenderer _lineRenderer;
 
         [Header("Thriving block destroyed flag")]
         public bool thrivingBlockDestroyed;
 
         [Header("New combines")]
-        List<List<Item>> newCombines;
+        private List<List<Item>> _newCombines;
 
         [Header("Drag blocked flag")]
-        private bool dragBlocked;
+        private bool _dragBlocked;
         
 
     }

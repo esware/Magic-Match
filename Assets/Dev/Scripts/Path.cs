@@ -66,4 +66,9 @@ public class Path : MonoBehaviour
             Mathf.Clamp(baseInd + dInd * 2, 0, waypoints.Count - 1)
         };
     }
+
+    public float GetLenght(int startIndex)
+    {
+        return Vector2.Distance(waypoints[startIndex].position, waypoints[(startIndex + 1) % waypoints.Count].position);
+    }
 }
