@@ -19,7 +19,6 @@ namespace Dev.Scripts
         public Object levelScene;
         public string sceneName;
         public int starsCount;
-        public Transform starsHoster;
         public Transform star1;
         public Transform star2;
         public Transform star3;

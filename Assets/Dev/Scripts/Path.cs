@@ -55,7 +55,7 @@ public class Path : MonoBehaviour
         return points;
     }
 
-    private int[] GetSplinePointIndexes(int baseInd, bool isForwardDirection)
+    public int[] GetSplinePointIndexes(int baseInd, bool isForwardDirection)
     {
         var dInd = isForwardDirection ? 1 : -1;
         return new int[]
