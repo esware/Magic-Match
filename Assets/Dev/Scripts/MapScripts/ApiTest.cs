@@ -1,6 +1,5 @@
 ﻿using System;
 using Dev.Scripts;
-using Dev.Scripts.Levels;
 using UnityEngine;
 
 public class ApiTest : MonoBehaviour, IMapProgressManager

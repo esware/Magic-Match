@@ -800,9 +800,9 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     : FACEBOOK;GAMESPARKS;UNITY_INAPPS
-    Android: 
-    Windows Store Apps: 
-    iPhone: 
+    Android: GOOGLE_MOBILE_ADS
+    Windows Store Apps: GOOGLE_MOBILE_ADS
+    iPhone: GOOGLE_MOBILE_ADS
   additionalCompilerArguments: {}
   platformArchitecture:
     iPhone: 1

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Serialization;
 using Malee;
 
@@ -11,11 +12,11 @@ namespace Dev.Scripts.Targets
         public TargetList targets;
     }
     
-    [System.Serializable]
+    [Serializable]
     public class TargetList : ReorderableArray<TargetObject> {
     }
 
-    [System.Serializable]
+    [Serializable]
     public class TargetObject
     {
         public Target type;

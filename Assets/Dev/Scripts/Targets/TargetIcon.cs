@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using Dev.Scripts.Targets;
+using UnityEngine;
 using UnityEngine.UI;
 
-namespace Dev.Scripts.Targets
-{
-    public class TargetIcon : MonoBehaviour
+public class TargetIcon : MonoBehaviour
     {
         public Image imageRenderer;
         public Text textObj;
@@ -87,4 +87,3 @@ namespace Dev.Scripts.Targets
 
         int GetScoreTarget() => count - LevelManager.Score;
     }
-}

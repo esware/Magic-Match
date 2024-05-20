@@ -1,5 +1,4 @@
-﻿using Dev.Scripts.Manager;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Dev.Scripts.System
 {

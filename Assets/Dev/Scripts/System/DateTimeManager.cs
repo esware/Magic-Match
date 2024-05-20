@@ -1,5 +1,4 @@
 ﻿using System;
-using Dev.Scripts.Manager;
 
 namespace Dev.Scripts.System
 {

@@ -1,6 +1,4 @@
-﻿using Dev.Scripts.Levels;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEditor;
 
 [CustomEditor(typeof(MapCamera))]
 public class MapCameraEditor : Editor
