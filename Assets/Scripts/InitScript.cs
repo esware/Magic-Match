@@ -9,19 +9,10 @@ using Dev.Scripts.System;
 using UnityEngine.Advertisements;
 #endif
 
-#if CHARTBOOST_ADS
-using ChartboostSDK;
-#endif
 #if GOOGLE_MOBILE_ADS
 using GoogleMobileAds.Api;
 #endif
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
-
-#if FACEBOOK
-using Facebook.Unity;
-#endif
 
 
 
@@ -77,21 +68,16 @@ public class InitScript : MonoBehaviour
     public static string timeForReps;
     private static int Lifes;
 
-    bool loginForSharing;
+    private bool _loginForSharing;
 
     public RewardedAdsType currentReward;
 
     public static int lifes
     {
-        get
-        {
-            return InitScript.Lifes;
-        }
-        set
-        {
-            InitScript.Lifes = value;
-        }
+        get => Lifes;
+        private set => Lifes = value; 
     }
+
 
     public int CapOfLife = 5;
     public float TotalTimeForRestLifeHours = 0;
@@ -146,10 +132,7 @@ public class InitScript : MonoBehaviour
 
     protected string LastResponse
     {
-        get
-        {
-            return this.lastResponse;
-        }
+        get => this.lastResponse;
 
         set
         {
@@ -158,7 +141,6 @@ public class InitScript : MonoBehaviour
     }
 
     private string status = "Ready";
-    public string RateURLIOS; //2.1.5
 
     protected string Status
     {
@@ -172,8 +154,7 @@ public class InitScript : MonoBehaviour
             this.status = value;
         }
     }
-
-    // Use this for initialization
+    
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -193,7 +174,7 @@ public class InitScript : MonoBehaviour
             }
         }
         if (PlayerPrefs.GetInt("Lauched") == 0)
-        {    //First lauching
+        {   
             lifes = CapOfLife;
             PlayerPrefs.SetInt("Lifes", lifes);
             Gems = FirstGems;
@@ -204,35 +185,17 @@ public class InitScript : MonoBehaviour
             PlayerPrefs.SetInt("Lauched", 1);
             PlayerPrefs.Save();
         }
-        /* rate = Instantiate(Resources.Load("Prefabs/Rate")) as GameObject;
-        rate.SetActive(false);
-        rate.transform.SetParent(GameObject.Find("CanvasGlobal").transform);
-        rate.transform.localPosition = Vector3.zero;
-        rate.GetComponent<RectTransform>().anchoredPosition = (Resources.Load("Prefabs/Rate") as GameObject).GetComponent<RectTransform>().anchoredPosition;
-        rate.transform.localScale = Vector3.one;
-*/
         if (gameObject.GetComponent<AspectCamera>() == null) gameObject.AddComponent<AspectCamera>().map = FindObjectOfType<LevelsMap>().transform.Find("map_background_01").GetComponent<SpriteRenderer>().sprite; 
 
         GameObject.Find("Music").GetComponent<AudioSource>().volume = PlayerPrefs.GetInt("Music");
         SoundBase.Instance.GetComponent<AudioSource>().volume = PlayerPrefs.GetInt("Sound");
 
-#if UNITY_ADS//2.1.1
+#if UNITY_ADS
         enableUnityAds = true;
 #else
         enableUnityAds = false;
 #endif
-#if CHARTBOOST_ADS//1.6.1
-        enableChartboostAds = true;
-#else
-        enableChartboostAds = false;
-#endif
-
-#if FACEBOOK
-        FacebookManager fbManager = gameObject.AddComponent<FacebookManager>();
-        fbManager.facebookButton = facebookButton;
-#endif
-
-
+        
 #if GOOGLE_MOBILE_ADS
         enableGoogleMobileAds = true;//1.6.1
 #if UNITY_ANDROID
@@ -246,14 +209,12 @@ public class InitScript : MonoBehaviour
 		interstitial = new InterstitialAd (admobUIDAndroid);
 #endif
 
-        // Create an empty ad request.
         requestAdmob = new AdRequest.Builder().Build();
-        // Load the interstitial with the request.
         interstitial.LoadAd(requestAdmob);
         interstitial.OnAdLoaded += HandleInterstitialLoaded;
         interstitial.OnAdFailedToLoad += HandleInterstitialFailedToLoad;
 #else
-        enableGoogleMobileAds = false;//1.6.1
+        enableGoogleMobileAds = false;
 #endif
         Transform canvas = GameObject.Find("CanvasGlobal").transform;
         foreach (Transform item in canvas)
@@ -347,7 +308,7 @@ public class InitScript : MonoBehaviour
             });
         }
 
-#elif GOOGLE_MOBILE_ADS//2.2
+#elif GOOGLE_MOBILE_ADS
         bool stillShow = true;
 #if UNITY_ADS
         stillShow = !GetRewardedUnityAdsReady ();
@@ -360,7 +321,7 @@ public class InitScript : MonoBehaviour
 #endif
     }
 
-    public bool RewardedReachedLimit(RewardedAdsType type)//2.2.2
+    public bool RewardedReachedLimit(RewardedAdsType type)
     {
         if (dailyRewardedFrequency == 0) return false;
         dailyRewardedShown[(int)type] = PlayerPrefs.GetInt(type.ToString());
@@ -376,7 +337,7 @@ public class InitScript : MonoBehaviour
     }
 
     public void CheckAdsEvents(GameState state)
-    {    //1.4 added
+    {   
         foreach (AdEvents item in adsEvents)
         {
             if (item.gameEvent == state)
@@ -398,7 +359,7 @@ public class InitScript : MonoBehaviour
     }
 
     void ShowAdByType(AdType adType)
-    { //1.4 added
+    { 
         if (adType == AdType.AdmobInterstitial && enableGoogleMobileAds)
             ShowAds(false);
         else if (adType == AdType.UnityAdsVideo && enableUnityAds)
@@ -409,7 +370,7 @@ public class InitScript : MonoBehaviour
     }
 
     public void ShowVideo()
-    {  //1.4 added
+    { 
 #if UNITY_ADS
         Debug.Log("show Unity ads video in " + LevelManager.THIS.gameStatus);
 
@@ -430,17 +391,6 @@ public class InitScript : MonoBehaviour
 
     public void ShowAds(bool chartboost = true)
     {
-        if (chartboost)
-        {
-#if CHARTBOOST_ADS
-            Debug.Log("show Chartboost Interstitial in " + LevelManager.THIS.gameStatus);
-
-            Chartboost.showInterstitial(CBLocation.Default);
-            Chartboost.cacheInterstitial(CBLocation.Default);
-#endif
-        }
-        else
-        {
 #if GOOGLE_MOBILE_ADS
             Debug.Log("show Google mobile ads Interstitial in " + LevelManager.THIS.gameStatus);
             if (interstitial.IsLoaded())
@@ -460,7 +410,6 @@ public class InitScript : MonoBehaviour
                 interstitial.LoadAd(requestAdmob);
             }
 #endif
-        }
     }
 
     public void ShowRate()
@@ -519,7 +468,7 @@ public class InitScript : MonoBehaviour
         Gems -= count;
         PlayerPrefs.SetInt("Gems", Gems);
         PlayerPrefs.Save();
-#if PLAYFAB || GAMESPARKS
+#if PLAYFAB
         NetworkManager.currencyManager.DecBalance(count);
 #endif
 
@@ -567,17 +516,13 @@ public class InitScript : MonoBehaviour
             PlayerPrefs.SetInt("Lifes", lifes);
             PlayerPrefs.Save();
         }
-        //else
-        //{
-        //    GameObject.Find("Canvas").transform.Find("RestoreLifes").gameObject.SetActive(true);
-        //}
     }
 
     public void BuyBoost(BoostType boostType, int price, int count)
     {
         PlayerPrefs.SetInt("" + boostType, count);
         PlayerPrefs.Save();
-#if PLAYFAB || GAMESPARKS
+#if PLAYFAB 
         NetworkManager.dataManager.SetBoosterData();
 #endif
 
@@ -630,7 +575,7 @@ public class InitScript : MonoBehaviour
     }
 
     void OnApplicationQuit()
-    {   //1.4  added 
+    {  
         if (RestLifeTimer > 0)
         {
             PlayerPrefs.SetFloat("RestLifeTimer", RestLifeTimer);
@@ -678,113 +623,4 @@ public class InitScript : MonoBehaviour
 #endif
 
     }
-
-    #region FaceBook
-
-#if FACEBOOK
-    //	public void CallFBInit () {
-    //		FB.Init (OnInitComplete, OnHideUnity);
-    //
-    //	}
-    //
-    //	private void OnInitComplete () {
-    //		Debug.Log ("FB.Init completed: Is user logged in? " + FB.IsLoggedIn);
-    //
-    //	}
-    //
-    //	private void OnHideUnity (bool isGameShown) {
-    //		Debug.Log ("Is game showing? " + isGameShown);
-    //	}
-    //
-    //	void OnGUI () {
-    //		if (LoginEnable) {
-    //			InitScript.Instance.CallFBLogin ();
-    //			LoginEnable = false;
-    //		}
-    //	}
-    //
-    //
-    //	public void CallFBLogin () {
-    //		FB.LogInWithReadPermissions (new List<string> () { "public_profile", "email", "user_friends" }, this.HandleResult);
-    //	}
-    //
-    //	public void CallFBLoginForPublish () {
-    //		// It is generally good behavior to split asking for read and publish
-    //		// permissions rather than ask for them all at once.
-    //		//
-    //		// In your own game, consider postponing this call until the moment
-    //		// you actually need it.
-    //		FB.LogInWithPublishPermissions (new List<string> () { "publish_actions" }, this.HandleResult);
-    //	}
-    //
-    //	void LoginCallback (IPayResult result) {
-    //
-    //		if (result.Error != null)
-    //			lastResponse = "Error Response:\n" + result.Error;
-    //		else if (!FB.IsLoggedIn) {
-    //			lastResponse = "Login cancelled by Player";
-    //		} else {
-    //			lastResponse = "Login was successful!";
-    //			if (loginForSharing) {
-    //				loginForSharing = false;
-    //				Share ();
-    //			}
-    //		}
-    //		Debug.Log (lastResponse);
-    //	}
-    //
-    //	private void CallFBLogout () {
-    //		FB.LogOut ();
-    //	}
-    //
-    //	public void Share () {
-    //		if (!FB.IsLoggedIn) {
-    //			loginForSharing = true;
-    //			LoginEnable = true;
-    //			Debug.Log ("not logged, logging");
-    //		} else {
-    //			FB.FeedShare (
-    //				link: new Uri ("http://apps.facebook.com/" + FB.AppId + "/?challenge_brag=" + (FB.IsLoggedIn ? AccessToken.CurrentAccessToken.UserId : "guest")),
-    //				linkName: FacebookSettings.AppLabels [0],
-    //				linkCaption: "I just scored " + LevelManager.Score + " points! Try to beat me!"
-    //            //picture: "https://fbexternal-a.akamaihd.net/safe_image.php?d=AQCzlvjob906zmGv&w=128&h=128&url=https%3A%2F%2Ffbcdn-photos-h-a.akamaihd.net%2Fhphotos-ak-xtp1%2Ft39.2081-0%2F11891368_513258735497916_1832270581_n.png&cfs=1"
-    //			);
-    //		}
-    //	}
-    //
-    //	protected void HandleResult (IResult result) {
-    //		if (result == null) {
-    //			this.LastResponse = "Null Response\n";
-    //			Debug.Log (this.LastResponse);
-    //			return;
-    //		}
-    //
-    //		//     this.LastResponseTexture = null;
-    //
-    //		// Some platforms return the empty string instead of null.
-    //		if (!string.IsNullOrEmpty (result.Error)) {
-    //			this.Status = "Error - Check log for details";
-    //			this.LastResponse = "Error Response:\n" + result.Error;
-    //			Debug.Log (result.Error);
-    //		} else if (result.Cancelled) {
-    //			this.Status = "Cancelled - Check log for details";
-    //			this.LastResponse = "Cancelled Response:\n" + result.RawResult;
-    //			Debug.Log (result.RawResult);
-    //		} else if (!string.IsNullOrEmpty (result.RawResult)) {
-    //			this.Status = "Success - Check log for details";
-    //			this.LastResponse = "Success Response:\n" + result.RawResult;
-    //			if (loginForSharing) {
-    //				loginForSharing = false;
-    //				Share ();
-    //			}
-    //
-    //			Debug.Log (result.RawResult);
-    //		} else {
-    //			this.LastResponse = "Empty Response\n";
-    //			Debug.Log (this.LastResponse);
-    //		}
-    //	}
-#endif
-    #endregion
-
 }

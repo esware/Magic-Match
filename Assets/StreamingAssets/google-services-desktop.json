@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "371954135514",
+    "project_id": "magicmatch-3d931",
+    "storage_bucket": "magicmatch-3d931.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371954135514:android:eed68e1981dbd4da3e50e3",
+        "android_client_info": {
+          "package_name": "com.ewgames.magicmatch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7f6ea8uAfyR0AU72avNYiXwGGgiJatDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

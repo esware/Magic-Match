@@ -299,10 +299,6 @@ public class LevelMakerEditor : EditorWindow
             GUILayout.Width (220),
             GUILayout.MaxWidth (220)
         });
-        initscript.RateURLIOS = EditorGUILayout.TextField("URL iOS", initscript.RateURLIOS, new GUILayoutOption[] {//2.2.1  ios rate link
-			GUILayout.Width (220),
-            GUILayout.MaxWidth (220)
-        });
     }
 
     #endregion
