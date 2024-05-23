@@ -15,8 +15,7 @@ namespace MapScripts.Scripts
     private Vector3 _precisePosition;
     private bool _isRunning;
     private bool _isForwardDirection;
-
-    [HideInInspector]
+    
     public Path path;
 
     [HideInInspector]

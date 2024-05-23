@@ -9,12 +9,10 @@ namespace MapScripts.Scripts
         public List<Transform> waypoints = new List<Transform>();
         
         public bool isCurved;
-
-        [HideInInspector]
+        
         public Color gizmosColor = Color.white;
-
-        [HideInInspector]
-        public float gizmosRadius = 10.0f;
+        
+        public float gizmosRadius = 1.0f;
 
         public void OnDrawGizmos()
         {

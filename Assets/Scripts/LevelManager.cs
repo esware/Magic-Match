@@ -480,8 +480,8 @@ public class LevelManager : MonoBehaviour
         gameStatus = GameState.Map;
         for (int i = 0; i < 20; i++)
         {
-            itemExplPool[i] = Instantiate(Resources.Load("Prefabs/Effects/ItemExpl"), transform.position, Quaternion.identity) as GameObject;
-            itemExplPool[i].GetComponent<SpriteRenderer>().enabled = false;
+            //itemExplPool[i] = Instantiate(Resources.Load("Prefabs/Effects/ItemExpl"), transform.position, Quaternion.identity) as GameObject;
+            //itemExplPool[i].GetComponent<SpriteRenderer>().enabled = false;
 
             // itemExplPool[i].SetActive(false);
         }

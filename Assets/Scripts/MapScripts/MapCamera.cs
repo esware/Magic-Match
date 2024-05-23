@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+
 
 public class MapCamera : MonoBehaviour
 {
     private Vector2 _prevPosition;
     private Transform _transform;
 
-    public Camera Camera;
-    public Bounds Bounds;
+    public Camera camera;
+    public Bounds bounds;
     Vector2 firstV;
     Vector2 deltaV;
     private float currentTime;
@@ -18,15 +18,16 @@ public class MapCamera : MonoBehaviour
 
     public void Awake()
     {
+        camera = GetComponent<Camera>();
         _transform = transform;
         currentTime = 0;
         speed = 0;
-
+        //bounds = new Bounds(Vector3.zero, new Vector3(10, 10, 0));
     }
 
     public void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(Bounds.center, Bounds.size);
+        Gizmos.DrawWireCube(bounds.center, bounds.size);
     }
 
     public void Update()
@@ -116,24 +117,23 @@ public class MapCamera : MonoBehaviour
             return;
         SetPosition(
             transform.localPosition +
-            (Camera.ScreenToWorldPoint(prevPosition) - Camera.ScreenToWorldPoint(curPosition)));
+            (camera.ScreenToWorldPoint(prevPosition) - camera.ScreenToWorldPoint(curPosition)));
     }
 
     public void SetPosition(Vector2 position)
     {
         Vector2 validatedPosition = ApplyBounds(position);
-        _transform = transform;
         _transform.position = new Vector3(validatedPosition.x, validatedPosition.y, _transform.position.z);
     }
 
     private Vector2 ApplyBounds(Vector2 position)
     {
-        float cameraHeight = Camera.orthographicSize * 2f;
-        float cameraWidth = (Screen.width * 1f / Screen.height) * cameraHeight;
-        position.x = Mathf.Max(position.x, Bounds.min.x + cameraWidth / 2f);
-        position.y = Mathf.Max(position.y, Bounds.min.y + cameraHeight / 2f);
-        position.x = Mathf.Min(position.x, Bounds.max.x - cameraWidth / 2f);
-        position.y = Mathf.Min(position.y, Bounds.max.y - cameraHeight / 2f);
+        float cameraHeight = camera.orthographicSize * 2f;
+        float cameraWidth = camera.aspect * cameraHeight;
+
+        position.x = Mathf.Clamp(position.x, bounds.min.x + cameraWidth / 2f, bounds.max.x - cameraWidth / 2f);
+        position.y = Mathf.Clamp(position.y, bounds.min.y + cameraHeight / 2f, bounds.max.y - cameraHeight / 2f);
+
         return position;
     }
 

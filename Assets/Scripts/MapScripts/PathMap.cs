@@ -13,7 +13,7 @@ public class PathMap : MonoBehaviour
     public Color GizmosColor = Color.white;
 
     [HideInInspector]
-    public float GizmosRadius = 10.0f;
+    public float GizmosRadius = 1.0f;
 
     public void OnDrawGizmos()
     {
