@@ -20,7 +20,7 @@ namespace Dev.Scripts.System
 
         IEnumerator WaitForLoad(Scene scene)
         {
-            yield return new WaitUntil(()=>LevelManager.THIS != null);
+            yield return new WaitUntil(()=>LevelManager.Instance != null);
             if(scene.name == "game")
             {
                 Debug.Log("restart");
@@ -46,7 +46,7 @@ namespace Dev.Scripts.System
             if (InitScript.lifes > 0)
             {
                 InitScript.Instance.SpendLife(1);
-                LevelManager.THIS.gameStatus = GameState.PrepareGame;
+                LevelManager.Instance.GameStatus = GameState.PrepareGame;
             }
             else
             {

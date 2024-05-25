@@ -52,7 +52,7 @@ public class AI : MonoBehaviour
 	/// <returns></returns>
 	Square GetSquare(int row, int col)
 	{
-		return LevelManager.THIS.GetSquare(col, row);
+		return LevelManager.Instance.GetSquare(col, row);
 	}
 
 	/// <summary>
@@ -98,29 +98,29 @@ public class AI : MonoBehaviour
 		allowShowTip = true;
 
 		//get max positions of squares
-		int maxRow = LevelManager.THIS.maxRows;
-		int maxCol = LevelManager.THIS.maxCols;
+		int maxRow = LevelManager.Instance.maxRows;
+		int maxCol = LevelManager.Instance.maxCols;
 
 		//variable to check: are we got tip or not
 		gotTip = false;
 
 		//break, if the main scripts have not ready yet
-		while (LevelManager.THIS == null)
+		while (LevelManager.Instance == null)
 		{
 			yield return new WaitForEndOfFrame();
 		}
 		//if game is not in Playing status - wait
-		while (LevelManager.THIS.gameStatus != GameState.Playing)
+		while (LevelManager.Instance.GameStatus != GameState.Playing)
 		{
 			yield return new WaitForEndOfFrame();
 		}
 
 		//if drag have not blocked and game status Playing - continue
-		if (!LevelManager.THIS.DragBlocked && LevelManager.THIS.gameStatus == GameState.Playing)
+		if (!LevelManager.Instance.DragBlocked && LevelManager.Instance.GameStatus == GameState.Playing)
 		{
 			nextMoveItems = new List<Item>();
 
-			if (LevelManager.THIS.gameStatus != GameState.Playing)
+			if (LevelManager.Instance.GameStatus != GameState.Playing)
 				yield break;
 
 
@@ -129,11 +129,11 @@ public class AI : MonoBehaviour
 			//Iteration for search possible combination 
 			for (int COLOR = 0; COLOR < it.items.Length; COLOR++)
 			{
-				for (int col = 0; col < LevelManager.THIS.maxCols; col++)
+				for (int col = 0; col < LevelManager.Instance.maxCols; col++)
 				{
-					for (int row = 0; row < LevelManager.THIS.maxRows; row++)
+					for (int row = 0; row < LevelManager.Instance.maxRows; row++)
 					{
-						Square square = LevelManager.THIS.GetSquare(col, row);
+						Square square = LevelManager.Instance.GetSquare(col, row);
 						if (square.type == SquareTypes.WIREBLOCK || square.item == null)
 							continue;
 						//current square called x
@@ -480,16 +480,16 @@ public class AI : MonoBehaviour
 
 			}
 			//if we don't get any tip.  call nomatches to regenerate level
-			if (!LevelManager.THIS.DragBlocked)
+			if (!LevelManager.Instance.DragBlocked)
 			{
 				if (!gotTip)
-					LevelManager.THIS.NoMatches();
+					LevelManager.Instance.NoMatches();
 			}
 
 		}
 		yield return new WaitForEndOfFrame();
 		//find possible combination again 
-		if (!LevelManager.THIS.DragBlocked)
+		if (!LevelManager.Instance.DragBlocked)
 			StartCoroutine(CheckPossibleCombines());
 
 		// }
@@ -513,16 +513,16 @@ public class AI : MonoBehaviour
 			corCount--;
 			yield break;
 		}
-		if (LevelManager.THIS.DragBlocked && !allowShowTip)
+		if (LevelManager.Instance.DragBlocked && !allowShowTip)
 		{
 			corCount--;
 			yield break;
 		}
-		tipID = LevelManager.THIS.moveID;
+		tipID = LevelManager.Instance.moveID;
 		//while (!LevelManager.THIS.DragBlocked && allowShowTip)
 		//{
 		yield return new WaitForSeconds(1);
-		if (LevelManager.THIS.DragBlocked && !allowShowTip && tipID != LevelManager.THIS.moveID)
+		if (LevelManager.Instance.DragBlocked && !allowShowTip && tipID != LevelManager.Instance.moveID)
 		{
 			corCount--;
 			yield break;

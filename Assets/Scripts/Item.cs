@@ -98,7 +98,7 @@ public class Item : MonoBehaviour
             transform.position = square.transform.position;
             falling = false;
         }
-        else if (LevelManager.THIS.limitType == LIMIT.TIME && Random.Range(0, 28) == 1)
+        else if (LevelManager.Instance.limitType == LIMIT.TIME && Random.Range(0, 28) == 1)
         {
             GameObject fiveTimes = Instantiate(Resources.Load("Prefabs/5sec")) as GameObject;
             fiveTimes.transform.SetParent(transform);
@@ -169,7 +169,7 @@ public class Item : MonoBehaviour
             randColor = remainColors[Random.Range(0, remainColors.Count)];
         if (exceptColor == randColor)
             randColor = (randColor++) % items.Length;
-        LevelManager.THIS.lastRandColor = randColor;
+        LevelManager.Instance.lastRandColor = randColor;
         sprRenderer.sprite = items[randColor];
         if (NextType == ItemsTypes.HORIZONTAL_STRIPPED)
             sprRenderer.sprite = stripedItems[color].horizontal;
@@ -181,13 +181,13 @@ public class Item : MonoBehaviour
             sprRenderer.sprite = bombItems[0];
         else
         {
-            var ingredients = LevelManager.THIS.targetObject.Where(i=>i.type == Target.INGREDIENT).ToArray();
+            var ingredients = LevelManager.Instance.targetObject.Where(i=>i.type == Target.INGREDIENT).ToArray();
             if (ingredients.Any())
             {
                 foreach (var targetObject in ingredients)
                 {
-                    if( Random.Range(0, LevelManager.THIS.Limit) == 0 && square.row + 1 < LevelManager.THIS.maxRows && !onlyNONEType
-                        && !targetObject.Done() && LevelManager.THIS.GetIngredientsCount(targetObject.icon.name) < targetObject.GetCount())
+                    if( Random.Range(0, LevelManager.Instance.limit) == 0 && square.row + 1 < LevelManager.Instance.maxRows && !onlyNONEType
+                        && !targetObject.Done() && LevelManager.Instance.GetIngredientsCount(targetObject.icon.name) < targetObject.GetCount())
                     {
                         StartCoroutine(FallingCor(square, true));
                         color = 1000;
@@ -379,7 +379,7 @@ public class Item : MonoBehaviour
         if (switchDirection != Vector3.zero && neighborSquare != null)
         {
             bool backMove = false;
-            LevelManager.THIS.DragBlocked = true;
+            LevelManager.Instance.DragBlocked = true;
             neighborSquare.item = this;
             square.item = switchItem;
             int matchesHere = neighborSquare.FindMatchesAround().Count;
@@ -411,7 +411,7 @@ public class Item : MonoBehaviour
                 switchItem.transform.position = Vector3.Lerp(neighborSquare.transform.position + Vector3.back * 0.2f, startPos, distCovered);
                 yield return new WaitForFixedUpdate();
             }
-            if (matchesHere <= 0 && matchesInNeithborItem <= 0 && LevelManager.THIS.ActivatedBoost.type != BoostType.Hand ||
+            if (matchesHere <= 0 && matchesInNeithborItem <= 0 && LevelManager.Instance.ActivatedBoost.type != BoostType.Hand ||
                 ((currentType == ItemsTypes.BOMB || switchItem.currentType == ItemsTypes.BOMB) && (currentType == ItemsTypes.INGREDIENT || switchItem.currentType == ItemsTypes.INGREDIENT) && (matchesHere + matchesInNeithborItem <= 2)) ||
                 (((int)currentType >= 1 || (int)switchItem.currentType >= 1) && (currentType == ItemsTypes.INGREDIENT || switchItem.currentType == ItemsTypes.INGREDIENT) && (matchesHere + matchesInNeithborItem <= 2)))
             {//1.6.1
@@ -425,18 +425,18 @@ public class Item : MonoBehaviour
             }
             else
             {
-                if (LevelManager.THIS.ActivatedBoost.type != BoostType.Hand)
+                if (LevelManager.Instance.ActivatedBoost.type != BoostType.Hand)
                 {
                     if (LevelManager.Instance.limitType == LIMIT.MOVES)
-                        LevelManager.THIS.Limit--;
-                    LevelManager.THIS.moveID++;
+                        LevelManager.Instance.limit--;
+                    LevelManager.Instance.moveID++;
                 }
-                if (LevelManager.THIS.ActivatedBoost.type == BoostType.Hand)
-                    LevelManager.THIS.ActivatedBoost = null;
+                if (LevelManager.Instance.ActivatedBoost.type == BoostType.Hand)
+                    LevelManager.Instance.ActivatedBoost = null;
                 switchItem.square = square;
                 square = neighborSquare;
-                LevelManager.THIS.lastDraggedItem = this;
-                LevelManager.THIS.lastSwitchedItem = switchItem;
+                LevelManager.Instance.lastDraggedItem = this;
+                LevelManager.Instance.lastSwitchedItem = switchItem;
 
                 if (matchesHereOneColor == 4 || matchesInNeithborItem == 4)
                 {
@@ -444,8 +444,8 @@ public class Item : MonoBehaviour
                         SetStrippedExtra(startPos - neighborSquare.transform.position);
                     else
                     {
-                        LevelManager.THIS.lastDraggedItem = switchItem;
-                        LevelManager.THIS.lastSwitchedItem = this;
+                        LevelManager.Instance.lastDraggedItem = switchItem;
+                        LevelManager.Instance.lastSwitchedItem = this;
                         switchItem.SetStrippedExtra(startPos - square.transform.position);
                         if (matchesInThisItem == 4)
                             SetStrippedExtra(startPos - neighborSquare.transform.position);
@@ -458,8 +458,8 @@ public class Item : MonoBehaviour
                         NextType = ItemsTypes.BOMB;
                     else if (!thisItemHaveMatch && matchesInNeithborItem >= 5)
                     {
-                        LevelManager.THIS.lastDraggedItem = switchItem;
-                        LevelManager.THIS.lastSwitchedItem = this;
+                        LevelManager.Instance.lastDraggedItem = switchItem;
+                        LevelManager.Instance.lastSwitchedItem = this;
                         switchItem.NextType = ItemsTypes.BOMB;
                         if (matchesInThisItem >= 5)
                             NextType = ItemsTypes.BOMB;
@@ -492,7 +492,7 @@ public class Item : MonoBehaviour
                 CheckPackageAndPackage(switchItem, this);
 
                 if (currentType != ItemsTypes.BOMB || switchItem.currentType != ItemsTypes.BOMB)
-                    LevelManager.THIS.FindMatches();
+                    LevelManager.Instance.FindMatches();
             }
             //Debug.Break();
             //yield return new WaitForSeconds(2);
@@ -510,7 +510,7 @@ public class Item : MonoBehaviour
 
             if (backMove)
             {
-                LevelManager.THIS.DragBlocked = false;
+                LevelManager.Instance.DragBlocked = false;
                 StartCoroutine(AI.THIS.CheckPossibleCombines());//2.1.5 prevents early move
             }
         }
@@ -523,13 +523,13 @@ public class Item : MonoBehaviour
         {
             int i = 0;
             List<Item> bigList = new List<Item>();
-            List<Item> itemsList = LevelManager.THIS.GetItemsAround(item2.square);
+            List<Item> itemsList = LevelManager.Instance.GetItemsAround(item2.square);
             foreach (Item item in itemsList)
             {
                 if (item != null)
                 {
 
-                    bigList.AddRange(LevelManager.THIS.GetItemsAround(item.square));
+                    bigList.AddRange(LevelManager.Instance.GetItemsAround(item.square));
                 }
             }
             foreach (Item item in bigList)
@@ -552,7 +552,7 @@ public class Item : MonoBehaviour
         if (((item1.currentType == ItemsTypes.HORIZONTAL_STRIPPED || item1.currentType == ItemsTypes.VERTICAL_STRIPPED) && item2.currentType == ItemsTypes.PACKAGE))
         {
             int i = 0;
-            List<Item> itemsList = LevelManager.THIS.GetItemsAround(item2.square);
+            List<Item> itemsList = LevelManager.Instance.GetItemsAround(item2.square);
             int direction = 1;//2.0
             foreach (Item item in itemsList)
             {
@@ -583,11 +583,11 @@ public class Item : MonoBehaviour
             if (item2.currentType == ItemsTypes.NONE)
                 DestroyColor(item2.color);
             else if (item2.currentType == ItemsTypes.HORIZONTAL_STRIPPED || item2.currentType == ItemsTypes.VERTICAL_STRIPPED)
-                LevelManager.THIS.SetTypeByColor(item2.color, ItemsTypes.HORIZONTAL_STRIPPED);
+                LevelManager.Instance.SetTypeByColor(item2.color, ItemsTypes.HORIZONTAL_STRIPPED);
             else if (item2.currentType == ItemsTypes.PACKAGE)
-                LevelManager.THIS.SetTypeByColor(item2.color, ItemsTypes.PACKAGE);
+                LevelManager.Instance.SetTypeByColor(item2.color, ItemsTypes.PACKAGE);
             else if (item2.currentType == ItemsTypes.BOMB)
-                LevelManager.THIS.DestroyDoubleBomb(square.col);
+                LevelManager.Instance.DestroyDoubleBomb(square.col);
 
 
 
@@ -639,7 +639,7 @@ public class Item : MonoBehaviour
         float startTime = Time.time;
         Vector3 startPos = transform.position;
         float speed = 10;
-        if (LevelManager.THIS.gameStatus == GameState.PreWinAnimations)
+        if (LevelManager.Instance.GameStatus == GameState.PreWinAnimations)
             speed = 10;
         float distance = Vector3.Distance(startPos, _square.transform.position);
         float fracJourney = 0;
@@ -815,7 +815,7 @@ public class Item : MonoBehaviour
 
     public void SetAnimationDestroyingFinished()
     {
-        LevelManager.THIS.itemsHided = true;
+        LevelManager.Instance.itemsHided = true;
         animationFinished = true;
     }
 
@@ -862,14 +862,14 @@ public class Item : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
 
             GameObject partcl = Instantiate(Resources.Load("Prefabs/Effects/Firework"), transform.position, Quaternion.identity) as GameObject;
-            partcl.GetComponent<ParticleSystem>().startColor = LevelManager.THIS.scoresColors[color];
+            partcl.GetComponent<ParticleSystem>().startColor = LevelManager.Instance.scoresColors[color];
             Destroy(partcl, 1f);
         }
         else if (currentType != ItemsTypes.INGREDIENT && currentType != ItemsTypes.BOMB)
         {
             PlayDestroyAnimation("destroy");
             // GameObject partcl = Instantiate(Resources.Load("Prefabs/Effects/ItemExpl"), transform.position, Quaternion.identity) as GameObject;
-            GameObject partcl = LevelManager.THIS.GetExplFromPool();
+            GameObject partcl = LevelManager.Instance.GetExplFromPool();
             if (partcl != null)
             {
                 partcl.GetComponent<ItemAnimEvents>().item = this;
@@ -890,7 +890,7 @@ public class Item : MonoBehaviour
         //else
         //    PlayDestroyAnimation(anim_name);
 
-        if (LevelManager.THIS.limitType == LIMIT.TIME && transform.Find("5sec") != null)
+        if (LevelManager.Instance.limitType == LIMIT.TIME && transform.Find("5sec") != null)
         {
             GameObject FiveSec = transform.Find("5sec").gameObject;
             FiveSec.transform.SetParent(null);
@@ -900,15 +900,15 @@ public class Item : MonoBehaviour
 
             FiveSec.GetComponent<Animation>().Play("5secfly");
             Destroy(FiveSec, 1);
-            if (LevelManager.THIS.gameStatus == GameState.Playing)
-                LevelManager.THIS.Limit += 5;
+            if (LevelManager.Instance.GameStatus == GameState.Playing)
+                LevelManager.Instance.limit += 5;
         }
 
         //Color color = sprRenderer.sprite.texture.GetPixel(sprRenderer.sprite.texture.width / 2 - 10, sprRenderer.sprite.texture.height / 2 - 10);
         if (showScore)
-            LevelManager.THIS.PopupScore(LevelManager.THIS.scoreForItem, transform.position, color);
+            LevelManager.Instance.PopupScore(LevelManager.Instance.scoreForItem, transform.position, color);
 
-        LevelManager.THIS.CheckCollectedTarget(gameObject);
+        LevelManager.Instance.CheckCollectedTarget(gameObject);
 
         while (!animationFinished && currentType == ItemsTypes.NONE)
             yield return new WaitForFixedUpdate();
@@ -920,8 +920,8 @@ public class Item : MonoBehaviour
             DestroyVertical();
         else if (currentType == ItemsTypes.PACKAGE)
             DestroyPackage();
-        else if (currentType == ItemsTypes.BOMB && LevelManager.THIS.gameStatus == GameState.PreWinAnimations)
-            CheckChocoBomb(this, LevelManager.THIS.GetRandomItems(1)[0]);
+        else if (currentType == ItemsTypes.BOMB && LevelManager.Instance.GameStatus == GameState.PreWinAnimations)
+            CheckChocoBomb(this, LevelManager.Instance.GetRandomItems(1)[0]);
 
         if (NextType != ItemsTypes.NONE)
         {
@@ -940,8 +940,8 @@ public class Item : MonoBehaviour
     public void DestroyHorizontal()
     {
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.strippedExplosion);
-        LevelManager.THIS.StrippedShow(gameObject, true);
-        List<Item> itemsList = LevelManager.THIS.GetRow(square.row);
+        LevelManager.Instance.StrippedShow(gameObject, true);
+        List<Item> itemsList = LevelManager.Instance.GetRow(square.row);
         foreach (Item item in itemsList)
         {
             if (item != null)
@@ -950,7 +950,7 @@ public class Item : MonoBehaviour
                     item.DestroyItem(true);
             }
         }
-        List<Square> sqList = LevelManager.THIS.GetRowSquaresObstacles(square.row);
+        List<Square> sqList = LevelManager.Instance.GetRowSquaresObstacles(square.row);
         foreach (Square item in sqList)
         {
             if (item != null)
@@ -961,8 +961,8 @@ public class Item : MonoBehaviour
     public void DestroyVertical()
     {
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.strippedExplosion);
-        LevelManager.THIS.StrippedShow(gameObject, false);
-        List<Item> itemsList = LevelManager.THIS.GetColumn(square.col);
+        LevelManager.Instance.StrippedShow(gameObject, false);
+        List<Item> itemsList = LevelManager.Instance.GetColumn(square.col);
         foreach (Item item in itemsList)
         {
             if (item != null)
@@ -971,7 +971,7 @@ public class Item : MonoBehaviour
                     item.DestroyItem(true);
             }
         }
-        List<Square> sqList = LevelManager.THIS.GetColumnSquaresObstacles(square.col);
+        List<Square> sqList = LevelManager.Instance.GetColumnSquaresObstacles(square.col);
         foreach (Square item in sqList)
         {
             if (item != null)
@@ -985,7 +985,7 @@ public class Item : MonoBehaviour
     {
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.destroyPackage);
 
-        List<Item> itemsList = LevelManager.THIS.GetItemsAround(square);
+        List<Item> itemsList = LevelManager.Instance.GetItemsAround(square);
         foreach (Item item in itemsList)
         {
             if (item != null)

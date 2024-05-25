@@ -24,7 +24,7 @@ namespace Dev.Scripts.GUI
         public void Pause () {
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
-            if (LevelManager.THIS.gameStatus == GameState.Playing)
+            if (LevelManager.Instance.GameStatus == GameState.Playing)
                 GameObject.Find ("CanvasGlobal").transform.Find ("MenuPause").gameObject.SetActive (true);
 
         }

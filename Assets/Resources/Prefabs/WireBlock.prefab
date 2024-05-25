@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4948573320546746587}
   - component: {fileID: 4872329689919152806}
-  - component: {fileID: 727644433331276399}
   - component: {fileID: 830859237157770104}
+  - component: {fileID: 4357583023542269879}
   m_Layer: 0
   m_Name: WireBlock
   m_TagString: Untagged
@@ -86,26 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &727644433331276399
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1119592432050960723}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &830859237157770104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,7 +95,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1119592432050960723}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a91df424f5e228345a2d43bc8d65b959, type: 3}
+  m_Script: {fileID: 11500000, guid: b6ad17be4db34f6aae1644d3b59a833a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
@@ -123,3 +103,19 @@ MonoBehaviour:
   col: 0
   type: 0
   block: []
+--- !u!111 &4357583023542269879
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1119592432050960723}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: ce16b419dfe194c4f9436017d53a50be, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: ce16b419dfe194c4f9436017d53a50be, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0

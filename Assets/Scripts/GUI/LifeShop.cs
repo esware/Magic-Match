@@ -14,7 +14,7 @@ namespace Dev.Scripts.GUI
         void OnEnable ()
         {
             transform.Find ("Image/BuyLife/Price").GetComponent<Text> ().text = "" + costIfRefill;
-            if (!LevelManager.THIS.enableInApps)
+            if (!LevelManager.Instance.enableInApps)
                 transform.Find ("Image/BuyLife").gameObject.SetActive (false);
 		
         }

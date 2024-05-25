@@ -19,8 +19,8 @@ namespace Dev.Scripts.GUI
 
 
         void Reset () {//2.1.2
-            if (LevelManager.THIS != null) {
-                if (LevelManager.THIS.limitType == LIMIT.MOVES)
+            if (LevelManager.Instance != null) {
+                if (LevelManager.Instance.limitType == LIMIT.MOVES)
                     GetComponent<Image> ().sprite = sprites [0];
                 else
                     GetComponent<Image> ().sprite = sprites [1];

@@ -39,9 +39,9 @@ namespace Dev.Scripts.GUI
 
 		if (name == "Limit") {
 			if (LevelManager.Instance.limitType == LIMIT.MOVES) {
-				txt.text = "" + LevelManager.THIS.Limit;
+				txt.text = "" + LevelManager.Instance.limit;
 				txt.transform.localScale = Vector3.one;
-				if (LevelManager.THIS.Limit <= 5) {
+				if (LevelManager.Instance.limit <= 5) {
 //					txt.color = new Color (216f / 255f, 0, 0);
 //					txt.GetComponent<Outline> ().effectColor = Color.white;
 					if (!alert) {
@@ -56,11 +56,11 @@ namespace Dev.Scripts.GUI
 				}
 
 			} else {
-				int minutes = Mathf.FloorToInt (LevelManager.THIS.Limit / 60F);
-				int seconds = Mathf.FloorToInt (LevelManager.THIS.Limit - minutes * 60);
+				int minutes = Mathf.FloorToInt (LevelManager.Instance.limit / 60F);
+				int seconds = Mathf.FloorToInt (LevelManager.Instance.limit - minutes * 60);
 				txt.text = "" + string.Format ("{0:00}:{1:00}", minutes, seconds);
 				txt.transform.localScale = Vector3.one * 0.68f;
-				if (LevelManager.THIS.Limit <= 30 && LevelManager.THIS.gameStatus == GameState.Playing) {
+				if (LevelManager.Instance.limit <= 30 && LevelManager.Instance.GameStatus == GameState.Playing) {
 					txt.color = new Color (216f / 255f, 0, 0);
 					txt.GetComponent<Outline> ().effectColor = Color.white;
 					if (lastTime + 30f < Time.time) {
@@ -76,13 +76,13 @@ namespace Dev.Scripts.GUI
 			}
 		}
 		if (name == "TargetBlocks") {
-			txt.text = "" + LevelManager.THIS.TargetBlocks;
+			txt.text = "" + LevelManager.Instance.TargetBlocks;
 		}
 		if (name == "TargetIngr1") {
-			txt.text = "" + LevelManager.THIS.ingrCountTarget [0];
+			txt.text = "" + LevelManager.Instance.ingrCountTarget [0];
 		}
 		if (name == "TargetIngr2") {
-			txt.text = "" + LevelManager.THIS.ingrCountTarget [1];
+			txt.text = "" + LevelManager.Instance.ingrCountTarget [1];
 		}
 		if (name == "Lifes") {
 			txt.text = "" + InitScript.Instance.GetLife ();
@@ -92,21 +92,21 @@ namespace Dev.Scripts.GUI
 			txt.text = "" + InitScript.Gems;
 		}
 		if (name == "TargetScore") {
-			txt.text = "" + LevelManager.THIS.star1;
+			txt.text = "" + LevelManager.Instance.star1;
 		}
 		if (name == "Level") {
 			txt.text = "" + levelNum;
 		}
 		
 		if (name == "TargetDescription1") {
-			if (LevelManager.THIS.target == Target.SCORE)
-				txt.text = LevelManager.THIS.targetDiscriptions [0].Replace ("%n", "" + LevelManager.THIS.star1);
-			else if (LevelManager.THIS.target == Target.BLOCKS)
-				txt.text = LevelManager.THIS.targetDiscriptions [1];
-			else if (LevelManager.THIS.target == Target.INGREDIENT)
-				txt.text = LevelManager.THIS.targetDiscriptions [2];
-			else if (LevelManager.THIS.target == Target.COLLECT)
-				txt.text = LevelManager.THIS.targetDiscriptions [3];
+			if (LevelManager.Instance.target == Target.SCORE)
+				txt.text = LevelManager.Instance.targetDiscriptions [0].Replace ("%n", "" + LevelManager.Instance.star1);
+			else if (LevelManager.Instance.target == Target.BLOCKS)
+				txt.text = LevelManager.Instance.targetDiscriptions [1];
+			else if (LevelManager.Instance.target == Target.INGREDIENT)
+				txt.text = LevelManager.Instance.targetDiscriptions [2];
+			else if (LevelManager.Instance.target == Target.COLLECT)
+				txt.text = LevelManager.Instance.targetDiscriptions [3];
 
 		}
 

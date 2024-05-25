@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,7 @@ namespace Dev.Scripts.Targets
 {
     public class TargetText : MonoBehaviour
     {
-        public Text textObject;
+        public TextMeshProUGUI textObject;
         public Action<string> updateText;
         public delegate string del();
         public del TextUpdate;

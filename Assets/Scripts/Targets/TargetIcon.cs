@@ -19,8 +19,8 @@ public class TargetIcon : MonoBehaviour
             {
                 if (targetObject == null)
                 {
-                    if (LevelManager.THIS != null)
-                        targetObject = LevelManager.THIS.targetObject.First(i => i.icon.name == imageRenderer.sprite.name);
+                    if (LevelManager.Instance != null)
+                        targetObject = LevelManager.Instance.targetObject.First(i => i.icon.name == imageRenderer.sprite.name);
                 }
                 return targetObject;
             }
@@ -37,7 +37,7 @@ public class TargetIcon : MonoBehaviour
             {
 //                textObj.gameObject.SetActive(false);
 //                imageRenderer.gameObject.SetActive(false);
-                count = LevelManager.THIS.star1;
+                count = LevelManager.Instance.star1;
                 textObj.text = "1";
 //                transform.parent = transform.parent.parent;
             }
@@ -58,7 +58,7 @@ public class TargetIcon : MonoBehaviour
         private void Update()
         {
             if(target?.Done() ?? false) SetCheck();
-            else if(LevelManager.THIS.gameStatus == GameState.PreFailed || LevelManager.THIS.gameStatus == GameState.GameOver) SetFailed();
+            else if(LevelManager.Instance.GameStatus == GameState.PreFailed || LevelManager.Instance.GameStatus == GameState.GameOver) SetFailed();
             else if((!target?.Done() ?? false) && checkObject.gameObject.activeSelf) SetContinue();
         }
 
@@ -82,7 +82,7 @@ public class TargetIcon : MonoBehaviour
             textObj.gameObject.SetActive(true);
         }
         
-        string GetBlocks() => LevelManager.THIS.TargetBlocks.ToString();
+        string GetBlocks() => LevelManager.Instance.TargetBlocks.ToString();
 
         string GetCount() => target?.GetCount().ToString();
 

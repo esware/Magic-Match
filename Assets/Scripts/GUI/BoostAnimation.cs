@@ -12,7 +12,7 @@ namespace Dev.Scripts.GUI
         public void ShowEffect ()
         {
             GameObject partcl = Instantiate (Resources.Load ("Prefabs/Effects/Firework"), transform.position, Quaternion.identity) as GameObject;
-            partcl.GetComponent<ParticleSystem> ().startColor = LevelManager.THIS.scoresColors [square.item.color];
+            partcl.GetComponent<ParticleSystem> ().startColor = LevelManager.Instance.scoresColors [square.item.color];
             if (name.Contains ("random_color_item"))//1.6.1 new lollipop
                 partcl.GetComponent<ParticleSystem> ().startColor = Color.white;
             Destroy (partcl, 1f);
@@ -28,7 +28,7 @@ namespace Dev.Scripts.GUI
         {
             if (boostType == BoostType.Random_color) {
 
-                List<Item> itemsList = LevelManager.THIS.GetItemsAround (square);
+                List<Item> itemsList = LevelManager.Instance.GetItemsAround (square);
                 foreach (Item item in itemsList) {
                     if (item != null) {
                         if (item.currentType == ItemsTypes.NONE)
@@ -40,7 +40,7 @@ namespace Dev.Scripts.GUI
             if (boostType == BoostType.Bomb) {
                 square.item.DestroyItem ();
             }
-            LevelManager.THIS.StartCoroutine (LevelManager.THIS.FindMatchDelay ());
+            LevelManager.Instance.StartCoroutine (LevelManager.Instance.FindMatchDelay ());
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.explosion);
 
             Destroy (gameObject);

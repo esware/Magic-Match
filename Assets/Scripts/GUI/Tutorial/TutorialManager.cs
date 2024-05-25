@@ -27,7 +27,7 @@ namespace Dev.Scripts.GUI.Tutorial
 
 	void DisableTutorial ()
 	{
-		if (!showed && LevelManager.THIS.currentLevel == 1) {
+		if (!showed && LevelManager.Instance.currentLevel == 1) {
 			ChangeLayerNum (0);
 			tutorial.SetActive (false);
 			showed = true;
@@ -37,7 +37,7 @@ namespace Dev.Scripts.GUI.Tutorial
 
 	void CheckNewTarget ()
 	{
-		if (LevelManager.THIS.currentLevel == 1 && !showed)
+		if (LevelManager.Instance.currentLevel == 1 && !showed)
 			StartCoroutine (WaitForCombine ());
 
 	}
@@ -64,7 +64,7 @@ namespace Dev.Scripts.GUI.Tutorial
 		if (items.Count == 0)
 			yield break;
 		items.Sort (SortByDistance);
-		if (LevelManager.THIS.currentLevel == 1 && !showed) {
+		if (LevelManager.Instance.currentLevel == 1 && !showed) {
 			ShowStarsTutorial ();
 		}
 	}

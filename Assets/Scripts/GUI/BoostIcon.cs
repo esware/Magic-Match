@@ -14,8 +14,8 @@ namespace Dev.Scripts.GUI
 	void OnEnable ()
 	{
 		if (name != "Main Camera") {
-			if (LevelManager.THIS != null) {
-				if (LevelManager.THIS.gameStatus == GameState.Map)
+			if (LevelManager.Instance != null) {
+				if (LevelManager.Instance.GameStatus == GameState.Map)
 					transform.Find ("Indicator/Image/Check").gameObject.SetActive (false);
 //				if (!LevelManager.THIS.enableInApps)
 //					gameObject.SetActive (false);
@@ -26,7 +26,7 @@ namespace Dev.Scripts.GUI
 
 	public void ActivateBoost ()
 	{
-		if (LevelManager.THIS.ActivatedBoost == this) {
+		if (LevelManager.Instance.ActivatedBoost == this) {
 			UnCheckBoost ();
 			return;
 		}
@@ -34,37 +34,37 @@ namespace Dev.Scripts.GUI
 		if (check )//2.2.1
 		{
 			if (type == BoostType.Colorful_bomb) {
-				LevelManager.THIS.BoostColorfullBomb = 0;
+				LevelManager.Instance.boostColorfullBomb = 0;
 				UnCheck();
 				return;
 			}
 			if (type == BoostType.Packages) {
-				LevelManager.THIS.BoostPackage = 0;
+				LevelManager.Instance.boostPackage = 0;
 				UnCheck();
 				return;
 			}
 			if (type == BoostType.Stripes) {
-				LevelManager.THIS.BoostStriped = 0;
+				LevelManager.Instance.boostStriped = 0;
 				UnCheck();
 				return;
 			}
 		}
 
-		if (IsLocked () || check || (LevelManager.THIS.gameStatus != GameState.Playing && LevelManager.THIS.gameStatus != GameState.Map))
+		if (IsLocked () || check || (LevelManager.Instance.GameStatus != GameState.Playing && LevelManager.Instance.GameStatus != GameState.Map))
 			return;
 		if (!check && BoostCount () > 0) {
-			if (type != BoostType.Colorful_bomb && type != BoostType.Packages && type != BoostType.Stripes && !LevelManager.THIS.DragBlocked)
-				LevelManager.THIS.ActivatedBoost = this;
+			if (type != BoostType.Colorful_bomb && type != BoostType.Packages && type != BoostType.Stripes && !LevelManager.Instance.DragBlocked)
+				LevelManager.Instance.ActivatedBoost = this;
 			if (type == BoostType.Colorful_bomb) {
-				LevelManager.THIS.BoostColorfullBomb = 1;
+				LevelManager.Instance.boostColorfullBomb = 1;
 				Check ();
 			}
 			if (type == BoostType.Packages) {
-				LevelManager.THIS.BoostPackage = 5;
+				LevelManager.Instance.boostPackage = 5;
 				Check ();
 			}
 			if (type == BoostType.Stripes) {
-				LevelManager.THIS.BoostStriped = 5;
+				LevelManager.Instance.boostStriped = 5;
 				Check ();
 			}
 
@@ -75,17 +75,17 @@ namespace Dev.Scripts.GUI
 
 	void UnCheckBoost ()
 	{
-		LevelManager.THIS.activatedBoost = null;
-		LevelManager.THIS.UnLockBoosts ();
+		LevelManager.Instance.activatedBoost = null;
+		LevelManager.Instance.UnLockBoosts ();
 	}
 
 	public void InitBoost ()
 	{
 		transform.Find ("Indicator/Image/Check").gameObject.SetActive (false);
 		transform.Find ("Indicator/Image/Count").gameObject.SetActive (true);
-		LevelManager.THIS.BoostColorfullBomb = 0;
-		LevelManager.THIS.BoostPackage = 0;
-		LevelManager.THIS.BoostStriped = 0;
+		LevelManager.Instance.boostColorfullBomb = 0;
+		LevelManager.Instance.boostPackage = 0;
+		LevelManager.Instance.boostStriped = 0;
 		check = false;
 	}
 

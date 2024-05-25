@@ -115,7 +115,7 @@ public class LevelMakerEditor : EditorWindow
             blockTex2 = lm.doubleBlock.texture;
             wireBlockTex = lm.wireBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
             solidBlockTex = lm.solidBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
-            undestroyableBlockTex = lm.undesroyableBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
+            undestroyableBlockTex = lm.undestroyableBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
             thrivingBlockTex = lm.thrivingBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
         }
     }
@@ -133,8 +133,8 @@ public class LevelMakerEditor : EditorWindow
         {
 
             SquareBlocks sqBlocks = new SquareBlocks();
-            sqBlocks.block = SquareTypes.EMPTY;
-            sqBlocks.obstacle = SquareTypes.NONE;
+            sqBlocks.Block = SquareTypes.EMPTY;
+            sqBlocks.Obstacle = SquareTypes.NONE;
 
             levelSquares[i] = sqBlocks;
         }
@@ -267,10 +267,6 @@ public class LevelMakerEditor : EditorWindow
             defines = defines + "; UNITY_ADS";
         if (initscript.enableGoogleMobileAds)
             defines = defines + "; GOOGLE_MOBILE_ADS";
-        if (initscript.enableChartboostAds)
-            defines = defines + "; CHARTBOOST_ADS";
-        if (lm.FacebookEnable)
-            defines = defines + "; FACEBOOK";
         if (lm.enableInApps)
             defines = defines + "; UNITY_INAPPS";
         PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defines);
@@ -652,26 +648,10 @@ public class LevelMakerEditor : EditorWindow
         LevelManager lm = Camera.main.GetComponent<LevelManager>();
 
         GUILayout.Label("In-apps settings:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
-
-        if (GUILayout.Button("Reset to default", new GUILayoutOption[] { GUILayout.Width(150) }))
-        {
-            ResetInAppsSettings();
-        }
-
-
-
+        
         GUILayout.Space(10);
         bool oldenableInApps = lm.enableInApps;
-
-        GUILayout.BeginHorizontal();
-        //		lm.enableInApps = EditorGUILayout.Toggle ("Enable In-apps", lm.enableInApps, new GUILayoutOption[] {//1.6.1
-        //			GUILayout.Width (180)
-        //		});
-        if (GUILayout.Button("Help", new GUILayoutOption[] { GUILayout.Width(80) }))
-        {
-            Application.OpenURL("https://docs.google.com/document/d/1HeN8JtQczTVetkMnd8rpSZp_TZZkEA7_kan7vvvsMw0#bookmark=id.b1efplsspes5");
-        }
-        GUILayout.EndHorizontal();
+        
 
 
         GUILayout.BeginHorizontal();
@@ -680,23 +660,10 @@ public class LevelMakerEditor : EditorWindow
         GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
-
-        //		if (oldenableInApps != lm.enableInApps) {1.6.1
-        //			SetScriptingDefineSymbols ();
-        //		}
-
-
+        
         GUILayout.BeginHorizontal();
         GUILayout.Space(30);
         GUILayout.BeginVertical();
-        for (int i = 0; i < 4; i++)
-        {
-            lm.InAppIDs[i] = EditorGUILayout.TextField("Product id " + (i + 1), lm.InAppIDs[i], new GUILayoutOption[] {
-                GUILayout.Width (300),
-                GUILayout.MaxWidth (300)
-            });
-
-        }
         GUILayout.Space(10);
 
         GUILayout.Label("Android:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
@@ -706,13 +673,6 @@ public class LevelMakerEditor : EditorWindow
 
         GUILayout.BeginVertical();
         GUILayout.Space(10);
-        //GUILayout.Label(" Put Google license key into the field \n from the google play account ", EditorStyles.label, new GUILayoutOption[] { GUILayout.Width(300) });
-        //GUILayout.Space(10);
-
-        //lm.GoogleLicenseKey = EditorGUILayout.TextField("Google license key", lm.GoogleLicenseKey, new GUILayoutOption[] {
-        //    GUILayout.Width (300),
-        //    GUILayout.MaxWidth (300)
-        //});
 
         GUILayout.Space(10);
         if (GUILayout.Button("Android account help", new GUILayoutOption[] { GUILayout.Width(400) }))
@@ -748,15 +708,7 @@ public class LevelMakerEditor : EditorWindow
         GUILayout.EndHorizontal();
 
     }
-
-    void ResetInAppsSettings()
-    {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
-        lm.InAppIDs[0] = "gems10";
-        lm.InAppIDs[1] = "gems50";
-        lm.InAppIDs[2] = "gems100";
-        lm.InAppIDs[3] = "gems150";
-    }
+    
 
     #endregion
 
@@ -795,83 +747,6 @@ public class LevelMakerEditor : EditorWindow
             Debug.Log("Player prefs cleared");
         }
         GUILayout.EndHorizontal();
-        GUILayout.Space(10);
-
-        bool oldFacebookEnable = lm.FacebookEnable;
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Facebook", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });//1.6.1
-        if (GUILayout.Button("Install", new GUILayoutOption[] { GUILayout.Width(70) }))
-        {
-            Application.OpenURL("https://developers.facebook.com/docs/unity/downloads");
-        }
-        if (GUILayout.Button("Account", new GUILayoutOption[] { GUILayout.Width(70) }))
-        {
-            Application.OpenURL("https://developers.facebook.com");
-        }
-        if (GUILayout.Button("Help", new GUILayoutOption[] { GUILayout.Width(60) }))
-        {
-            Application.OpenURL("https://docs.google.com/document/d/1bTNdM3VSg8qu9nWwO7o7WeywMPhVLVl8E_O0gMIVIw0/edit?usp=sharing");
-        }
-        GUILayout.EndHorizontal();
-        // #if FACEBOOK
-        //         share_settings = EditorGUILayout.Foldout(share_settings, "Share settings:");
-        //         if (share_settings)
-        //         {
-        //             GUILayout.BeginHorizontal();
-        //             GUILayout.Space(30);
-        //             GUILayout.BeginVertical();
-        //             {
-        //                 lm.androidSharingPath = EditorGUILayout.TextField("Android path", lm.androidSharingPath, new GUILayoutOption[] { GUILayout.MaxWidth(500) });
-        //                 lm.iosSharingPath = EditorGUILayout.TextField("iOS path", lm.iosSharingPath, new GUILayoutOption[] { GUILayout.MaxWidth(500) });
-        //             }
-        //             GUILayout.EndVertical();
-        //             GUILayout.EndHorizontal();
-
-        //             GUILayout.Space(10);
-        //         }
-        // #endif
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("Leadboard Gamesparks", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });//1.6.1
-        if (GUILayout.Button("Install", new GUILayoutOption[] { GUILayout.Width(70) }))
-        {
-            Application.OpenURL("https://docs.gamesparks.com/sdk-center/unity.html");
-        }
-        if (GUILayout.Button("Account", new GUILayoutOption[] { GUILayout.Width(70) }))
-        {
-            Application.OpenURL("https://portal.gamesparks.net");
-        }
-        if (GUILayout.Button("Help", new GUILayoutOption[] { GUILayout.Width(60) }))
-        {
-            Application.OpenURL("https://docs.google.com/document/d/1JcQfiiD2ALz6v_i9UIcG93INWZKC7z6FHXH_u6w9A8E");
-        }
-        GUILayout.EndHorizontal();
-#if GAMESPARKS
-        GUILayout.BeginHorizontal();
-        {
-            GUILayout.Space(150);
-            if (GUILayout.Button("Create game", GUILayout.Width(100)))//2.1.6
-            {
-                GamesparksConfiguration window = ScriptableObject.CreateInstance<GamesparksConfiguration>();
-                window.position = new Rect(Screen.width / 2, Screen.height / 2, 250, 200);
-                window.ShowPopup();
-            }
-
-        }
-        GUILayout.EndHorizontal();
-#endif
-
-        //		if (oldFacebookEnable != lm.FacebookEnable) {//1.6.1
-        //			SetScriptingDefineSymbols ();
-        //		}
-        if (lm.FacebookEnable)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(20);
-            GUILayout.Label("menu Facebook-> Edit settings", new GUILayoutOption[] { GUILayout.Width(300) });
-            GUILayout.EndHorizontal();
-        }
-
-        GUILayout.Space(10);
 
         score_settings = EditorGUILayout.Foldout(score_settings, "Score settings:");
         if (score_settings)
@@ -1023,15 +898,15 @@ public class LevelMakerEditor : EditorWindow
             GUILayout.Space(30);
             GUILayout.BeginVertical();
 
-            lm.FailedCost = EditorGUILayout.IntField(new GUIContent("Cost of continue", "Cost of continue after failed"), lm.FailedCost, new GUILayoutOption[] {
+            lm.failedCost = EditorGUILayout.IntField(new GUIContent("Cost of continue", "Cost of continue after failed"), lm.failedCost, new GUILayoutOption[] {
                 GUILayout.Width (200),
                 GUILayout.MaxWidth (200)
             });
-            lm.ExtraFailedMoves = EditorGUILayout.IntField(new GUIContent("Extra moves", "Extra moves after continue"), lm.ExtraFailedMoves, new GUILayoutOption[] {
+            lm.extraFailedMoves = EditorGUILayout.IntField(new GUIContent("Extra moves", "Extra moves after continue"), lm.extraFailedMoves, new GUILayoutOption[] {
                 GUILayout.Width (200),
                 GUILayout.MaxWidth (200)
             });
-            lm.ExtraFailedSecs = EditorGUILayout.IntField(new GUIContent("Extra seconds", "Extra seconds after continue"), lm.ExtraFailedSecs, new GUILayoutOption[] {
+            lm.extraFailedSecs = EditorGUILayout.IntField(new GUIContent("Extra seconds", "Extra seconds after continue"), lm.extraFailedSecs, new GUILayoutOption[] {
                 GUILayout.Width (200),
                 GUILayout.MaxWidth (200)
             });
@@ -1092,9 +967,9 @@ public class LevelMakerEditor : EditorWindow
         initscript.TotalTimeForRestLifeMin = 15;
         initscript.TotalTimeForRestLifeSec = 0;
         lm.lifeShop.CostIfRefill = 12;
-        lm.FailedCost = 12;
-        lm.ExtraFailedMoves = 5;
-        lm.ExtraFailedSecs = 30;
+        lm.failedCost = 12;
+        lm.extraFailedMoves = 5;
+        lm.extraFailedSecs = 30;
         EditorUtility.SetDirty(lm);
     }
 
@@ -1583,8 +1458,8 @@ public class LevelMakerEditor : EditorWindow
         {
             for (int i = 0; i < levelSquares.Length; i++)
             {
-                levelSquares[i].block = SquareTypes.EMPTY;
-                levelSquares[i].obstacle = SquareTypes.NONE;
+                levelSquares[i].Block = SquareTypes.EMPTY;
+                levelSquares[i].Obstacle = SquareTypes.NONE;
             }
             SaveLevel();
         }
@@ -1707,81 +1582,81 @@ public class LevelMakerEditor : EditorWindow
                 Color squareColor = new Color(0.8f, 0.8f, 0.8f);
 
                 var imageButton = new object();
-                if (levelSquares[row * maxCols + col].block == SquareTypes.NONE)
+                if (levelSquares[row * maxCols + col].Block == SquareTypes.NONE)
                 {
                     imageButton = "X";
                     squareColor = new Color(0.8f, 0.8f, 0.8f);
                 }
-                else if (levelSquares[row * maxCols + col].block == SquareTypes.EMPTY)
+                else if (levelSquares[row * maxCols + col].Block == SquareTypes.EMPTY)
                 {
                     imageButton = squareTex;
                     squareColor = Color.white;
-                    if (levelSquares[row * maxCols + col].obstacle == SquareTypes.WIREBLOCK)
+                    if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.WIREBLOCK)
                     {
                         imageButton = wireBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.SOLIDBLOCK)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.SOLIDBLOCK)
                     {
                         imageButton = solidBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.UNDESTROYABLE)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.UNDESTROYABLE)
                     {
                         imageButton = undestroyableBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.THRIVING)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.THRIVING)
                     {
                         imageButton = thrivingBlockTex;
                         squareColor = Color.white;
                     }
 
                 }
-                else if (levelSquares[row * maxCols + col].block == SquareTypes.BLOCK)
+                else if (levelSquares[row * maxCols + col].Block == SquareTypes.BLOCK)
                 {
                     imageButton = blockTex;
-                    if (levelSquares[row * maxCols + col].obstacle == SquareTypes.WIREBLOCK)
+                    if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.WIREBLOCK)
                     {
                         imageButton = wireBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.SOLIDBLOCK)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.SOLIDBLOCK)
                     {
                         imageButton = solidBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.UNDESTROYABLE)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.UNDESTROYABLE)
                     {
                         imageButton = undestroyableBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.THRIVING)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.THRIVING)
                     {
                         imageButton = thrivingBlockTex;
                         squareColor = Color.white;
                     }
                     //     squareColor = new Color(0.8f, 1, 1, 1f);
                 }
-                else if (levelSquares[row * maxCols + col].block == SquareTypes.DOUBLEBLOCK)
+                else if (levelSquares[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
                 {
                     imageButton = blockTex2;
-                    if (levelSquares[row * maxCols + col].obstacle == SquareTypes.WIREBLOCK)
+                    if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.WIREBLOCK)
                     {
                         imageButton = wireBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.SOLIDBLOCK)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.SOLIDBLOCK)
                     {
                         imageButton = solidBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.UNDESTROYABLE)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.UNDESTROYABLE)
                     {
                         imageButton = undestroyableBlockTex;
                         squareColor = Color.white;
                     }
-                    else if (levelSquares[row * maxCols + col].obstacle == SquareTypes.THRIVING)
+                    else if (levelSquares[row * maxCols + col].Obstacle == SquareTypes.THRIVING)
                     {
                         imageButton = thrivingBlockTex;
                         squareColor = Color.white;
@@ -1873,17 +1748,17 @@ public class LevelMakerEditor : EditorWindow
     {
         if (squareType == SquareTypes.BLOCK)
         {
-            if (levelSquares[row * maxCols + col].block == SquareTypes.BLOCK)
-                levelSquares[row * maxCols + col].block = SquareTypes.DOUBLEBLOCK;
+            if (levelSquares[row * maxCols + col].Block == SquareTypes.BLOCK)
+                levelSquares[row * maxCols + col].Block = SquareTypes.DOUBLEBLOCK;
             else
-                levelSquares[row * maxCols + col].block = SquareTypes.BLOCK;
+                levelSquares[row * maxCols + col].Block = SquareTypes.BLOCK;
         }
         else if (squareType == SquareTypes.WIREBLOCK || squareType == SquareTypes.SOLIDBLOCK || squareType == SquareTypes.UNDESTROYABLE || squareType == SquareTypes.THRIVING)
-            levelSquares[row * maxCols + col].obstacle = squareType;
+            levelSquares[row * maxCols + col].Obstacle = squareType;
         else
         {
-            levelSquares[row * maxCols + col].block = squareType;
-            levelSquares[row * maxCols + col].obstacle = SquareTypes.NONE;
+            levelSquares[row * maxCols + col].Block = squareType;
+            levelSquares[row * maxCols + col].Obstacle = SquareTypes.NONE;
         }
         update = true;
         SaveLevel();
@@ -1922,7 +1797,7 @@ public class LevelMakerEditor : EditorWindow
         {
             for (int col = 0; col < maxCols; col++)
             {
-                saveString += (int)levelSquares[row * maxCols + col].block + "" + (int)levelSquares[row * maxCols + col].obstacle;
+                saveString += (int)levelSquares[row * maxCols + col].Block + "" + (int)levelSquares[row * maxCols + col].Obstacle;
                 //if this column not yet end of row, add space between them
                 if (col < (maxCols - 1))
                     saveString += " ";
@@ -2025,8 +1900,8 @@ public class LevelMakerEditor : EditorWindow
                 string[] st = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < st.Length; i++)
                 {
-                    levelSquares[mapLine * maxCols + i].block = (SquareTypes)int.Parse(st[i][0].ToString());
-                    levelSquares[mapLine * maxCols + i].obstacle = (SquareTypes)int.Parse(st[i][1].ToString());
+                    levelSquares[mapLine * maxCols + i].Block = (SquareTypes)int.Parse(st[i][0].ToString());
+                    levelSquares[mapLine * maxCols + i].Obstacle = (SquareTypes)int.Parse(st[i][1].ToString());
                 }
                 mapLine++;
             }

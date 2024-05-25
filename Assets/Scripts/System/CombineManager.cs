@@ -17,8 +17,8 @@ namespace Dev.Scripts.System
 	{
 
 		List<List<Item>> combinedItems = new List<List<Item>> ();
-		maxCols = LevelManager.THIS.maxCols;
-		maxRows = LevelManager.THIS.maxRows;
+		maxCols = LevelManager.Instance.maxCols;
+		maxRows = LevelManager.Instance.maxRows;
 		combines.Clear ();
 		tempCombines.Clear ();
 		dic.Clear ();
@@ -29,7 +29,7 @@ namespace Dev.Scripts.System
 		for (int row = 0; row < maxRows; row++) {
 			color = -1;
 			for (int col = 0; col < maxCols; col++) {
-				Square square = LevelManager.THIS.GetSquare (col, row);
+				Square square = LevelManager.Instance.GetSquare (col, row);
 				if (IsSquareNotNull (square)) {
 					CheckMatches (square.item, color, ref combine);
 					color = square.item.color;
@@ -41,7 +41,7 @@ namespace Dev.Scripts.System
 		for (int col = 0; col < maxCols; col++) {
 			color = -1;
 			for (int row = 0; row < maxRows; row++) {
-				Square square = LevelManager.THIS.GetSquare (col, row);
+				Square square = LevelManager.Instance.GetSquare (col, row);
 				if (IsSquareNotNull (square)) {
 					CheckMatches (square.item, color, ref combine);
 					color = square.item.color;
@@ -61,10 +61,10 @@ namespace Dev.Scripts.System
 			if (cmb.nextType != ItemsTypes.NONE) {
 				Item item = cmb.items [UnityEngine.Random.Range (0, cmb.items.Count)];
 
-				Item draggedItem = LevelManager.THIS.lastDraggedItem;
+				Item draggedItem = LevelManager.Instance.lastDraggedItem;
 				if (draggedItem) {
 					if (draggedItem.color != item.color)
-						draggedItem = LevelManager.THIS.lastSwitchedItem;
+						draggedItem = LevelManager.Instance.lastSwitchedItem;
 					//check the dragged item found in this combine or not and change this type
 					if (cmb.items.IndexOf (draggedItem) >= 0) {
 						item = draggedItem;
@@ -144,8 +144,8 @@ namespace Dev.Scripts.System
 		if (combine.hCount >= 3 && combine.vCount >= 3)
 			return ItemsTypes.PACKAGE;
 		if (combine.hCount > 3 || combine.vCount > 3) {
-			if (LevelManager.THIS.lastDraggedItem) {
-				Vector2 dir = LevelManager.THIS.lastDraggedItem.moveDirection;
+			if (LevelManager.Instance.lastDraggedItem) {
+				Vector2 dir = LevelManager.Instance.lastDraggedItem.moveDirection;
 				if (Math.Abs (dir.x) > Math.Abs (dir.y))
 					return ItemsTypes.HORIZONTAL_STRIPPED;
 				else

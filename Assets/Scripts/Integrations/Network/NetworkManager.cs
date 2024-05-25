@@ -59,10 +59,7 @@ public class NetworkManager : MonoBehaviour
 
     public bool IsLoggedIn
     {
-        get
-        {
-            return _isLoggedIn;
-        }
+        get => _isLoggedIn;
         set
         {
             _isLoggedIn = value;

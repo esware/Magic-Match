@@ -594,8 +594,8 @@ public class InitScript : MonoBehaviour
         {
             PlayerPrefs.SetInt("OpenLevel", args.Number);
             PlayerPrefs.Save();
-            LevelManager.THIS.MenuPlayEvent();
-            LevelManager.THIS.LoadLevel();
+            LevelManager.Instance.MenuPlayEvent();
+            LevelManager.Instance.LoadLevel();
             openLevel = args.Number;
             //  currentTarget = targets[args.Number];
             GameObject.Find("CanvasGlobal").transform.Find("MenuPlay").gameObject.SetActive(true);

@@ -85,8 +85,8 @@ namespace Dev.Scripts.GUI
         {
             for (int i = 1; i <= 4; i++)
             {
-                transform.Find("Image/Pack" + i + "/Count").GetComponent<Text>().text = "" + LevelManager.THIS.gemsProducts[i - 1].count;
-                transform.Find("Image/Pack" + i + "/Buy/Price").GetComponent<Text>().text = "$" + LevelManager.THIS.gemsProducts[i - 1].price;
+                transform.Find("Image/Pack" + i + "/Count").GetComponent<Text>().text = "" + LevelManager.Instance.gemsProducts[i - 1].count;
+                transform.Find("Image/Pack" + i + "/Buy/Price").GetComponent<Text>().text = "$" + LevelManager.Instance.gemsProducts[i - 1].price;
             }
         }
         if (name == "MenuComplete")
@@ -204,20 +204,20 @@ namespace Dev.Scripts.GUI
         }
         if (name == "MenuPause")
         {
-            if (LevelManager.THIS.gameStatus == GameState.Playing)
-                LevelManager.THIS.gameStatus = GameState.Pause;
+            if (LevelManager.Instance.GameStatus == GameState.Playing)
+                LevelManager.Instance.GameStatus = GameState.Pause;
         }
 
         if (name == "PrePlay")
         {
             CloseMenu();
-            LevelManager.THIS.gameStatus = GameState.WaitForPopup;
+            LevelManager.Instance.GameStatus = GameState.WaitForPopup;
 
         }
         if (name == "PreFailed")
         {
-            if (LevelManager.THIS.Limit <= 0)
-                LevelManager.THIS.gameStatus = GameState.GameOver;
+            if (LevelManager.Instance.limit <= 0)
+                LevelManager.Instance.GameStatus = GameState.GameOver;
             transform.Find("Video").gameObject.SetActive(false);
 
             CloseMenu();
@@ -324,23 +324,23 @@ namespace Dev.Scripts.GUI
         }
         if (gameObject.name == "MenuComplete")
         {
-            LevelManager.THIS.gameStatus = GameState.Map;
+            LevelManager.Instance.GameStatus = GameState.Map;
             //2.1
-            PlayerPrefs.SetInt("OpenLevel", LevelManager.THIS.currentLevel + 1);
-            LevelManager.THIS.LoadLevel();//2.1.5  Switch target
-            if (LevelsMap._instance.GetMapLevels().Count >= LevelManager.THIS.currentLevel)
+            PlayerPrefs.SetInt("OpenLevel", LevelManager.Instance.currentLevel + 1);
+            LevelManager.Instance.LoadLevel();//2.1.5  Switch target
+            if (LevelsMap._instance.GetMapLevels().Count >= LevelManager.Instance.currentLevel)
                 GameObject.Find("CanvasGlobal").transform.Find("MenuPlay").gameObject.SetActive(true);
         }
         if (gameObject.name == "MenuFailed")
         {
-            LevelManager.THIS.gameStatus = GameState.Map;
+            LevelManager.Instance.GameStatus = GameState.Map;
         }
 
         if (SceneManager.GetActiveScene().name == "game")
         {
-            if (LevelManager.Instance.gameStatus == GameState.Pause)
+            if (LevelManager.Instance.GameStatus == GameState.Pause)
             {
-                LevelManager.Instance.gameStatus = GameState.WaitAfterClose;
+                LevelManager.Instance.GameStatus = GameState.WaitAfterClose;
 
             }
         }
@@ -370,7 +370,7 @@ namespace Dev.Scripts.GUI
             {
                 InitScript.Instance.SpendGems(12);
                 //                LevelData.LimitAmount += 12;
-                LevelManager.Instance.gameStatus = GameState.WaitAfterClose;
+                LevelManager.Instance.GameStatus = GameState.WaitAfterClose;
                 gameObject.SetActive(false);
 
             }
@@ -381,14 +381,14 @@ namespace Dev.Scripts.GUI
         }
         else if (gameObject.name == "MenuFailed")
         {
-            LevelManager.Instance.gameStatus = GameState.Map;
+            LevelManager.Instance.GameStatus = GameState.Map;
         }
         else if (gameObject.name == "MenuPlay")
         {
             if (InitScript.lifes > 0)
             {
                 InitScript.Instance.SpendLife(1);
-                LevelManager.THIS.gameStatus = GameState.PrepareGame;
+                LevelManager.Instance.GameStatus = GameState.PrepareGame;
                 CloseMenu();
                 //Application.LoadLevel( "game" );
             }
@@ -401,14 +401,14 @@ namespace Dev.Scripts.GUI
         else if (gameObject.name == "MenuPause")
         {
             CloseMenu();
-            LevelManager.Instance.gameStatus = GameState.Playing;
+            LevelManager.Instance.GameStatus = GameState.Playing;
         }
     }
 
     public void PlayTutorial()
     {
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
-        LevelManager.Instance.gameStatus = GameState.Playing;
+        LevelManager.Instance.GameStatus = GameState.Playing;
         //    mainscript.Instance.dropDownTime = Time.time + 0.5f;
         //        CloseMenu();
     }
@@ -416,7 +416,7 @@ namespace Dev.Scripts.GUI
     public void BackToMap()
     {
         Time.timeScale = 1;
-        LevelManager.THIS.gameStatus = GameState.GameOver;
+        LevelManager.Instance.GameStatus = GameState.GameOver;
         CloseMenu();
     }
 
@@ -548,12 +548,12 @@ namespace Dev.Scripts.GUI
 
     public void GoOnFailed()
     {
-        if (LevelManager.THIS.limitType == LIMIT.MOVES)
-            LevelManager.THIS.Limit += LevelManager.THIS.ExtraFailedMoves;
+        if (LevelManager.Instance.limitType == LIMIT.MOVES)
+            LevelManager.Instance.limit += LevelManager.Instance.extraFailedMoves;
         else
-            LevelManager.THIS.Limit += LevelManager.THIS.ExtraFailedSecs;
+            LevelManager.Instance.limit += LevelManager.Instance.extraFailedSecs;
         GetComponent<Animation>()["bannerFailed"].speed = 1;
-        LevelManager.THIS.gameStatus = GameState.Playing;
+        LevelManager.Instance.GameStatus = GameState.Playing;
     }
 
     public void GiveUp()

@@ -6,7 +6,7 @@ namespace Dev.Scripts.GUI
 
         void EndAnimGamField()
         {
-            LevelManager.THIS.gameStatus = GameState.Playing;
+            LevelManager.Instance.GameStatus = GameState.Playing;
         }
     }
 }

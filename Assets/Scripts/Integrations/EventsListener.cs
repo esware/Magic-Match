@@ -38,7 +38,7 @@ namespace Dev.Scripts.Integrations
         void OnMapState() {
         }
         void OnEnterGame() {
-            AnalyticsEvent("OnEnterGame", LevelManager.THIS.currentLevel);
+            AnalyticsEvent("OnEnterGame", LevelManager.Instance.currentLevel);
         }
         void OnLevelLoaded() {
         }
@@ -49,10 +49,10 @@ namespace Dev.Scripts.Integrations
         void OnStartPlay() {
         }
         void OnWin() {
-            AnalyticsEvent("OnWin", LevelManager.THIS.currentLevel);
+            AnalyticsEvent("OnWin", LevelManager.Instance.currentLevel);
         }
         void OnLose() {
-            AnalyticsEvent("OnLose", LevelManager.THIS.currentLevel);
+            AnalyticsEvent("OnLose", LevelManager.Instance.currentLevel);
         }
 
         #endregion

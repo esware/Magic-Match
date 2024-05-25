@@ -33,11 +33,11 @@ namespace Dev.Scripts.System
 
         IEnumerator Wait()
         {
-            yield return new WaitWhile(() => !LevelManager.THIS);
-            if (LevelManager.THIS.gameStatus != GameState.Map)
+            yield return new WaitWhile(() => !LevelManager.Instance);
+            if (LevelManager.Instance.GameStatus != GameState.Map)
             {
-                yield return new WaitWhile(() => LevelManager.THIS.GetItems().Count == 0);
-                var items = LevelManager.THIS.GetItems().Where(i => i != null).Where(i => i != null);
+                yield return new WaitWhile(() => LevelManager.Instance.GetItems().Count == 0);
+                var items = LevelManager.Instance.GetItems().Where(i => i != null).Where(i => i != null);
                 float topY = items.Max(i => i.transform.position.y);
                 float bottomY = items.Min(i => i.transform.position.y);
                 float leftX = items.Min(i => i.transform.position.x);
