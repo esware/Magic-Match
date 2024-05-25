@@ -1,0 +1,42 @@
+[33m26bb0cb[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD
+[33m26bb0cb[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m HEAD@{1}: reset: moving to 26bb0cbeee9d38426569e38a4741277bdd56eff2
+[33med71a78[m HEAD@{2}: reset: moving to ed71a78abe731237b831b46bbe44b5abeee23557
+[33md263005[m HEAD@{3}: reset: moving to d263005ff43e83102147688c04e0487e5750c7e0
+[33md263005[m HEAD@{4}: reset: moving to d263005ff43e83102147688c04e0487e5750c7e0
+[33m762880b[m HEAD@{5}: reset: moving to 762880b325f904d14c35ed68b9c4a3313ac609c5
+[33m762880b[m HEAD@{6}: reset: moving to 762880b325f904d14c35ed68b9c4a3313ac609c5
+[33mbbe14f6[m HEAD@{7}: reset: moving to bbe14f64fb07d32cc9b63f263485abbb279a2817
+[33mbbe14f6[m HEAD@{8}: reset: moving to bbe14f64fb07d32cc9b63f263485abbb279a2817
+[33me337f38[m HEAD@{9}: reset: moving to e337f387bf4ca833c70523bef0993994f18fc449
+[33m9df48fc[m HEAD@{10}: reset: moving to 9df48fcbaaeef7b5df018520c21222160b60df74
+[33md76f1a2[m HEAD@{11}: reset: moving to d76f1a24737a4e4e75f2aff8f7da1bcc6efd9248
+[33m665112a[m HEAD@{12}: reset: moving to 665112a9ea05d3ea6f3eff8f92cbaa5bab4d6a02
+[33m1740105[m HEAD@{13}: reset: moving to 1740105b88024f11e880d908509b345ff0abcaef
+[33m1740105[m HEAD@{14}: reset: moving to 1740105b88024f11e880d908509b345ff0abcaef
+[33ma1131f5[m HEAD@{15}: reset: moving to a1131f5bf7853d194cf1abb5138dcaddd050f162
+[33ma1131f5[m HEAD@{16}: reset: moving to a1131f5bf7853d194cf1abb5138dcaddd050f162
+[33mdf14931[m HEAD@{17}: commit: firebase , playfab kullanici kayit ve login sistemi kuruldu , login olduktan sonra bir loading ekrani eklendi...
+[33md6f930e[m HEAD@{18}: commit: Remove Plugins directory from repository and ignore it
+[33me1c9059[m HEAD@{19}: commit: firebase , playfab kullanici kayit ve login sistemi kuruldu , login olduktan sonra bir loading ekrani eklendi...
+[33m444c780[m HEAD@{20}: commit: Remove large Firebase files from repository and ignore them
+[33m991a9ff[m HEAD@{21}: commit: firebase sdk tool added
+[33m7bf99be[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{22}: commit: game editor . level editor updated, ui improvements
+[33m883c8fb[m HEAD@{23}: commit: created 10 levels , ui
+[33me5a8e38[m HEAD@{24}: commit: some ui improvements
+[33m68d745e[m HEAD@{25}: commit: Gamesparks & PlayFab
+[33mfa8155b[m HEAD@{26}: commit: integrations & networking
+[33me7dff39[m HEAD@{27}: commit: added Leadboard
+[33m928f911[m HEAD@{28}: commit: Level Map , editor
+[33m0e36cfb[m HEAD@{29}: commit: Admob
+[33mcd5341c[m HEAD@{30}: commit: Movement of the character between two levels on the level map
+[33m574ece5[m HEAD@{31}: commit: some bugs fixed
+[33m26fe8d0[m HEAD@{32}: commit: created map Level scripts , for all levels
+[33mecdaba3[m HEAD@{33}: commit: Levels map and path created
+[33m620f1fa[m HEAD@{34}: commit: item , square added
+[33me572269[m HEAD@{35}: commit: added Object Pooling
+[33mf185ba3[m HEAD@{36}: commit: FindHorizontalMatches ,CheckForMatches methods added
+[33mb5e49a0[m HEAD@{37}: commit: ui designs added
+[33m8f76f7e[m HEAD@{38}: commit: created boardmanager , base tile scripts
+[33m96f4c6a[m HEAD@{39}: commit: added new assets
+[33mb7483a4[m HEAD@{40}: commit: initial commit
+[33m98c9471[m HEAD@{41}: commit (initial): Initial commit
