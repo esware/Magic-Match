@@ -71,7 +71,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-# Firebase Plugins
-Assets/Plugins/Firebase/Plugins/x86_64/FirebaseCppApp-12_0_0.bundle
-Assets/Plugins/Firebase/Plugins/x86_64/FirebaseCppApp-12_0_0.so
+# Ignore all files in the Assets/Plugins directory
+Assets/Plugins/
+
 
