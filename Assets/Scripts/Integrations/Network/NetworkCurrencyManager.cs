@@ -1,4 +1,4 @@
-﻿#if PLAYFAB || GAMESPARKS
+﻿//#if PLAYFAB
 using UnityEngine;
 using System.Collections;
 
@@ -6,29 +6,31 @@ using System.Collections;
 using PlayFab.ClientModels;
 using PlayFab;
 #endif
-using System.Collections.Generic;
+using Dev.Scripts.Integrations.Network;
 
-public class NetworkCurrencyManager {
+public class NetworkCurrencyManager
+{
 	public static int currentBalance;
 	ICurrencyManager currencyMananager;
 
-	public NetworkCurrencyManager () {
+	public NetworkCurrencyManager ()
+	{
 		NetworkManager.OnLoginEvent += GetBalance;
 		NetworkManager.OnLogoutEvent += Logout;
 #if PLAYFAB
 		currencyMananager = new PlayFabCurrencyManager ();
-#elif GAMESPARKS 
-		currencyMananager = new GamesparksCurrencyManager ();
 #endif
 	}
 
-	void Logout () {
+	void Logout ()
+	{
 		NetworkManager.OnLoginEvent -= GetBalance;
 		NetworkManager.OnLogoutEvent -= Logout;
 	}
 
-	public  void IncBalance (int amount) {
-		if (!NetworkManager.THIS.IsLoggedIn)
+	public  void IncBalance (int amount) 
+	{
+		if (!NetworkManager.Instance.IsLoggedIn)
 			return;
 
 
@@ -36,8 +38,9 @@ public class NetworkCurrencyManager {
 			currencyMananager.IncBalance (amount);
 	}
 
-	public  void DecBalance (int amount) {
-		if (!NetworkManager.THIS.IsLoggedIn)
+	public  void DecBalance (int amount) 
+	{
+		if (!NetworkManager.Instance.IsLoggedIn)
 			return;
 
 
@@ -45,8 +48,9 @@ public class NetworkCurrencyManager {
 			currencyMananager.DecBalance (amount);
 	}
 
-	public  void SetBalance (int newbalance) {
-		if (!NetworkManager.THIS.IsLoggedIn)
+	public  void SetBalance (int newbalance)
+	{
+		if (!NetworkManager.Instance.IsLoggedIn)
 			return;
 
 		//		GetBalance ();
@@ -55,12 +59,15 @@ public class NetworkCurrencyManager {
 			currencyMananager.SetBalance (newbalance);
 	}
 
-	public  void GetBalance () {
-		if (!NetworkManager.THIS.IsLoggedIn)
+	public  void GetBalance () 
+	{
+		if (!NetworkManager.Instance.IsLoggedIn)
 			return;
 
-		if (currencyMananager != null) {
-			currencyMananager.GetBalance ((balance) => {
+		if (currencyMananager != null) 
+		{
+			currencyMananager.GetBalance ((balance) => 
+			{
 				Debug.Log (balance);
 				currentBalance = balance;
 				if (currentBalance >= InitScript.Gems)
@@ -74,5 +81,3 @@ public class NetworkCurrencyManager {
 	}
 
 }
-
-#endif

@@ -1,14 +1,21 @@
-﻿#if PLAYFAB
+﻿
+#if PLAYFAB
+
+
 using UnityEngine;
 using System.Collections;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
 using PlayFab;
 using System;
+using Dev.Scripts.Integrations;
 
-public class PlayFabDataManager : IDataManager {
+public class PlayFabDataManager : IDataManager
+{
 
-	public	void Logout () {//1.3.3
+	public	void Logout () 
+	{
+		
 	}
 
 
@@ -30,16 +37,8 @@ public class PlayFabDataManager : IDataManager {
 
 
 	#region SCORE
-
-	//	public static void SetPlayerScoreTotal () {//1.3.3
-	//		int latestLevel = LevelsMap._instance.GetLastestReachedLevel ();
-	//		for (int i = 1; i <= latestLevel; i++) {
-	//			SetPlayerScore (i, PlayerPrefs.GetInt ("Score" + i, 0));//TODO sync Level_
-	//		}
-	//	}
-
-	public  void SetPlayerScore (int level, int score) {
-		UpdatePlayerScoreFoLeadboard (score);
+	public  void SetPlayerScore (int level, int score) 
+	{
 
 		List<StatisticUpdate> stUpdateList = new List<StatisticUpdate> ();
 		StatisticUpdate stUpd = new StatisticUpdate ();
@@ -80,17 +79,6 @@ public class PlayFabDataManager : IDataManager {
 
 
 	}
-
-	void UpdatePlayerScoreFoLeadboard (int score) {
-		LeadboardPlayerData leadboardPlayerData = NetworkManager.leadboardList.Find (delegate (LeadboardPlayerData bk) {
-			return bk.userID == NetworkManager.UserID;
-		}
-		                                          );
-		if (leadboardPlayerData != null)
-			leadboardPlayerData.score = score;
-	}
-
-
 	#endregion
 
 
@@ -228,9 +216,5 @@ public class PlayFabDataManager : IDataManager {
 	}
 
 	#endregion
-
-
-
 }
-
 #endif

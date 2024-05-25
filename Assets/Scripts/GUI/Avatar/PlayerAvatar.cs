@@ -13,7 +13,7 @@ namespace Dev.Scripts.GUI.Avatar
             image.enabled = false;
         }
 
-#if PLAYFAB || GAMESPARKS
+#if PLAYFAB
 	void OnEnable () {
 		NetworkManager.OnPlayerPictureLoaded += ShowPicture;
 	}

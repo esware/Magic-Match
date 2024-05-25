@@ -1,10 +1,11 @@
-﻿#if PLAYFAB
+﻿
 using UnityEngine;
 using System.Collections;
 using PlayFab.ClientModels;
 using PlayFab;
 using System.Collections.Generic;
 using System;
+using Dev.Scripts.Integrations.Network;
 
 public class PlayFabCurrencyManager : ICurrencyManager {
 
@@ -71,5 +72,3 @@ public class PlayFabCurrencyManager : ICurrencyManager {
 	}
 
 }
-
-#endif

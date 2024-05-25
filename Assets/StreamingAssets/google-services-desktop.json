@@ -7,22 +7,29 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:371954135514:android:eed68e1981dbd4da3e50e3",
+        "mobilesdk_app_id": "1:371954135514:ios:1ec13d1ef742bb683e50e3",
         "android_client_info": {
           "package_name": "com.ewgames.magicmatch"
         }
       },
-      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB7f6ea8uAfyR0AU72avNYiXwGGgiJatDs"
+          "current_key": "AIzaSyCxrmMWongucwAfAWflZ-pDBbAU6Px3lDE"
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 0
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "status": 1
         }
-      }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371954135514-tq0r2fdppmea1j9om6q4hjl88fsun9ri.apps.googleusercontent.com"
+        }
+      ]
     }
   ],
   "configuration_version": "1"

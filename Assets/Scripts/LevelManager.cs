@@ -355,7 +355,7 @@ public class LevelManager : MonoBehaviour
 
     public void MenuPlayEvent()
     {
-        OnMenuPlay();
+        if (OnMenuPlay != null) OnMenuPlay();
     }
 
 

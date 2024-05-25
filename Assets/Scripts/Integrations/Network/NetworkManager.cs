@@ -1,200 +1,146 @@
-﻿
+﻿using System;
 using UnityEngine;
-using System.Collections;
-
-#if PLAYFAB || GAMESPARKS
-#if GAMESPARKS
-using GameSparks.Platforms;
-#endif
-
-
-#if PLAYFAB
-using PlayFab.ClientModels;
-using PlayFab;
-#endif
-
-//using PlayFab.AdminModels;
 using System.Collections.Generic;
+using Dev.Scripts.Integrations;
+using Dev.Scripts.Integrations.Network;
+using Firebase;
+using Firebase.Auth;
+using Firebase.Extensions;
+using Integrations.Network.Firebase;
+using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class NetworkManager : MonoBehaviour
 {
-	public delegate void NetworkEvents();
+    public delegate void NetworkEvents();
 
-	public static event NetworkEvents OnLoginEvent;
-	public static event NetworkEvents OnLogoutEvent;
-	public static event NetworkEvents OnFriendsOnMapLoaded;
-	public static event NetworkEvents OnPlayerPictureLoaded;
-	public static event NetworkEvents OnLevelLeadboardLoaded;
+    public static event NetworkEvents OnLoginEvent;
+    public static event NetworkEvents OnLogoutEvent;
 
-	public static NetworkManager THIS;
-	public static NetworkCurrencyManager currencyManager;
-	public static NetworkDataManager dataManager;
-	public static NetworkFriendsManager friendsManager;
-	public static ILoginManager loginManger;
-	[HideInInspector]
-	private static string userID;
+    private static NetworkManager _instance;
 
-	public static string UserID
-	{
-		get
-		{
-			return userID;
-		}
-		set
-		{
-			if (value != PlayerPrefs.GetString("UserID") && PlayerPrefs.GetString("UserID") != "" && userID != "" && userID != null)//2.1.5 Fixed: progress not saved after login
-			{//2.1.3
-				PlayerPrefs.DeleteAll();
-				LevelsMap._instance.Reset();
-			}
+    public static NetworkManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                GameObject networkManager = new GameObject();
+                _instance = networkManager.AddComponent<NetworkManager>();
+                networkManager.name = typeof(NetworkManager).ToString() + " (NetworkManager)";
+                DontDestroyOnLoad(networkManager);
+            }
+            return _instance;
+        }
+    }
+    public static ICurrencyManager currencyManager;
+    public static IDataManager dataManager;
 
-			userID = value;
-			PlayerPrefs.SetString("UserID", userID);
-			PlayerPrefs.Save();
-		}
-	}
+    [HideInInspector]
+    private static string _userID;
 
-	public string titleId;
-	//public string DeveloperSecretKey;
-	private bool isLoggedIn;
+    public static string UserID
+    {
+        get => _userID;
+        set
+        {
+            if (value != PlayerPrefs.GetString("UserID") && PlayerPrefs.GetString("UserID") != "" && _userID != "" && _userID != null)
+            {
+                PlayerPrefs.DeleteAll();
+                LevelsMap._instance.Reset();
+            }
 
-	public bool IsLoggedIn
-	{
-		get
-		{
-			return isLoggedIn;
-		}
+            _userID = value;
+            PlayerPrefs.SetString("UserID", _userID);
+            PlayerPrefs.Save();
+        }
+    }
 
-		set
-		{
-			isLoggedIn = value;
-			if (value && OnLoginEvent != null)
-				OnLoginEvent();
-			else if (!value && OnLogoutEvent != null)
-				OnLogoutEvent();
-		}
-	}
+    public bool IsLoggedIn
+    {
+        get
+        {
+            return _isLoggedIn;
+        }
+        set
+        {
+            _isLoggedIn = value;
+            if (value && OnLoginEvent != null)
+                OnLoginEvent();
+            else if (!value && OnLogoutEvent != null)
+                OnLogoutEvent();
+        }
+    }
+    private bool _isLoggedIn;
 
-	public static List<LeadboardPlayerData> leadboardList = new List<LeadboardPlayerData>();
-	public static string facebookUserID;
+    void Start()
+    {
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+        {
+            FirebaseApp app = FirebaseApp.DefaultInstance;
+            currencyManager = new FirebaseCurrencyManager(UserID);
+            dataManager = new FirebaseDataManager(UserID);
+        });
+        OnLoginEvent += OnUserLoggedIn;
+    }
+    
+    private void OnUserLoggedIn()
+    {
+        Debug.Log("User logged in, initializing game...");
+        LoadingManager.Instance.ShowLoading();
+    }
 
-	// Use this for initialization
-	void Start()
-	{
-		THIS = this;
-		//#if ((UNITY_PS4 || UNITY_XBOXONE) && !UNITY_EDITOR) || GS_FORCE_NATIVE_PLATFORM
+    public void RegisterWithFirebase(string email,string username, string password, TextMeshProUGUI statusText)
+    {
+        FirebaseManager.Instance.Register(email, username,password, statusText);
+        LoginWithFirebase(email,password,statusText);
+    }
+    
+    
 
+    public void LoginWithFirebase(string email, string password, TextMeshProUGUI statusText)
+    {
+        FirebaseManager.Instance.Login(email, password, statusText);
+    }
 
+    public void LoginWithGoogle(string idToken, TextMeshProUGUI statusText)
+    {
+        FirebaseManager.Instance.LoginWithGoogle(idToken, statusText);
+    }
 
+    public void LoginWithPlayFab(string email, string password, TextMeshProUGUI statusText)
+    {
+        PlayFabManager.Instance.Login(email, password, statusText);
+    }
 
+    public void Logout()
+    {
+        FirebaseManager.Instance.Logout();
+    }
 
-#if GS_FORCE_NATIVE_PLATFORM
-this.gameObject.AddComponent<NativePlatform>();
+    public void UpdatePlayFabUserData(string key, string value)
+    {
+        PlayFabManager.Instance.UpdateUserData(key, value);
+    }
 
+    public void IncreaseCurrency(int amount)
+    {
+        currencyManager.IncBalance(amount);
+    }
 
+    public void DecreaseCurrency(int amount)
+    {
+        currencyManager.DecBalance(amount);
+    }
 
+    public void SetCurrency(int newBalance)
+    {
+        currencyManager.SetBalance(newBalance);
+    }
 
-
-#elif UNITY_WEBGL && !UNITY_EDITOR
-this.gameObject.AddComponent<WebGLPlatform>();
-
-
-
-
-
-// #elif !PLAYFAB
-// 		this.gameObject.AddComponent<DefaultPlatform> ();//2.1.4
-#endif
-#if PLAYFAB
-		PlayFabSettings.TitleId = titleId;
-		loginManger = new PlayFabManager ();
-
-
-
-
-
-#elif GAMESPARKS
-		//		new GamesparksConfiguration (this);
-		loginManger = new GamesparksLogin();
-#endif
-		//PlayFabSettings.DeveloperSecretKey = DeveloperSecretKey;
-		currencyManager = new NetworkCurrencyManager();
-		friendsManager = new NetworkFriendsManager();
-		dataManager = new NetworkDataManager();
-
-		//Login(titleId);
-	}
-
-
-
-
-
-
-	#region AUTHORIZATION
-
-	public void LoginWithFB(string accessToken)
-	{
-		loginManger.LoginWithFB(accessToken, titleId);
-	}
-
-
-
-	public void UpdateName(string userName)
-	{
-		loginManger.UpdateName(userName);
-	}
-
-	public bool IsYou(string playFabId)
-	{
-		return loginManger.IsYou(playFabId);
-	}
-
-
-
-
-
-
-
-	#endregion
-
-
-
-
-
-
-	#region EVENTS
-
-	public static void LevelLeadboardLoaded()
-	{
-		//		OnLevelLeadboardLoaded();
-	}
-
-	public static void PlayerPictureLoaded()
-	{
-		OnPlayerPictureLoaded();
-	}
-
-	public static void FriendsOnMapLoaded()
-	{
-		OnFriendsOnMapLoaded();
-	}
-
-
-
-
-
-
-	#endregion
+    public void GetCurrencyBalance(Action<int> callback)
+    {
+        currencyManager.GetBalance(callback);
+    }
 }
-#endif
-
-public class LeadboardPlayerData
-{
-	public string Name;
-	public string userID;
-	public int position;
-	public int score;
-	public Sprite picture;
-	public FriendData friendData;
-}
-

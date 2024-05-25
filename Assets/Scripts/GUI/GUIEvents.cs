@@ -5,15 +5,8 @@ using UnityEngine.SceneManagement;
 
 namespace Dev.Scripts.GUI
 {
-    public class GUIEvents : MonoBehaviour {
-
-        void Update () {
-            if (name == "FaceBook" || name == "Share" || name == "FaceBookLogout") {
-                if (!LevelManager.THIS.FacebookEnable)
-                    gameObject.SetActive (false);
-            }
-        }
-
+    public class GUIEvents : MonoBehaviour
+    {
         public void Settings () {
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
@@ -36,25 +29,17 @@ namespace Dev.Scripts.GUI
 
         }
 
-        public void FaceBookLogin () {
-#if FACEBOOK
+        public void LoginPopup()
+        {
+            SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
-		FacebookManager.THIS.CallFBLogin ();
-#endif
+            GameObject.Find ("CanvasGlobal").transform.Find ("Popup_Login").gameObject.SetActive (true);
         }
+        public void RegisterPopup()
+        {
+            SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
-        public void FaceBookLogout () {
-#if FACEBOOK
-		FacebookManager.THIS.CallFBLogout ();
-
-#endif
-        }
-
-        public void Share () {
-#if FACEBOOK
-
-		FacebookManager.THIS.Share ();
-#endif
+            GameObject.Find ("CanvasGlobal").transform.Find ("Popup_Signup").gameObject.SetActive (true);
         }
 
     }

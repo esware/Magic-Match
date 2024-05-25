@@ -1,94 +1,125 @@
-﻿#if PLAYFAB 
-using UnityEngine;
-using System.Collections;
-
-#if PLAYFAB
-using PlayFab.ClientModels;
+﻿using System.Collections.Generic;
+using Dev.Scripts.Integrations.Network;
 using PlayFab;
-#endif
+using PlayFab.ClientModels;
+using TMPro;
+using UnityEngine;
 
-//using PlayFab.AdminModels;
-using System.Collections.Generic;
+public class PlayFabManager : ILoginManager
+{
+    private static PlayFabManager _instance;
 
-public class PlayFabManager : ILoginManager {
-	public string PlayFabId;
+    public static PlayFabManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = new PlayFabManager();
+            }
+            return _instance;
+        }
+    }
 
+    private PlayFabManager() { }
 
-
-	// Use this for initialization
-
-	#region AUTHORIZATION
-
-	public void LoginWithFB (string accessToken, string titleId) {
-		LoginWithFacebookRequest request = new LoginWithFacebookRequest () {
-			TitleId = titleId,
-			CreateAccount = true,
-			AccessToken = accessToken
-			//  CustomId = SystemInfo.deviceUniqueIdentifier
-		};
-
-		PlayFabClientAPI.LoginWithFacebook (request, (result) => {
-			PlayFabId = result.PlayFabId;
-			Debug.Log ("Got PlayFabID: " + PlayFabId);
-			NetworkManager.UserID = PlayFabId; //TODO: think about login lambda
-			if (result.NewlyCreated) {
-				Debug.Log ("(new account)");
-			} else {
-				Debug.Log ("(existing account)");
-			}
-			NetworkManager.THIS.IsLoggedIn = true;
-		},
-			(error) => {
-				Debug.Log (error.ErrorMessage);
-			});
-	}
+    private void OnLoginSuccess(LoginResult result)
+    {
+        Debug.Log("PlayFab login successful: " + result.PlayFabId);
+        NetworkManager.Instance.IsLoggedIn = true;
+        NetworkManager.UserID = result.PlayFabId;
+    }
 
 
-	void Login (string titleId) {
-		LoginWithCustomIDRequest request = new LoginWithCustomIDRequest () {
-			TitleId = titleId,
-			CreateAccount = true,
-			CustomId = SystemInfo.deviceUniqueIdentifier
-		};
+    private void OnLoginFailure(PlayFabError error)
+    {
+        Debug.LogError("PlayFab login failed: " + error.GenerateErrorReport());
+    }
 
-		PlayFabClientAPI.LoginWithCustomID (request, (result) => {
-			PlayFabId = result.PlayFabId;
-			Debug.Log ("Got PlayFabID: " + PlayFabId);
+    public void Register(string email, string username, string password, TextMeshProUGUI statusText)
+    {
+        var request = new RegisterPlayFabUserRequest
+        {
+            Email = email,
+            Username = username,
+            Password = password,
+            RequireBothUsernameAndEmail = true
+        };
+        PlayFabClientAPI.RegisterPlayFabUser(request, result =>
+        {
+            Debug.Log("PlayFab registration successful: " + result.PlayFabId);
+            statusText.text = "Registration successful!";
+        }, error =>
+        {
+            Debug.LogError("PlayFab registration failed: " + error.GenerateErrorReport());
+            statusText.text = "Registration failed: " + error.GenerateErrorReport();
+        });
+    }
 
-			if (result.NewlyCreated) {
-				Debug.Log ("(new account)");
-			} else {
-				Debug.Log ("(existing account)");
-			}
-			NetworkManager.THIS.IsLoggedIn = true;
-		},
-			(error) => {
-				Debug.Log (error.ErrorMessage);
-			});
-	}
+    public void Login(string email, string password, TextMeshProUGUI statusText)
+    {
+        var request = new LoginWithEmailAddressRequest
+        {
+            Email = email,
+            Password = password
+        };
+        PlayFabClientAPI.LoginWithEmailAddress(request, result =>
+        {
+            OnLoginSuccess(result);
+            statusText.text = "Login successful!";
+        }, error =>
+        {
+            OnLoginFailure(error);
+            statusText.text = "Login failed: " + error.GenerateErrorReport();
+        });
+    }
 
-	public void UpdateName (string userName) {
-		PlayFab.ClientModels.UpdateUserTitleDisplayNameRequest request = new PlayFab.ClientModels.UpdateUserTitleDisplayNameRequest () {
-			DisplayName = userName
-		};
+    public void LoginWithGoogle(string idToken, TextMeshProUGUI statusText)
+    {
+        throw new System.NotImplementedException();
+    }
 
-		PlayFabClientAPI.UpdateUserTitleDisplayName (request, (result) => {
-		},
-			(error) => {
-				Debug.Log (error.ErrorMessage);
-			});
+    public void UpdateName(string userName)
+    {
+        var request = new UpdateUserTitleDisplayNameRequest
+        {
+            DisplayName = userName
+        };
+        PlayFabClientAPI.UpdateUserTitleDisplayName(request, result =>
+        {
+            Debug.Log("User name updated to: " + result.DisplayName);
+        }, error =>
+        {
+            Debug.LogError("Failed to update user name: " + error.GenerateErrorReport());
+        });
+    }
 
-	}
+    public bool IsYou(string userId)
+    {
+        return NetworkManager.UserID == userId;
+    }
 
-	public bool IsYou (string playFabId) {
-		if (playFabId == PlayFabId)
-			return true;
-		return false;
-	}
+    public void Logout()
+    {
+        PlayFabClientAPI.ForgetAllCredentials();
+        NetworkManager.Instance.IsLoggedIn = false;
+    }
 
-
-	#endregion
-
+    public void UpdateUserData(string key, string value)
+    {
+        var request = new UpdateUserDataRequest
+        {
+            Data = new Dictionary<string, string>
+            {
+                { key, value }
+            }
+        };
+        PlayFabClientAPI.UpdateUserData(request, result =>
+        {
+            Debug.Log("Successfully updated user data");
+        }, error =>
+        {
+            Debug.LogError("Failed to update user data: " + error.GenerateErrorReport());
+        });
+    }
 }
-
-#endif

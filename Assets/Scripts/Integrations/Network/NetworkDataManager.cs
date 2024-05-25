@@ -1,4 +1,4 @@
-﻿#if PLAYFAB || GAMESPARKS
+﻿//#if PLAYFAB 
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -8,10 +8,12 @@ using PlayFab;
 using PlayFab.ClientModels;
 #endif
 using System.Collections.Generic;
+using Dev.Scripts.GUI;
+using Dev.Scripts.Integrations;
 
 public class NetworkDataManager
 {
-    IDataManager dataManager;
+    private IDataManager _dataManager;
     public static int LatestReachedLevel = 0;
     public static int LevelScoreCurrentRecord = 0;
 
@@ -30,7 +32,7 @@ public class NetworkDataManager
 
     public void Logout()
     {
-        dataManager.Logout();
+        _dataManager.Logout();
         NetworkManager.OnLoginEvent -= GetPlayerLevel;
         LevelManager.OnEnterGame -= GetPlayerScore;
         NetworkManager.OnLoginEvent -= GetBoosterData;
@@ -50,21 +52,21 @@ public class NetworkDataManager
 
     public void SetPlayerScore(int level, int score)
     {
-        if (!NetworkManager.THIS.IsLoggedIn)
+        if (!NetworkManager.Instance.IsLoggedIn)
             return;
 
         if (score <= LevelScoreCurrentRecord)
             return;
 
-        dataManager.SetPlayerScore(level, score);
+        _dataManager.SetPlayerScore(level, score);
     }
 
     public void GetPlayerScore()
     {
-        if (!NetworkManager.THIS.IsLoggedIn)
+        if (!NetworkManager.Instance.IsLoggedIn)
             return;
 
-        dataManager.GetPlayerScore((value) =>
+        _dataManager.GetPlayerScore((value) =>
         {
             NetworkDataManager.LevelScoreCurrentRecord = value;
             PlayerPrefs.SetInt("Score" + LevelManager.THIS.currentLevel, NetworkDataManager.LevelScoreCurrentRecord);
@@ -78,21 +80,21 @@ public class NetworkDataManager
 
     public void SetPlayerLevel(int level)
     {
-        if (!NetworkManager.THIS.IsLoggedIn)
+        if (!NetworkManager.Instance.IsLoggedIn)
             return;
 
         if (level <= LatestReachedLevel)
             return;
 
-        dataManager.SetPlayerLevel(level);
+        _dataManager.SetPlayerLevel(level);
     }
 
     public void GetPlayerLevel()
     {
-        if (!NetworkManager.THIS.IsLoggedIn)
+        if (!NetworkManager.Instance.IsLoggedIn)
             return;
 
-        dataManager.GetPlayerLevel((value) => //2.1.5 Fixed: progress not saved after login
+        _dataManager.GetPlayerLevel((value) => //2.1.5 Fixed: progress not saved after login
         {
             NetworkDataManager.LatestReachedLevel = value;
             if (NetworkDataManager.LatestReachedLevel <= 0)
@@ -109,12 +111,12 @@ public class NetworkDataManager
     {
         int level = LevelManager.THIS.currentLevel;
         int stars = PlayerPrefs.GetInt(string.Format("Level.{0:000}.StarsCount", level));
-        dataManager.SetStars(stars, level);
+        _dataManager.SetStars(stars, level);
     }
 
     public void GetStars()
     {
-        if (!NetworkManager.THIS.IsLoggedIn)
+        if (!NetworkManager.Instance.IsLoggedIn)
             return;
 
         Debug.Log(LevelsMap._instance.GetLastestReachedLevel() + " " + LatestReachedLevel);
@@ -125,7 +127,7 @@ public class NetworkDataManager
             return;
         }
 
-        dataManager.GetStars((dic) =>
+        _dataManager.GetStars((dic) =>
         {
             foreach (var item in dic)
             {
@@ -146,15 +148,15 @@ public class NetworkDataManager
         Dictionary<string, string> dic = new Dictionary<string, string>() { { "Boost_" + (int) BoostType.ExtraMoves, "" + PlayerPrefs.GetInt ("" + BoostType.ExtraMoves) }, { "Boost_" + (int) BoostType.Packages, "" + PlayerPrefs.GetInt ("" + BoostType.Packages) }, { "Boost_" + (int) BoostType.Stripes, "" + PlayerPrefs.GetInt ("" + BoostType.Stripes) }, { "Boost_" + (int) BoostType.ExtraTime, "" + PlayerPrefs.GetInt ("" + BoostType.ExtraTime) }, { "Boost_" + (int) BoostType.Bomb, "" + PlayerPrefs.GetInt ("" + BoostType.Bomb) }, { "Boost_" + (int) BoostType.Colorful_bomb, "" + PlayerPrefs.GetInt ("" + BoostType.Colorful_bomb) }, { "Boost_" + (int) BoostType.Hand, "" + PlayerPrefs.GetInt ("" + BoostType.Hand) }, { "Boost_" + (int) BoostType.Random_color, "" + PlayerPrefs.GetInt ("" + BoostType.Random_color) }
         };
 
-        dataManager.SetBoosterData(dic);
+        _dataManager.SetBoosterData(dic);
     }
 
     public void GetBoosterData()
     {
-        if (!NetworkManager.THIS.IsLoggedIn)
+        if (!NetworkManager.Instance.IsLoggedIn)
             return;
 
-        dataManager.GetBoosterData((dic) =>
+        _dataManager.GetBoosterData((dic) =>
         {
             foreach (var item in dic)
             {
@@ -168,7 +170,7 @@ public class NetworkDataManager
 
     public void SetTotalStars()
     {
-        LevelsMap._instance.GetMapLevels().Where(l => !l.IsLocked).ToList().ForEach(i => dataManager.SetStars(i.StarsCount, i.Number)); //2.1.5
+        LevelsMap._instance.GetMapLevels().Where(l => !l.IsLocked).ToList().ForEach(i => _dataManager.SetStars(i.StarsCount, i.Number)); //2.1.5
     }
 
     public void SyncAllData()
@@ -182,5 +184,3 @@ public class NetworkDataManager
     }
 
 }
-
-#endif

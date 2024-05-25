@@ -1,17 +1,21 @@
-﻿using Google;
+﻿using Firebase.Extensions;
+using Google;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Dev.Scripts.Integrations
 {
-    public class SignInWithGoogle : MonoBehaviour
+    public class GoogleSignInManager : MonoBehaviour
     {
-        public Text statusText;
-        private FirebaseManager firebaseManager;
-
+        public TextMeshProUGUI statusText;
         void Start()
         {
-            firebaseManager = new FirebaseManager();
+            ConfigureGoogleSignIn();
+        }
+
+        private void ConfigureGoogleSignIn()
+        {
             GoogleSignIn.Configuration = new GoogleSignInConfiguration
             {
                 WebClientId = "YOUR_WEB_CLIENT_ID",
@@ -30,10 +34,11 @@ namespace Dev.Scripts.Integrations
                 else
                 {
                     var googleUser = task.Result;
-                    firebaseManager.LoginWithGoogle(googleUser.IdToken, statusText);
+                    FirebaseManager.Instance.LoginWithGoogle(googleUser.IdToken, statusText);
                 }
             });
         }
     }
+
 
 }
