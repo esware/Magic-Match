@@ -4,7 +4,7 @@ public class PlayerPrefsMapProgressManager : IMapProgressManager
 {
     private string GetLevelKey(int number)
     {
-        return string.Format("Level.{0:000}.StarsCount", number);
+        return $"Level.{number:000}.StarsCount";
     }
 
     public int LoadLevelStarsCount(int level)

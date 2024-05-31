@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using UnityEditor;
 using System.Collections.Generic;
 using System;
@@ -13,7 +14,6 @@ using UnityEngine.SceneManagement;
 [InitializeOnLoad]
 public class LevelMakerEditor : EditorWindow
 {
-    string myString = "Hello World";
     bool groupEnabled;
     bool myBool = true;
     float myFloat = 1.23f;
@@ -58,8 +58,6 @@ public class LevelMakerEditor : EditorWindow
     [MenuItem("EWGames/Game editor")]
     public static void Init()
     {
-
-        // Get existing open window or if none, make a new one:
         window = (LevelMakerEditor)EditorWindow.GetWindow(typeof(LevelMakerEditor));
         window.Show();
     }
@@ -86,37 +84,41 @@ public class LevelMakerEditor : EditorWindow
         Initialize();
 
         LoadDataFromLocal(levelNumber);
-        if (SceneManager.GetActiveScene().name == "game")
+        if (SceneManager.GetActiveScene().name == "Game")
         {
-            LevelManager lm = Camera.main.GetComponent<LevelManager>();
-            InitScript initscript = Camera.main.GetComponent<InitScript>();
-            if (oldList == null)
+            var camera = Camera.main;
+            if (camera != null)
             {
-                oldList = new List<AdEvents>();
-                oldList.Clear();
-                for (int i = 0; i < initscript.adsEvents.Count; i++)
+                LevelManager lm = camera.GetComponent<LevelManager>();
+                InitScript initscript = camera.GetComponent<InitScript>();
+                if (oldList == null)
                 {
-                    oldList.Add(new AdEvents());
-                    oldList[i].adType = initscript.adsEvents[i].adType;
-                    oldList[i].everyLevel = initscript.adsEvents[i].everyLevel;
-                    oldList[i].gameEvent = initscript.adsEvents[i].gameEvent;
+                    oldList = new List<AdEvents>();
+                    oldList.Clear();
+                    for (int i = 0; i < initscript.adsEvents.Count; i++)
+                    {
+                        oldList.Add(new AdEvents());
+                        oldList[i].adType = initscript.adsEvents[i].adType;
+                        oldList[i].everyLevel = initscript.adsEvents[i].everyLevel;
+                        oldList[i].gameEvent = initscript.adsEvents[i].gameEvent;
+                    }
                 }
-            }
 
-            //squareTex = Resources.Load("Blocks/square") as Texture;
-            //blockTex = Resources.Load("Blocks/block") as Texture;
-            //blockTex2 = Resources.Load("Blocks/block_02") as Texture;
-            //wireBlockTex = Resources.Load("Blocks/wireBlock") as Texture;
-            //solidBlockTex = Resources.Load("Blocks/solidBlock") as Texture;
-            //undestroyableBlockTex = Resources.Load("Blocks/undestroyable") as Texture;
-            //thrivingBlockTex = Resources.Load("Blocks/thriving_block") as Texture;
-            squareTex = lm.squarePrefab.GetComponent<SpriteRenderer>().sprite.texture;
-            blockTex = lm.blockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
-            blockTex2 = lm.doubleBlock.texture;
-            wireBlockTex = lm.wireBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
-            solidBlockTex = lm.solidBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
-            undestroyableBlockTex = lm.undestroyableBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
-            thrivingBlockTex = lm.thrivingBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
+                //squareTex = Resources.Load("Blocks/square") as Texture;
+                //blockTex = Resources.Load("Blocks/block") as Texture;
+                //blockTex2 = Resources.Load("Blocks/block_02") as Texture;
+                //wireBlockTex = Resources.Load("Blocks/wireBlock") as Texture;
+                //solidBlockTex = Resources.Load("Blocks/solidBlock") as Texture;
+                //undestroyableBlockTex = Resources.Load("Blocks/undestroyable") as Texture;
+                //thrivingBlockTex = Resources.Load("Blocks/thriving_block") as Texture;
+                squareTex = lm.squarePrefab.GetComponent<SpriteRenderer>().sprite.texture;
+                blockTex = lm.blockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
+                blockTex2 = lm.doubleBlock.texture;
+                wireBlockTex = lm.wireBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
+                solidBlockTex = lm.solidBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
+                undestroyableBlockTex = lm.undesroyableBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
+                thrivingBlockTex = lm.thrivingBlockPrefab.GetComponent<SpriteRenderer>().sprite.texture;
+            }
         }
     }
 
@@ -162,7 +164,7 @@ public class LevelMakerEditor : EditorWindow
 
         if (selected == 0)
         {
-            if (SceneManager.GetActiveScene().name == "game")
+            if (SceneManager.GetActiveScene().name == "Game")
             {
                 GUILevelSelector();
                 GUILayout.Space(10);
@@ -192,43 +194,36 @@ public class LevelMakerEditor : EditorWindow
         }
         else if (selected == 1)
         {
-            if (EditorSceneManager.GetActiveScene().name == "game")
+            if (SceneManager.GetActiveScene().name == "Game")
                 GUISettings();
             else
                 GUIShowWarning();
         }
         else if (selected == 2)
         {
-            if (EditorSceneManager.GetActiveScene().name == "game")
+            if (SceneManager.GetActiveScene().name == "Game")
                 GUIShops();
             else
                 GUIShowWarning();
         }
         else if (selected == 3)
         {
-            if (EditorSceneManager.GetActiveScene().name == "game")
+            if (SceneManager.GetActiveScene().name == "Game")
                 GUIInappSettings();
             else
                 GUIShowWarning();
         }
         else if (selected == 4)
         {
-            if (EditorSceneManager.GetActiveScene().name == "game")
+            if (SceneManager.GetActiveScene().name == "Game")
                 GUIAds();
             else
                 GUIShowWarning();
         }
         else if (selected == 5)
         {
-            if (EditorSceneManager.GetActiveScene().name == "game")
+            if (SceneManager.GetActiveScene().name == "Game")
                 GUIDialogs();
-            else
-                GUIShowWarning();
-        }
-        else if (selected == 6)
-        {
-            if (EditorSceneManager.GetActiveScene().name == "game")
-                GUIRate();
             else
                 GUIShowWarning();
         }
@@ -254,50 +249,9 @@ public class LevelMakerEditor : EditorWindow
     {
         GUILayout.Space(100);
         GUILayout.Label("CAUTION!", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(600) });
-        GUILayout.Label("Please open scene - game ( Assets/JellyGarden/Scenes/game.unity )", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(600) });
+        GUILayout.Label("Please open scene - game ( Assets/Scenes/Game.unity )", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(600) });
 
     }
-
-    void SetScriptingDefineSymbols()
-    {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
-        InitScript initscript = Camera.main.GetComponent<InitScript>();
-        string defines = "";
-        if (initscript.enableUnityAds)
-            defines = defines + "; UNITY_ADS";
-        if (initscript.enableGoogleMobileAds)
-            defines = defines + "; GOOGLE_MOBILE_ADS";
-        if (lm.enableInApps)
-            defines = defines + "; UNITY_INAPPS";
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defines);
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, defines);
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.WP8, defines);
-
-    }
-
-
-    #region GUIRate
-
-    void GUIRate()
-    {
-        InitScript initscript = Camera.main.GetComponent<InitScript>();
-
-        GUILayout.Label("Rate settings:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
-        GUILayout.Space(10);
-        GUILayout.BeginHorizontal();
-        initscript.ShowRateEvery = EditorGUILayout.IntField("Show Rate every ", initscript.ShowRateEvery, new GUILayoutOption[] {
-            GUILayout.Width (220),
-            GUILayout.MaxWidth (220)
-        });
-        GUILayout.Label(" level (0 = disable)", EditorStyles.label, new GUILayoutOption[] { GUILayout.Width(150) });
-        GUILayout.EndHorizontal();
-        initscript.RateURL = EditorGUILayout.TextField("URL", initscript.RateURL, new GUILayoutOption[] {
-            GUILayout.Width (220),
-            GUILayout.MaxWidth (220)
-        });
-    }
-
-    #endregion
 
     #region GUIDialogs
 
@@ -401,14 +355,7 @@ public class LevelMakerEditor : EditorWindow
 
     void RunOnceChartboost()
     {
-        //if (Directory.Exists("Assets/JellyGarden/Plugins/Android/google-play-services_lib"))
-        //{
-        //    bool check = AssetDatabase.DeleteAsset("Assets/JellyGarden/Plugins/Android/google-play-services_lib");
-        //    Debug.Log("deleted google-play-services_lib " + check);
-        //}
         enableChartboostAdsProcessing = false;
-
-
     }
 
 
@@ -471,14 +418,6 @@ public class LevelMakerEditor : EditorWindow
         GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
-        //		if (oldenableGoogleMobileAds != initscript.enableGoogleMobileAds) {//1.6.1
-        //
-        //			SetScriptingDefineSymbols ();
-        //			if (initscript.enableGoogleMobileAds) {
-        //				enableGoogleAdsProcessing = true;
-        //			}
-        //		}
-        //		if (initscript.enableGoogleMobileAds) {
         GUILayout.BeginHorizontal();
         GUILayout.Space(20);
         initscript.admobUIDAndroid = EditorGUILayout.TextField("Admob Interstitial ID Android ", initscript.admobUIDAndroid, new GUILayoutOption[] {
@@ -543,13 +482,6 @@ public class LevelMakerEditor : EditorWindow
         GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
-        //		if (oldenableChartboostAds != initscript.enableChartboostAds) {//1.6.1
-        //			SetScriptingDefineSymbols ();
-        //			if (initscript.enableChartboostAds) {
-        //				enableChartboostAdsProcessing = true;
-        //			}
-        //
-        //		}
         if (initscript.enableChartboostAds)
         {
             GUILayout.BeginHorizontal();
@@ -579,7 +511,7 @@ public class LevelMakerEditor : EditorWindow
 
         GUILayout.Label("Event:               Status:                            Show every:", new GUILayoutOption[] { GUILayout.Width(350) });
 
-
+/*
         foreach (AdEvents item in initscript.adsEvents)
         {
             EditorGUILayout.BeginHorizontal();
@@ -612,6 +544,7 @@ public class LevelMakerEditor : EditorWindow
             EditorGUILayout.EndHorizontal();
 
         }
+*/
 
         EditorGUILayout.Space();
 
@@ -646,12 +579,19 @@ public class LevelMakerEditor : EditorWindow
     void GUIInappSettings()
     {
         LevelManager lm = Camera.main.GetComponent<LevelManager>();
-
-        GUILayout.Label("In-apps settings:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
         
         GUILayout.Space(10);
         bool oldenableInApps = lm.enableInApps;
-        
+
+        GUILayout.BeginHorizontal();
+        //		lm.enableInApps = EditorGUILayout.Toggle ("Enable In-apps", lm.enableInApps, new GUILayoutOption[] {//1.6.1
+        //			GUILayout.Width (180)
+        //		});
+        if (GUILayout.Button("Help", new GUILayoutOption[] { GUILayout.Width(80) }))
+        {
+            Application.OpenURL("https://docs.google.com/document/d/1HeN8JtQczTVetkMnd8rpSZp_TZZkEA7_kan7vvvsMw0#bookmark=id.b1efplsspes5");
+        }
+        GUILayout.EndHorizontal();
 
 
         GUILayout.BeginHorizontal();
@@ -661,9 +601,7 @@ public class LevelMakerEditor : EditorWindow
 
         GUILayout.Space(10);
         
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(30);
-        GUILayout.BeginVertical();
+        
         GUILayout.Space(10);
 
         GUILayout.Label("Android:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
@@ -673,6 +611,13 @@ public class LevelMakerEditor : EditorWindow
 
         GUILayout.BeginVertical();
         GUILayout.Space(10);
+        //GUILayout.Label(" Put Google license key into the field \n from the google play account ", EditorStyles.label, new GUILayoutOption[] { GUILayout.Width(300) });
+        //GUILayout.Space(10);
+
+        //lm.GoogleLicenseKey = EditorGUILayout.TextField("Google license key", lm.GoogleLicenseKey, new GUILayoutOption[] {
+        //    GUILayout.Width (300),
+        //    GUILayout.MaxWidth (300)
+        //});
 
         GUILayout.Space(10);
         if (GUILayout.Button("Android account help", new GUILayoutOption[] { GUILayout.Width(400) }))
@@ -708,7 +653,6 @@ public class LevelMakerEditor : EditorWindow
         GUILayout.EndHorizontal();
 
     }
-    
 
     #endregion
 
@@ -747,6 +691,12 @@ public class LevelMakerEditor : EditorWindow
             Debug.Log("Player prefs cleared");
         }
         GUILayout.EndHorizontal();
+        GUILayout.Space(10);
+        
+        
+        
+
+        GUILayout.Space(10);
 
         score_settings = EditorGUILayout.Foldout(score_settings, "Score settings:");
         if (score_settings)
@@ -889,31 +839,6 @@ public class LevelMakerEditor : EditorWindow
             GUILayout.MaxWidth (200)
         });
         GUILayout.Space(20);
-
-
-        failed_settings_show = EditorGUILayout.Foldout(failed_settings_show, "Failed settings:");
-        if (failed_settings_show)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(30);
-            GUILayout.BeginVertical();
-
-            lm.failedCost = EditorGUILayout.IntField(new GUIContent("Cost of continue", "Cost of continue after failed"), lm.failedCost, new GUILayoutOption[] {
-                GUILayout.Width (200),
-                GUILayout.MaxWidth (200)
-            });
-            lm.extraFailedMoves = EditorGUILayout.IntField(new GUIContent("Extra moves", "Extra moves after continue"), lm.extraFailedMoves, new GUILayoutOption[] {
-                GUILayout.Width (200),
-                GUILayout.MaxWidth (200)
-            });
-            lm.extraFailedSecs = EditorGUILayout.IntField(new GUIContent("Extra seconds", "Extra seconds after continue"), lm.extraFailedSecs, new GUILayoutOption[] {
-                GUILayout.Width (200),
-                GUILayout.MaxWidth (200)
-            });
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-
-        }
         GUILayout.Space(20);
 
         target_description_show = EditorGUILayout.Foldout(target_description_show, "Targets description:");
@@ -967,9 +892,6 @@ public class LevelMakerEditor : EditorWindow
         initscript.TotalTimeForRestLifeMin = 15;
         initscript.TotalTimeForRestLifeSec = 0;
         lm.lifeShop.CostIfRefill = 12;
-        lm.failedCost = 12;
-        lm.extraFailedMoves = 5;
-        lm.extraFailedSecs = 30;
         EditorUtility.SetDirty(lm);
     }
 
@@ -1435,7 +1357,7 @@ public class LevelMakerEditor : EditorWindow
         {
             asset = CreateInstance<TargetLevel>();
             asset.name = "Level" + levelNumber;
-            string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath("Assets/Resources/Targets/Level" + levelNumber + ".asset");
+            string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath("Assets/JellyGarden/Resources/Targets/Level" + levelNumber + ".asset");
             AssetDatabase.CreateAsset(asset, assetPathAndName);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -1661,7 +1583,6 @@ public class LevelMakerEditor : EditorWindow
                         imageButton = thrivingBlockTex;
                         squareColor = Color.white;
                     }
-                    // squareColor = new Color(0.3f, 1, 1, 1f);
                 }
                 GUI.color = squareColor;
                 if (GUILayout.Button(imageButton as Texture, new GUILayoutOption[] {
@@ -1693,20 +1614,7 @@ public class LevelMakerEditor : EditorWindow
         SaveLevel();
 
     }
-
-    void CreateLevel()
-    {
-        //levelSquares = new LevelSquare[81];
-        //for (int i = 0; i < levelSquares.Length; i++)
-        //{
-        //    levelSquares[i] = new LevelSquare();
-        //}
-        //Level newLevel = new Level();
-        //newLevel.number = levelNumber;
-        //newLevel.squares = levelSquares;
-        levelNumber++;
-    }
-
+    
     int GetLastLevel()
     {
         TextAsset mapText = null;
@@ -1720,11 +1628,7 @@ public class LevelMakerEditor : EditorWindow
         }
         return 0;
     }
-
-    void DeleteLevel()
-    {
-
-    }
+    
 
     void NextLevel()
     {
@@ -1809,7 +1713,7 @@ public class LevelMakerEditor : EditorWindow
         if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.WindowsEditor)
         {
             //Write to file
-            string activeDir = Application.dataPath + @"/Resources/Levels/";
+            string activeDir = Application.dataPath + @"/EwGames/Resources/Levels/";
             string newPath = System.IO.Path.Combine(activeDir, levelNumber + ".txt");
             StreamWriter sw = new StreamWriter(newPath);
             sw.Write(saveString);

@@ -22,7 +22,7 @@ namespace MapScripts.Editor.SmartLevelsMap
 	    GUILayout.BeginVertical();
 	    fixToggle = EditorGUILayout.Toggle("fix map", fixToggle);
 	    if (!fixToggle) {
-	        if (_levelsMap != null && _levelsMap.IsGenerated) {
+	        if (_levelsMap != null && _levelsMap.isGenerated) {
 	            DrawLevelsSettings();
 	            DrawStarsSettings();
 	            DrawMapCameraSettings();
@@ -54,20 +54,20 @@ namespace MapScripts.Editor.SmartLevelsMap
 	    GUILayout.BeginVertical("Box");
 	    EditorGUILayout.LabelField("General:");
 
-	    if (_levelsMap.WaypointsMover != null) {
-	        _levelsMap.WaypointsMover.Speed = EditorGUILayout.FloatField("Character speed", _levelsMap.WaypointsMover.Speed);
+	    if (_levelsMap.waypointsMover != null) {
+	        _levelsMap.waypointsMover.speed = EditorGUILayout.FloatField("Character speed", _levelsMap.waypointsMover.speed);
 
-	        _levelsMap.TranslationType = (TranslationType)EditorGUILayout.EnumPopup("Translation type", _levelsMap.TranslationType);
+	        _levelsMap.translationType = (TranslationType)EditorGUILayout.EnumPopup("Translation type", _levelsMap.translationType);
 
-	        if (_levelsMap.WaypointsMover.path == null) {
+	        if (_levelsMap.waypointsMover.path == null) {
 	            Transform pathTransform = _levelsMap.transform.Find("Path");
 	            if (pathTransform != null) {
-	                _levelsMap.WaypointsMover.path = pathTransform.GetComponent<MapScripts.Scripts.Path>();
+	                _levelsMap.waypointsMover.path = pathTransform.GetComponent<MapScripts.Scripts.Path>();
 	            }
 	        }
 
-	        if (_levelsMap.WaypointsMover.path != null) {
-	            MapScripts.Scripts.Path path = _levelsMap.WaypointsMover.path;
+	        if (_levelsMap.waypointsMover.path != null) {
+	            MapScripts.Scripts.Path path = _levelsMap.waypointsMover.path;
 	            path.isCurved = EditorGUILayout.Toggle("Curved", path.isCurved);
 	            path.gizmosColor = EditorGUILayout.ColorField("Gizmos Path Color", path.gizmosColor);
 	            path.gizmosRadius = EditorGUILayout.FloatField("Gizmos Path Pivot Radius", path.gizmosRadius);
@@ -84,7 +84,7 @@ namespace MapScripts.Editor.SmartLevelsMap
 			while (_levelsMap.transform.childCount > 0) {
 				DestroyImmediate (_levelsMap.transform.GetChild (0).gameObject);
 			}
-			_levelsMap.IsGenerated = false;
+			_levelsMap.isGenerated = false;
 			DisableScrolling ();
 		}
 
@@ -92,14 +92,14 @@ namespace MapScripts.Editor.SmartLevelsMap
 
 		private void DrawGenerateDraft () {
 			GUILayout.BeginVertical ("Box");
-			_levelsMap.Count = EditorGUILayout.IntField ("Count", _levelsMap.Count);
-			_levelsMap.MapLevelPrefab = EditorGUILayout.ObjectField ("Level prefab", _levelsMap.MapLevelPrefab, typeof(MapLevel), false) as MapLevel;
-			_levelsMap.CharacterPrefab = EditorGUILayout.ObjectField ("Character prefab", _levelsMap.CharacterPrefab, typeof(Transform), false) as Transform;
+			_levelsMap.count = EditorGUILayout.IntField ("Count", _levelsMap.count);
+			_levelsMap.mapLevelPrefab = EditorGUILayout.ObjectField ("Level prefab", _levelsMap.mapLevelPrefab, typeof(MapLevel), false) as MapLevel;
+			_levelsMap.characterPrefab = EditorGUILayout.ObjectField ("Character prefab", _levelsMap.characterPrefab, typeof(Transform), false) as Transform;
 			GUILayout.EndVertical ();
 
 			if (GUILayout.Button ("Generate draft", GUILayout.MinWidth (120))) {
 				Generate ();
-				_levelsMap.IsGenerated = true;
+				_levelsMap.isGenerated = true;
 				SetStarsEnabled (_levelsMap, false);
 			}
 		}
@@ -108,8 +108,8 @@ namespace MapScripts.Editor.SmartLevelsMap
 			InitBounds ();
 			List<MapLevel> levels = GenerateLevels ();
 			MapScripts.Scripts.Path path = GeneratePath (levels);
-			_levelsMap.WaypointsMover = GenerateCharacter (path);
-			_levelsMap.WaypointsMover.transform.position = levels [0].transform.position;
+			_levelsMap.waypointsMover = GenerateCharacter (path);
+			_levelsMap.waypointsMover.transform.position = levels [0].transform.position;
 		}
 
 		private void InitBounds () {
@@ -120,9 +120,9 @@ namespace MapScripts.Editor.SmartLevelsMap
 		private List<MapLevel> GenerateLevels () {
 			GameObject goLevels = new GameObject ("Levels");
 			goLevels.transform.parent = _levelsMap.transform;
-			float[] points = DevideLineToPoints (_levelsMap.Count);
+			float[] points = DevideLineToPoints (_levelsMap.count);
 			List<MapLevel> levels = new List<MapLevel> ();
-			for (int i = 0; i < _levelsMap.Count; i++) {
+			for (int i = 0; i < _levelsMap.count; i++) {
 				MapLevel mapLevel = CreateMapLevel (points [i], i + 1);
 				mapLevel.transform.parent = goLevels.transform;
 				levels.Add (mapLevel);
@@ -139,11 +139,11 @@ namespace MapScripts.Editor.SmartLevelsMap
 				position = GetPosition ((point - 1f / 3f) * 3f, -_width, _width, _height / 3f, _height / 3f);
 			else
 				position = GetPosition ((point - 2f / 3f) * 3f, _width, 0, _height / 3f, _height * 2f / 3f);
-			return CreateMapLevel (position, number, _levelsMap.MapLevelPrefab);
+			return CreateMapLevel (position, number, _levelsMap.mapLevelPrefab);
 		}
 
-		private MapScripts.Scripts.Path GeneratePath (List<MapLevel> levels) {
-			MapScripts.Scripts.Path path = new GameObject ("Path").AddComponent<MapScripts.Scripts.Path> ();
+		private Path GeneratePath (List<MapLevel> levels) {
+			Path path = new GameObject ("Path").AddComponent<Path> ();
 			path.isCurved = false;
 			path.gizmosRadius = Camera.main.orthographicSize / 40f;
 			path.transform.parent = _levelsMap.transform;
@@ -177,11 +177,11 @@ namespace MapScripts.Editor.SmartLevelsMap
 		}
 
 		private WaypointsMover GenerateCharacter (MapScripts.Scripts.Path path) {
-			Transform character = PrefabUtility.InstantiatePrefab (_levelsMap.CharacterPrefab) as Transform;
+			Transform character = PrefabUtility.InstantiatePrefab (_levelsMap.characterPrefab) as Transform;
 			character.transform.parent = _levelsMap.transform;
 			WaypointsMover waypointsMover = character.gameObject.AddComponent<WaypointsMover> ();
 			waypointsMover.path = path;
-			waypointsMover.Speed = Camera.main.orthographicSize;
+			waypointsMover.speed = Camera.main.orthographicSize;
 			return waypointsMover;
 		}
 
@@ -190,7 +190,7 @@ namespace MapScripts.Editor.SmartLevelsMap
 		#region Stars
 
 		private void DrawStarsSettings () {
-			if (_levelsMap.StarsEnabled) {
+			if (_levelsMap.starsEnabled) {
 				if (GUILayout.Button ("Disable stars")) {
 					SetStarsEnabled (_levelsMap, false);
 				} else {
@@ -214,7 +214,7 @@ namespace MapScripts.Editor.SmartLevelsMap
 		#region Map camera
 
 		private void DrawMapCameraSettings () {
-			if (_levelsMap.ScrollingEnabled) {
+			if (_levelsMap.scrollingEnabled) {
 				if (GUILayout.Button ("Disable map scrolling"))
 					DisableScrolling ();
 				else
@@ -227,23 +227,23 @@ namespace MapScripts.Editor.SmartLevelsMap
 		
 		private void EnableScrolling(Camera camera)
 		{
-			_levelsMap.ScrollingEnabled = true;
+			_levelsMap.scrollingEnabled = true;
 			MapCamera mapCameraComponent = camera.gameObject.AddComponent<MapCamera>();
 			mapCameraComponent.camera = camera;
-			_levelsMap.MapCamera = mapCameraComponent;
-			_levelsMap.MapCamera.bounds.size = new Vector2(camera.orthographicSize * 3f, camera.orthographicSize * 3f);
+			_levelsMap.mapCamera = mapCameraComponent;
+			_levelsMap.mapCamera.bounds.size = new Vector2(camera.orthographicSize * 3f, camera.orthographicSize * 3f);
 			EditorUtility.SetDirty(_levelsMap);
 		}
 
 
 		private void DisableScrolling () {
-			_levelsMap.ScrollingEnabled = false;
-			DestroyImmediate (_levelsMap.MapCamera);
+			_levelsMap.scrollingEnabled = false;
+			DestroyImmediate (_levelsMap.mapCamera);
 			EditorUtility.SetDirty (_levelsMap);
 		}
 
 		private void DrawMapCameraBounds () {
-			MapCamera mapCamera = _levelsMap.MapCamera;
+			MapCamera mapCamera = _levelsMap.mapCamera;
 			if (!mapCamera) return;
 			GUILayout.BeginVertical ("Box");
 
@@ -278,7 +278,7 @@ namespace MapScripts.Editor.SmartLevelsMap
 					Bounds bounds = mapCamera.bounds;
 					DisableScrolling ();
 					EnableScrolling (camera);
-					mapCamera = _levelsMap.MapCamera;
+					mapCamera = _levelsMap.mapCamera;
 					mapCamera.bounds = bounds;
 					EditorUtility.SetDirty (mapCamera);
 				}
@@ -290,15 +290,15 @@ namespace MapScripts.Editor.SmartLevelsMap
 		#region Level selection confirmation
 
 		private void DrawLevelClickSettings () {
-			if (_levelsMap.IsClickEnabled) {
+			if (_levelsMap.isClickEnabled) {
 				if (GUILayout.Button ("Disable levels click/tap")) {
-					_levelsMap.IsClickEnabled = false;
+					_levelsMap.isClickEnabled = false;
 					EditorUtility.SetDirty (_levelsMap);
 				}
 				DrawConfirmationSettings ();
 			} else {
 				if (GUILayout.Button ("Enable levels click/tap")) {
-					_levelsMap.IsClickEnabled = true;
+					_levelsMap.isClickEnabled = true;
 					EditorUtility.SetDirty (_levelsMap);
 				}
 			}
@@ -308,19 +308,19 @@ namespace MapScripts.Editor.SmartLevelsMap
 			GUILayout.BeginVertical ("Box");
 			string helpString = "Level click/tap enabled.\n";
 
-			if (_levelsMap.IsConfirmationEnabled) {
+			if (_levelsMap.isConfirmationEnabled) {
 				helpString +=
 					"Confirmation enabled: Click/tap level on map and catch 'LevelsMap.LevelSelected' event. After confirmation call 'LevelsMap.GoToLevel' method.";
 				GUILayout.Box (helpString);
 				if (GUILayout.Button ("Disable confirmation")) {
-					_levelsMap.IsConfirmationEnabled = false;
+					_levelsMap.isConfirmationEnabled = false;
 					EditorUtility.SetDirty (_levelsMap);
 				}
 			} else {
 				helpString += "Confirmation disabled: Click/tap level on map for character moving to level.";
 				GUILayout.Box (helpString);
 				if (GUILayout.Button ("Enable confirmation")) {
-					_levelsMap.IsConfirmationEnabled = true;
+					_levelsMap.isConfirmationEnabled = true;
 					EditorUtility.SetDirty (_levelsMap);
 				}
 			}

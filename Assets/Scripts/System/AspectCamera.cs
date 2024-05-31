@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Linq;
+using GameStates;
 using UnityEngine;
 
 namespace Dev.Scripts.System
@@ -13,16 +14,20 @@ namespace Dev.Scripts.System
         private float fielgWidth;
         private float fraq;
 
+        private Camera _mainCam;
+
         private void OnEnable()
         {
-            LevelManager.OnMapState += UpdateAspect;
-            LevelManager.OnEnterGame += UpdateAspect;
+            GameEvents.OnMapState += UpdateAspect;
+            GameEvents.OnEnterGame += UpdateAspect;
+
+            _mainCam = GetComponent<Camera>();
         }
 
         private void OnDisable()
         {
-            LevelManager.OnMapState -= UpdateAspect;
-            LevelManager.OnEnterGame -= UpdateAspect;
+            GameEvents.OnMapState -= UpdateAspect;
+            GameEvents.OnEnterGame -= UpdateAspect;
         }
 
         void UpdateAspect()
@@ -34,7 +39,7 @@ namespace Dev.Scripts.System
         IEnumerator Wait()
         {
             yield return new WaitWhile(() => !LevelManager.Instance);
-            if (LevelManager.Instance.GameStatus != GameState.Map)
+            if (!GameManager.Instance.GetState<Map>())
             {
                 yield return new WaitWhile(() => LevelManager.Instance.GetItems().Count == 0);
                 var items = LevelManager.Instance.GetItems().Where(i => i != null).Where(i => i != null);
@@ -53,12 +58,10 @@ namespace Dev.Scripts.System
                 var h = fieldRect.width * Screen.height / Screen.width / 2 + 1.5f;
                 var w = (fieldRect.height + 2.5f * 2) / 2 + 2f;
                 var maxLength = Mathf.Max(h, w);
-                Camera.main.orthographicSize = Mathf.Clamp(maxLength, 4, maxLength);
+                _mainCam.orthographicSize = Mathf.Clamp(maxLength, 4, maxLength);
             }
             else
-                Camera.main.orthographicSize = 8f / Screen.width * Screen.height / 2f;
-
-
+                _mainCam.orthographicSize = 8f / Screen.width * Screen.height / 2f;
         }
 
     }

@@ -5,7 +5,6 @@ namespace MapScripts.Scripts
 {
     public class Path : MonoBehaviour
     {
-        // [HideInInspector]
         public List<Transform> waypoints = new List<Transform>();
         
         public bool isCurved;

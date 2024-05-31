@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using GameStates;
 using UnityEngine.SceneManagement;
 
 
@@ -24,7 +25,7 @@ namespace Dev.Scripts.GUI
         public void Pause () {
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
-            if (LevelManager.Instance.GameStatus == GameState.Playing)
+            if ( GameManager.Instance.GetState<Playing>())
                 GameObject.Find ("CanvasGlobal").transform.Find ("MenuPause").gameObject.SetActive (true);
 
         }

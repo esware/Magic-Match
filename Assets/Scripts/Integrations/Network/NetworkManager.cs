@@ -34,8 +34,8 @@ public class NetworkManager : MonoBehaviour
             return _instance;
         }
     }
-    public static ICurrencyManager currencyManager;
-    public static IDataManager dataManager;
+    public static ICurrencyManager CurrencyManager;
+    public static IDataManager DataManager;
 
     [HideInInspector]
     private static string _userID;
@@ -48,7 +48,7 @@ public class NetworkManager : MonoBehaviour
             if (value != PlayerPrefs.GetString("UserID") && PlayerPrefs.GetString("UserID") != "" && _userID != "" && _userID != null)
             {
                 PlayerPrefs.DeleteAll();
-                LevelsMap._instance.Reset();
+                LevelsMap.Instance.Reset();
             }
 
             _userID = value;
@@ -76,8 +76,8 @@ public class NetworkManager : MonoBehaviour
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
             FirebaseApp app = FirebaseApp.DefaultInstance;
-            currencyManager = new FirebaseCurrencyManager(UserID);
-            dataManager = new FirebaseDataManager(UserID);
+            CurrencyManager = new FirebaseCurrencyManager(UserID);
+            DataManager = new FirebaseDataManager(UserID);
         });
         OnLoginEvent += OnUserLoggedIn;
     }
@@ -123,21 +123,21 @@ public class NetworkManager : MonoBehaviour
 
     public void IncreaseCurrency(int amount)
     {
-        currencyManager.IncBalance(amount);
+        CurrencyManager.IncBalance(amount);
     }
 
     public void DecreaseCurrency(int amount)
     {
-        currencyManager.DecBalance(amount);
+        CurrencyManager.DecBalance(amount);
     }
 
     public void SetCurrency(int newBalance)
     {
-        currencyManager.SetBalance(newBalance);
+        CurrencyManager.SetBalance(newBalance);
     }
 
     public void GetCurrencyBalance(Action<int> callback)
     {
-        currencyManager.GetBalance(callback);
+        CurrencyManager.GetBalance(callback);
     }
 }

@@ -16,13 +16,15 @@ namespace MapScripts.Scripts
     private bool _isRunning;
     private bool _isForwardDirection;
     
+    [HideInInspector]
     public Path path;
 
     [HideInInspector]
-    public float Speed;
+    public float speed;
 
     public void Start()
     {
+        path = FindObjectOfType<Path>();
         if (path.isCurved)
         {
             _splineCurve = new SplineCurve();
@@ -76,7 +78,7 @@ namespace MapScripts.Scripts
     {
         Transform waypoint = path.waypoints[_nextInd];
         Vector3 direction = (waypoint.position - transform.position).normalized;
-        Vector3 nextPosition = transform.position + direction * Speed * Time.deltaTime;
+        Vector3 nextPosition = transform.position + direction * speed * Time.deltaTime;
         if (Vector3.Distance(transform.position, waypoint.position) <=
             Vector3.Distance(transform.position, nextPosition))
         {
@@ -123,7 +125,7 @@ namespace MapScripts.Scripts
     private float GetPartPassTime(int targetInd)
     {
         int dInd = _isForwardDirection ? 1 : 0;
-        return path.GetLength((targetInd - dInd + path.waypoints.Count) % path.waypoints.Count) / Speed;
+        return path.GetLength((targetInd - dInd + path.waypoints.Count) % path.waypoints.Count) / speed;
     }
 
     #endregion

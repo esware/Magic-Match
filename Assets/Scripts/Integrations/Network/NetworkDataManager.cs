@@ -25,7 +25,7 @@ public class NetworkDataManager
         dataManager = new GamesparksDataManager();
 #endif
         NetworkManager.OnLoginEvent += GetPlayerLevel;
-        LevelManager.OnEnterGame += GetPlayerScore;
+        GameEvents.OnEnterGame += GetPlayerScore;
         NetworkManager.OnLogoutEvent += Logout;
         NetworkManager.OnLoginEvent += GetBoosterData;
     }
@@ -34,7 +34,7 @@ public class NetworkDataManager
     {
         _dataManager.Logout();
         NetworkManager.OnLoginEvent -= GetPlayerLevel;
-        LevelManager.OnEnterGame -= GetPlayerScore;
+        GameEvents.OnEnterGame -= GetPlayerScore;
         NetworkManager.OnLoginEvent -= GetBoosterData;
         NetworkManager.OnLogoutEvent -= Logout;
     }
@@ -43,7 +43,7 @@ public class NetworkDataManager
 
     public void SetPlayerScoreTotal()
     {//2.1.6
-        int latestLevel = LevelsMap._instance.GetLastestReachedLevel();
+        int latestLevel = LevelsMap.Instance.GetLastestReachedLevel();
         for (int i = 1; i <= latestLevel; i++)
         {
             SetPlayerScore(i, PlayerPrefs.GetInt("Score" + i, 0));
@@ -98,7 +98,7 @@ public class NetworkDataManager
         {
             NetworkDataManager.LatestReachedLevel = value;
             if (NetworkDataManager.LatestReachedLevel <= 0)
-                NetworkManager.dataManager.SetPlayerLevel(1);
+                NetworkManager.DataManager.SetPlayerLevel(1);
             GetStars();
         });
     }
@@ -119,8 +119,8 @@ public class NetworkDataManager
         if (!NetworkManager.Instance.IsLoggedIn)
             return;
 
-        Debug.Log(LevelsMap._instance.GetLastestReachedLevel() + " " + LatestReachedLevel);
-        if (LevelsMap._instance.GetLastestReachedLevel() > LatestReachedLevel)
+        Debug.Log(LevelsMap.Instance.GetLastestReachedLevel() + " " + LatestReachedLevel);
+        if (LevelsMap.Instance.GetLastestReachedLevel() > LatestReachedLevel)
         {
             Debug.Log("reached higher level than synced");
             SyncAllData();
@@ -134,7 +134,7 @@ public class NetworkDataManager
                 PlayerPrefs.SetInt(string.Format("Level.{0:000}.StarsCount", int.Parse(item.Key.Replace("StarsLevel_", ""))), item.Value);
             }
             PlayerPrefs.Save();
-            LevelsMap._instance.Reset();
+            LevelsMap.Instance.Reset();
 
         });
     }
@@ -170,16 +170,16 @@ public class NetworkDataManager
 
     public void SetTotalStars()
     {
-        LevelsMap._instance.GetMapLevels().Where(l => !l.IsLocked).ToList().ForEach(i => _dataManager.SetStars(i.StarsCount, i.Number)); //2.1.5
+        LevelsMap.Instance.GetMapLevels().Where(l => !l.isLocked).ToList().ForEach(i => _dataManager.SetStars(i.starsCount, i.number)); //2.1.5
     }
 
     public void SyncAllData()
     {
         SetTotalStars();
-        SetPlayerLevel(LevelsMap._instance.GetLastestReachedLevel());
+        SetPlayerLevel(LevelsMap.Instance.GetLastestReachedLevel());
         SetBoosterData();//2.1.5 sync boosters
         SetPlayerScoreTotal();//2.1.6 sync levels
-        NetworkManager.currencyManager.SetBalance(PlayerPrefs.GetInt("Gems"));//2.1.5 sync currency
+        NetworkManager.CurrencyManager.SetBalance(PlayerPrefs.GetInt("Gems"));//2.1.5 sync currency
 
     }
 

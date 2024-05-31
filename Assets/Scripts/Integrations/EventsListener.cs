@@ -11,26 +11,26 @@ namespace Dev.Scripts.Integrations
     public class EventsListener : MonoBehaviour {
 
         void OnEnable() {
-            LevelManager.OnMapState += OnMapState;
-            LevelManager.OnEnterGame += OnEnterGame;
-            LevelManager.OnLevelLoaded += OnLevelLoaded;
-            LevelManager.OnMenuPlay += OnMenuPlay;
-            LevelManager.OnMenuComplete += OnMenuComplete;
-            LevelManager.OnStartPlay += OnStartPlay;
-            LevelManager.OnWin += OnWin;
-            LevelManager.OnLose += OnLose;
+            GameEvents.OnMapState += OnMapState;
+            GameEvents.OnEnterGame += OnEnterGame;
+            GameEvents.OnLevelLoaded += OnLevelLoaded;
+            GameEvents.OnMenuPlay += OnMenuPlay;
+            GameEvents.OnMenuComplete += OnMenuComplete;
+            GameEvents.OnStartPlay += OnStartPlay;
+            GameEvents.OnWin += OnWin;
+            GameEvents.OnLose += OnLose;
 
         }
 
         void OnDisable() {
-            LevelManager.OnMapState -= OnMapState;
-            LevelManager.OnEnterGame -= OnEnterGame;
-            LevelManager.OnLevelLoaded -= OnLevelLoaded;
-            LevelManager.OnMenuPlay -= OnMenuPlay;
-            LevelManager.OnMenuComplete -= OnMenuComplete;
-            LevelManager.OnStartPlay -= OnStartPlay;
-            LevelManager.OnWin -= OnWin;
-            LevelManager.OnLose -= OnLose;
+            GameEvents.OnMapState -= OnMapState;
+            GameEvents.OnEnterGame -= OnEnterGame;
+            GameEvents.OnLevelLoaded -= OnLevelLoaded;
+            GameEvents.OnMenuPlay -= OnMenuPlay;
+            GameEvents.OnMenuComplete -= OnMenuComplete;
+            GameEvents.OnStartPlay -= OnStartPlay;
+            GameEvents.OnWin -= OnWin;
+            GameEvents.OnLose -= OnLose;
 
         }
 

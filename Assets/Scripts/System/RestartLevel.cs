@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using GameStates;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -46,7 +47,7 @@ namespace Dev.Scripts.System
             if (InitScript.lifes > 0)
             {
                 InitScript.Instance.SpendLife(1);
-                LevelManager.Instance.GameStatus = GameState.PrepareGame;
+                GameManager.Instance.ChangeState<PrepareGame>();
             }
             else
             {

@@ -73,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: fbc0451ca0a3d874c8084e00cd02ef99, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -175,7 +175,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 61b7c1903c6a99a438546db2cb7db60a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -203,7 +203,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1926876822089441791
 Transform:
   m_ObjectHideFlags: 0
@@ -259,7 +259,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 61b7c1903c6a99a438546db2cb7db60a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -600,7 +600,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: baa30d20af936b141907fccf046ab0f8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -624,19 +624,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acdffa5a6d494d0f923478c61c4c2d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OverScale: 1.05
-  ClickScale: 0.95
-  Number: 1
-  IsLocked: 0
+  overScale: 1.05
+  clickScale: 0.95
+  number: 0
+  isLocked: 0
   Lock: {fileID: 1926876823024220789}
-  PathPivot: {fileID: 1926876823001070421}
-  LevelScene: {fileID: 0}
-  SceneName: 
-  StarsCount: 0
-  StarsHoster: {fileID: 1926876823167706521}
-  Star1: {fileID: 1926876822089441791}
-  Star2: {fileID: 1926876821955973467}
-  Star3: {fileID: 1926876822877021537}
+  pathPivot: {fileID: 1926876823001070421}
+  levelScene: {fileID: 0}
+  sceneName: 
+  starsCount: 0
+  starsHoster: {fileID: 1926876823167706521}
+  star1: {fileID: 1926876822089441791}
+  star2: {fileID: 1926876821955973467}
+  star3: {fileID: 1926876822877021537}
 --- !u!61 &1926876822645764587
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -735,7 +735,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 61b7c1903c6a99a438546db2cb7db60a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -850,7 +850,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 48fb45e1d7d559a4a81f4fa93a722f03, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

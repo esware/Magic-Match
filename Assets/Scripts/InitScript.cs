@@ -9,10 +9,19 @@ using Dev.Scripts.System;
 using UnityEngine.Advertisements;
 #endif
 
+#if CHARTBOOST_ADS
+using ChartboostSDK;
+#endif
 #if GOOGLE_MOBILE_ADS
 using GoogleMobileAds.Api;
 #endif
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
+
+#if FACEBOOK
+using Facebook.Unity;
+#endif
 
 
 
@@ -68,16 +77,21 @@ public class InitScript : MonoBehaviour
     public static string timeForReps;
     private static int Lifes;
 
-    private bool _loginForSharing;
+    bool loginForSharing;
 
     public RewardedAdsType currentReward;
 
     public static int lifes
     {
-        get => Lifes;
-        private set => Lifes = value; 
+        get
+        {
+            return InitScript.Lifes;
+        }
+        set
+        {
+            InitScript.Lifes = value;
+        }
     }
-
 
     public int CapOfLife = 5;
     public float TotalTimeForRestLifeHours = 0;
@@ -132,7 +146,10 @@ public class InitScript : MonoBehaviour
 
     protected string LastResponse
     {
-        get => this.lastResponse;
+        get
+        {
+            return this.lastResponse;
+        }
 
         set
         {
@@ -141,6 +158,7 @@ public class InitScript : MonoBehaviour
     }
 
     private string status = "Ready";
+    public string RateURLIOS; //2.1.5
 
     protected string Status
     {
@@ -154,7 +172,6 @@ public class InitScript : MonoBehaviour
             this.status = value;
         }
     }
-    
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -174,10 +191,10 @@ public class InitScript : MonoBehaviour
             }
         }
         if (PlayerPrefs.GetInt("Lauched") == 0)
-        {   
+        {
             lifes = CapOfLife;
-            PlayerPrefs.SetInt("Lifes", lifes);
             Gems = FirstGems;
+            PlayerPrefs.SetInt("Lifes", lifes);
             PlayerPrefs.SetInt("Gems", Gems);
             PlayerPrefs.SetInt("Music", 1);
             PlayerPrefs.SetInt("Sound", 1);
@@ -185,12 +202,14 @@ public class InitScript : MonoBehaviour
             PlayerPrefs.SetInt("Lauched", 1);
             PlayerPrefs.Save();
         }
-        if (gameObject.GetComponent<AspectCamera>() == null) gameObject.AddComponent<AspectCamera>().map = FindObjectOfType<LevelsMap>().transform.Find("map_background_01").GetComponent<SpriteRenderer>().sprite; 
+
+        if (gameObject.GetComponent<AspectCamera>() == null) gameObject.AddComponent<AspectCamera>().map = 
+            FindObjectOfType<LevelsMap>().transform.Find("map_background_01").GetComponent<SpriteRenderer>().sprite;
 
         GameObject.Find("Music").GetComponent<AudioSource>().volume = PlayerPrefs.GetInt("Music");
         SoundBase.Instance.GetComponent<AudioSource>().volume = PlayerPrefs.GetInt("Sound");
 
-#if UNITY_ADS
+#if UNITY_ADS//2.1.1
         enableUnityAds = true;
 #else
         enableUnityAds = false;
@@ -209,7 +228,9 @@ public class InitScript : MonoBehaviour
 		interstitial = new InterstitialAd (admobUIDAndroid);
 #endif
 
+        // Create an empty ad request.
         requestAdmob = new AdRequest.Builder().Build();
+        // Load the interstitial with the request.
         interstitial.LoadAd(requestAdmob);
         interstitial.OnAdLoaded += HandleInterstitialLoaded;
         interstitial.OnAdFailedToLoad += HandleInterstitialFailedToLoad;
@@ -327,7 +348,6 @@ public class InitScript : MonoBehaviour
         dailyRewardedShown[(int)type] = PlayerPrefs.GetInt(type.ToString());
         if (!DateTimeManager.IsPeriodPassed(type.ToString())) return true;
         if (dailyRewardedFrequency > 0 && dailyRewardedShown[(int)type] >= dailyRewardedFrequency) return true;
-        // if (Random.Range(0, 5) > 0) return true;
         dailyRewardedShown[(int)type]++;
         PlayerPrefs.SetInt(type.ToString(), dailyRewardedShown[(int)type]);
         if (dailyRewardedShown[(int)type] >= dailyRewardedFrequency) DateTimeManager.SetDateTimeNow(type.ToString());
@@ -337,23 +357,14 @@ public class InitScript : MonoBehaviour
     }
 
     public void CheckAdsEvents(GameState state)
-    {   
+    {
         foreach (AdEvents item in adsEvents)
         {
             if (item.gameEvent == state)
             {
-                //1.5   1.6.1
-                //				if ((LevelManager.THIS.gameStatus == GameState.GameOver || LevelManager.THIS.gameStatus == GameState.Pause ||
-                //				    LevelManager.THIS.gameStatus == GameState.Playing || LevelManager.THIS.gameStatus == GameState.PrepareGame || LevelManager.THIS.gameStatus == GameState.PreWinAnimations ||
-                //				    LevelManager.THIS.gameStatus == GameState.RegenLevel || LevelManager.THIS.gameStatus == GameState.Win)) {
-
-                item.calls++;  //1.6
+                item.calls++; 
                 if (item.calls % item.everyLevel == 0)
                     ShowAdByType(item.adType);
-                //				} else {
-                //					ShowAdByType (item.adType);
-                //
-                //				}
             }
         }
     }
@@ -389,7 +400,7 @@ public class InitScript : MonoBehaviour
     }
 
 
-    public void ShowAds(bool chartboost = true)
+    private void ShowAds(bool chartboost = true)
     {
 #if GOOGLE_MOBILE_ADS
             Debug.Log("show Google mobile ads Interstitial in " + LevelManager.THIS.gameStatus);
@@ -411,13 +422,7 @@ public class InitScript : MonoBehaviour
             }
 #endif
     }
-
-    public void ShowRate()
-    {
-        rate.SetActive(true);
-    }
-
-
+    
     void CheckRewardedAds()
     {
         RewardIcon reward = GameObject.Find("CanvasGlobal").transform.Find("Reward").GetComponent<RewardIcon>();
@@ -456,9 +461,10 @@ public class InitScript : MonoBehaviour
         Gems += count;
         PlayerPrefs.SetInt("Gems", Gems);
         PlayerPrefs.Save();
-#if PLAYFAB || GAMESPARKS
+#if PLAYFAB
         NetworkManager.currencyManager.IncBalance(count);
 #endif
+        NetworkManager.Instance.IncreaseCurrency(count);
 
     }
 
@@ -468,7 +474,7 @@ public class InitScript : MonoBehaviour
         Gems -= count;
         PlayerPrefs.SetInt("Gems", Gems);
         PlayerPrefs.Save();
-#if PLAYFAB
+#if PLAYFAB 
         NetworkManager.currencyManager.DecBalance(count);
 #endif
 
@@ -525,8 +531,7 @@ public class InitScript : MonoBehaviour
 #if PLAYFAB 
         NetworkManager.dataManager.SetBoosterData();
 #endif
-
-        //   ReloadBoosts();
+        
     }
 
     public void SpendBoost(BoostType boostType)
@@ -537,28 +542,6 @@ public class InitScript : MonoBehaviour
         NetworkManager.dataManager.SetBoosterData();
 #endif
     }
-    //void ReloadBoosts()
-    //{
-    //    BoostExtraMoves = PlayerPrefs.GetInt("" + BoostType.ExtraMoves);
-    //    BoostPackages = PlayerPrefs.GetInt("" + BoostType.Packages);
-    //    BoostStripes = PlayerPrefs.GetInt("" + BoostType.Stripes);
-    //    BoostExtraTime = PlayerPrefs.GetInt("" + BoostType.ExtraTime);
-    //    BoostBomb = PlayerPrefs.GetInt("" + BoostType.Bomb);
-    //    BoostColorful_bomb = PlayerPrefs.GetInt("" + BoostType.Colorful_bomb);
-    //    BoostHand = PlayerPrefs.GetInt("" + BoostType.Hand);
-    //    BoostRandom_color = PlayerPrefs.GetInt("" + BoostType.Random_color);
-
-    //}
-    //public void onMarketPurchase(PurchasableVirtualItem pvi, string payload, Dictionary<string, string> extra)
-    //{
-    //    PurchaseSucceded();
-    //}
-
-    //private void OnApplicationFocus(bool focus)//2.1.5 need to test music on
-    //{
-    //	var music = GameObject.Find("Music");
-    //	if (music != null) music.GetComponent<AudioSource>().Play();
-    //}
 
     void OnApplicationPause(bool pauseStatus)
     {
@@ -575,7 +558,7 @@ public class InitScript : MonoBehaviour
     }
 
     void OnApplicationQuit()
-    {  
+    {   
         if (RestLifeTimer > 0)
         {
             PlayerPrefs.SetFloat("RestLifeTimer", RestLifeTimer);
@@ -583,7 +566,6 @@ public class InitScript : MonoBehaviour
         PlayerPrefs.SetInt("Lifes", lifes);
         PlayerPrefs.SetString("DateOfExit", DateTime.Now.ToString());
         PlayerPrefs.Save();
-        //print(RestLifeTimer)
     }
 
     public void OnLevelClicked(object sender, LevelReachedEventArgs args)
@@ -594,10 +576,9 @@ public class InitScript : MonoBehaviour
         {
             PlayerPrefs.SetInt("OpenLevel", args.Number);
             PlayerPrefs.Save();
-            LevelManager.Instance.MenuPlayEvent();
+            //GameEvents.MenuPlayEvent();
             LevelManager.Instance.LoadLevel();
             openLevel = args.Number;
-            //  currentTarget = targets[args.Number];
             GameObject.Find("CanvasGlobal").transform.Find("MenuPlay").gameObject.SetActive(true);
         }
     }
@@ -610,10 +591,8 @@ public class InitScript : MonoBehaviour
     void OnDisable()
     {
         LevelsMap.LevelSelected -= OnLevelClicked;
-
-        //		if(RestLifeTimer>0){
+        
         PlayerPrefs.SetFloat("RestLifeTimer", RestLifeTimer);
-        //		}
         PlayerPrefs.SetInt("Lifes", lifes);
         PlayerPrefs.SetString("DateOfExit", DateTime.Now.ToString());
         PlayerPrefs.Save();

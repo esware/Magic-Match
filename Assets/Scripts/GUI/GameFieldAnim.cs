@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GameStates;
+using UnityEngine;
 
 namespace Dev.Scripts.GUI
 {
@@ -6,7 +7,7 @@ namespace Dev.Scripts.GUI
 
         void EndAnimGamField()
         {
-            LevelManager.Instance.GameStatus = GameState.Playing;
+             GameManager.Instance.ChangeState<Playing>();
         }
     }
 }

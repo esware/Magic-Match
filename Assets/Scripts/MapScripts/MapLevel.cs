@@ -5,21 +5,21 @@ public class MapLevel : MonoBehaviour
 {
     private Vector3 _originalScale;
     private bool _isScaled;
-    public float OverScale = 1.05f;
-    public float ClickScale = 0.95f;
+    public float overScale = 1.5f;
+    public float clickScale = 0.9f;
 
-    public int Number;
-    public bool IsLocked;
+    public int number;
+    public bool isLocked;
     public Transform Lock;
-    public Transform PathPivot;
-    public Object LevelScene;
-    public string SceneName;
+    public Transform pathPivot;
+    public Object levelScene;
+    public string sceneName;
 
-    public int StarsCount;
-    public Transform StarsHoster;
-    public Transform Star1;
-    public Transform Star2;
-    public Transform Star3;
+    public int starsCount;
+    public Transform starsHoster;
+    public Transform star1;
+    public Transform star2;
+    public Transform star3;
 
     public void Awake()
     {
@@ -30,19 +30,19 @@ public class MapLevel : MonoBehaviour
 
     public void OnMouseEnter()
     {
-        if (LevelsMap.GetIsClickEnabled())
-            Scale(OverScale);
+        if (LevelsMap.Instance.GetIsClickEnabled())
+            Scale(overScale);
     }
 
     public void OnMouseDown()
     {
-        if (LevelsMap.GetIsClickEnabled())
-            Scale(ClickScale);
+        if (LevelsMap.Instance.GetIsClickEnabled())
+            Scale(clickScale);
     }
 
     public void OnMouseExit()
     {
-        if (LevelsMap.GetIsClickEnabled())
+        if (LevelsMap.Instance.GetIsClickEnabled())
             ResetScale();
     }
 
@@ -54,16 +54,16 @@ public class MapLevel : MonoBehaviour
 
     public void OnDisable()
     {
-        if (LevelsMap.GetIsClickEnabled())
+        if (LevelsMap.Instance.GetIsClickEnabled())
             ResetScale();
     }
 
     public void OnMouseUpAsButton()
     {
-        if (LevelsMap.GetIsClickEnabled())
+        if (LevelsMap.Instance.GetIsClickEnabled())
         {
             ResetScale();
-            LevelsMap.OnLevelSelected(Number);
+            LevelsMap.Instance.OnLevelSelected(number);
         }
     }
 
@@ -75,18 +75,18 @@ public class MapLevel : MonoBehaviour
 
     #endregion
 
-    public void UpdateState(int starsCount, bool isLocked)
+    public void UpdateState(int starCount, bool locked)
     {
-        StarsCount = starsCount;
-        UpdateStars(starsCount);
-        IsLocked = isLocked;
-        Lock.gameObject.SetActive(isLocked);
+        this.starsCount = starCount;
+        UpdateStars(starCount);
+        this.isLocked = locked;
+        Lock.gameObject.SetActive(locked);
     }
 
-    public void UpdateStars(int starsCount)
+    public void UpdateStars(int starCount)
     {
-        Star1.gameObject.SetActive(starsCount >= 1);
-        Star2.gameObject.SetActive(starsCount >= 2);
-        Star3.gameObject.SetActive(starsCount >= 3);
+        star1.gameObject.SetActive(starCount >= 1);
+        star2.gameObject.SetActive(starCount >= 2);
+        star3.gameObject.SetActive(starCount >= 3);
     }
 }

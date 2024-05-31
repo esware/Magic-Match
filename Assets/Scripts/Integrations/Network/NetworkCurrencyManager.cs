@@ -1,5 +1,4 @@
-﻿//#if PLAYFAB
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 #if PLAYFAB
@@ -28,7 +27,7 @@ public class NetworkCurrencyManager
 		NetworkManager.OnLogoutEvent -= Logout;
 	}
 
-	public  void IncBalance (int amount) 
+	public void IncBalance (int amount) 
 	{
 		if (!NetworkManager.Instance.IsLoggedIn)
 			return;

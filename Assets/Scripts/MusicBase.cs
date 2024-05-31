@@ -9,7 +9,6 @@ public class MusicBase : MonoBehaviour {
     ///MusicBase.Instance.audio.PlayOneShot(MusicBase.Instance.music[0]);
 
 
-    // Use this for initialization
     void Awake () {
         if (transform.parent == null) {
             transform.parent = Camera.main.transform;
@@ -23,8 +22,4 @@ public class MusicBase : MonoBehaviour {
             Destroy (gameObject);
     }
 
-    // Update is called once per frame
-    void Update () {
-
-    }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using GameStates;
 using TMPro;
 using UnityEngine.UI;
 
@@ -13,14 +14,13 @@ namespace Dev.Scripts.GUI
 
 	void OnEnable ()
 	{
-		if (name != "Main Camera") {
-			if (LevelManager.Instance != null) {
-				if (LevelManager.Instance.GameStatus == GameState.Map)
-					transform.Find ("Indicator/Image/Check").gameObject.SetActive (false);
-//				if (!LevelManager.THIS.enableInApps)
-//					gameObject.SetActive (false);
+		if (name != "Main Camera")
+		{
+			var mapState = GameManager.Instance.GetState<Map>();
+			if (mapState != null)
+			{
+				transform.Find("Indicator/Image/Check").gameObject.SetActive(false);
 			}
-
 		}
 	}
 
@@ -31,7 +31,7 @@ namespace Dev.Scripts.GUI
 			return;
 		}
 
-		if (check )//2.2.1
+		if (check )
 		{
 			if (type == BoostType.Colorful_bomb) {
 				LevelManager.Instance.boostColorfullBomb = 0;
@@ -50,7 +50,7 @@ namespace Dev.Scripts.GUI
 			}
 		}
 
-		if (IsLocked () || check || (LevelManager.Instance.GameStatus != GameState.Playing && LevelManager.Instance.GameStatus != GameState.Map))
+		if (IsLocked () || check || (!GameManager.Instance.GetState<Playing>() && !GameManager.Instance.GetState<Map>()))
 			return;
 		if (!check && BoostCount () > 0) {
 			if (type != BoostType.Colorful_bomb && type != BoostType.Packages && type != BoostType.Stripes && !LevelManager.Instance.DragBlocked)

@@ -6,56 +6,56 @@ using System.Linq;
 using Dev.Scripts.GUI;
 using Dev.Scripts.System;
 using Dev.Scripts.Targets;
+using GameStates;
 using UnityEngine.UI;
+using PreFailed = GameStates.PreFailed;
+
 
 public class SquareBlocks
 {
     public SquareTypes Block;
     public SquareTypes Obstacle;
-}
 
-public enum GameState
-{
-    Map,
-    PrepareGame,
-    Playing,
-    Highscore,
-    GameOver,
-    Pause,
-    PreWinAnimations,
-    Win,
-    WaitForPopup,
-    WaitAfterClose,
-    BlockedGame,
-    Tutorial,
-    PreTutorial,
-    WaitForPotion,
-    PreFailed,
-    RegenLevel
 }
 
 
 public class LevelManager : MonoBehaviour
 {
-    public static LevelManager Instance;
-    [Header("Item & Block Prefabs")]
+
+    private static LevelManager _instance;
+    public static LevelManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<LevelManager>();
+
+                if (_instance == null)
+                {
+                    Debug.LogError("There needs to be one active LevelManager script on a GameObject in your scene.");
+                }
+            }
+
+            return _instance;
+        }
+    }
+    
+    
     public GameObject itemPrefab;
     public GameObject squarePrefab;
-    public GameObject blockPrefab;
-    public GameObject wireBlockPrefab;
-    public GameObject solidBlockPrefab;
-    public GameObject undestroyableBlockPrefab;
-    public GameObject thrivingBlockPrefab;
-    
-    [Space,Header("Sprites")]
     public Sprite squareSprite;
     public Sprite squareSprite1;
     public Sprite outline1;
     public Sprite outline2;
     public Sprite outline3;
-    
+    public GameObject blockPrefab;
+    public GameObject wireBlockPrefab;
+    public GameObject solidBlockPrefab;
+    public GameObject undesroyableBlockPrefab;
+    public GameObject thrivingBlockPrefab;
     public LifeShop lifeShop;
-    public Transform gameField;
+    public Transform GameField;
     public bool enableInApps;
     public int maxRows = 9;
     public int maxCols = 9;
@@ -63,22 +63,16 @@ public class LevelManager : MonoBehaviour
     public float squareHeight = 1.2f;
     public Vector2 firstSquarePosition;
     public Square[] squaresArray;
-    
-    [HideInInspector]
+    List<List<Item>> combinedItems = new List<List<Item>>();
     public Item lastDraggedItem;
-    [HideInInspector]
     public Item lastSwitchedItem;
-    
     public List<Item> destroyAnyway = new List<Item>();
     public GameObject popupScore;
-    
-    [Space,Header("Score Settings")]
     public int scoreForItem = 10;
     public int scoreForBlock = 100;
     public int scoreForWireBlock = 100;
     public int scoreForSolidBlock = 100;
     public int scoreForThrivingBlock = 100;
-    
     public LIMIT limitType;
     public int limit = 30;
     public int targetScore = 1000;
@@ -87,36 +81,29 @@ public class LevelManager : MonoBehaviour
     public int extraFailedMoves = 5;
     public int extraFailedSecs = 30;
     public List<GemProduct> gemsProducts = new List<GemProduct>();
-
+    LineRenderer _line;
+    public bool thrivingBlockDestroyed;
+    List<List<Item>> _newCombines;
+    private bool _dragBlocked;
     public int boostColorfullBomb;
     public int boostPackage;
     public int boostStriped;
+    public bool boostHandActivated;
+    public bool boostBombActivated;
+    public bool boostReplacingActivated;
     public BoostIcon emptyBoostIcon;
+    public BoostIcon avctivatedBoostView;
     public BoostIcon activatedBoost;
-    public bool thrivingBlockDestroyed;
-    
-    private LineRenderer _line;
-    private List<List<Item>> _newCombines;
-    private List<List<Item>> _combinedItems = new List<List<Item>>();
-    private bool _dragBlocked;
-    
+    public string androidSharingPath;
+    public string iosSharingPath;
 
     public BoostIcon ActivatedBoost
     {
-        get
-        {
-            if (activatedBoost == null)
-            {
-                return emptyBoostIcon;
-            }
-            return activatedBoost;
-        }
+        get => activatedBoost == null ? emptyBoostIcon : activatedBoost;
         set
         {
             if (value == null)
             {
-                if (activatedBoost != null && GameStatus == GameState.Playing)
-                    InitScript.Instance.SpendBoost(activatedBoost.type);
                 UnLockBoosts();
             }
             activatedBoost = value;
@@ -141,17 +128,14 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
-    
-    private bool _ingredientFly;
-    private int _linePoint;
-    private SquareBlocks[] _levelSquaresFile = new SquareBlocks[81];
-    
+
+    SquareBlocks[] levelSquaresFile = new SquareBlocks[81];
     public int targetBlocks;
 
     public GameObject[] itemExplPool = new GameObject[20];
     public static int Score;
     public int stars;
-    
+    private int linePoint;
     public int star1;
     public int star2;
     public int star3;
@@ -173,13 +157,14 @@ public class LevelManager : MonoBehaviour
     public GameObject ingrObject;
     public GameObject blocksObject;
     public GameObject scoreTargetObject;
-    
+    private bool matchesGot;
+    bool ingredientFly;
     public GameObject[] gratzWords;
 
-    public GameObject level;
-    public GameObject levelsMap;
+    public GameObject Level;
+    public GameObject LevelsMap;
 
-    public BoostIcon[] inGameBoosts;
+    public BoostIcon[] InGameBoosts;
     public int passLevelCounter;
 
     public Target target;
@@ -209,7 +194,7 @@ public class LevelManager : MonoBehaviour
                 foreach (Item item in items)
                 {
                     if (item != null)
-                       item.anim.SetBool(Stop, true);
+                      item.anim.SetBool("stop", true);
                 }
             }
             else
@@ -228,135 +213,25 @@ public class LevelManager : MonoBehaviour
     public bool levelLoaded;
     public Hashtable countedSquares;
     public Sprite doubleBlock;
+    internal int LastMatchColor;
     private CombineManager _combineManager;
     public TargetObject[] targetObject;
     
-    private static readonly int Stop = Animator.StringToHash("stop");
-
-    #region EVENTS
-
-    public delegate void GameStateEvents();
-
-    public static event GameStateEvents OnMapState;
-    public static event GameStateEvents OnEnterGame;
-    public static event GameStateEvents OnLevelLoaded;
-    public static event GameStateEvents OnMenuPlay;
-    public static event GameStateEvents OnMenuComplete;
-    public static event GameStateEvents OnStartPlay;
-    public static event GameStateEvents OnWin;
-    public static event GameStateEvents OnLose;
-
-    public GameState GameStatus
+    void Awake()
     {
-        get
+        if (_instance == null)
         {
-            return _gameStatus;
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        set
+        else if (_instance != this)
         {
-            _gameStatus = value;
-            InitScript.Instance.CheckAdsEvents(value);
-
-            if (value == GameState.PrepareGame)
-            {
-                passLevelCounter++;
-
-                MusicBase.Instance.GetComponent<AudioSource>().Stop();
-                MusicBase.Instance.GetComponent<AudioSource>().loop = true;
-                MusicBase.Instance.GetComponent<AudioSource>().clip = MusicBase.Instance.music[1];
-                MusicBase.Instance.GetComponent<AudioSource>().Play();
-                PrepareGame();
-            }
-            else if (value == GameState.WaitForPopup)
-            {
-                InitLevel();
-                if (OnLevelLoaded != null) OnLevelLoaded();
-            }
-            else if (value == GameState.PreFailed)
-            {
-                GameObject.Find("CanvasGlobal").transform.Find("PreFailed").gameObject.SetActive(true);
-
-            }
-            else if (value == GameState.Map)
-            {
-                if (PlayerPrefs.GetInt("OpenLevelTest") <= 0)
-                {
-                    MusicBase.Instance.GetComponent<AudioSource>().Stop();
-                    MusicBase.Instance.GetComponent<AudioSource>().loop = true;
-                    MusicBase.Instance.GetComponent<AudioSource>().clip = MusicBase.Instance.music[0];
-                    MusicBase.Instance.GetComponent<AudioSource>().Play();
-                    EnableMap(true);
-                    OnMapState();
-                }
-                else
-                {
-                    LevelManager.Instance.GameStatus = GameState.PrepareGame;
-                    PlayerPrefs.SetInt("OpenLevelTest", 0);
-                    PlayerPrefs.Save();
-                }
-                if (passLevelCounter > 0 && InitScript.Instance.ShowRateEvery > 0)
-                {
-                    if (passLevelCounter % InitScript.Instance.ShowRateEvery == 0 && InitScript.Instance.ShowRateEvery > 0 && PlayerPrefs.GetInt("Rated", 0) == 0)
-                        InitScript.Instance.ShowRate();
-                }
-            }
-            else if (value == GameState.Pause)
-            {
-                Time.timeScale = 0;
-
-            }
-            else if (value == GameState.Playing)
-            {
-                Time.timeScale = 1;
-                StartCoroutine(AI.THIS.CheckPossibleCombines());
-            }
-            else if (value == GameState.GameOver)
-            {
-                GameObject.Find("CanvasGlobal").transform.Find("MenuFailed").gameObject.SetActive(true);
-                OnLose();
-            }
-            else if (value == GameState.PreWinAnimations)
-            {
-                StartCoroutine(PreWinAnimationsCor());
-            }
-            else if (value == GameState.Win)
-            {
-                //InitScript.THIS.AddGems(1);//Add coins after win
-                if (!InitScript.Instance.losingLifeEveryGame)
-                    InitScript.Instance.AddLife(1);
-                OnMenuComplete();
-                if (PlayerPrefs.GetInt(string.Format("Level.{0:000}.StarsCount", currentLevel), 0) < stars)
-                    PlayerPrefs.SetInt(string.Format("Level.{0:000}.StarsCount", currentLevel), stars);
-                if (Score > PlayerPrefs.GetInt("Score" + currentLevel))
-                {
-                    PlayerPrefs.SetInt("Score" + currentLevel, Score);
-                }
-
-#if PLAYFAB 
-                NetworkManager.dataManager.SetPlayerScore(currentLevel, Score);
-                NetworkManager.dataManager.SetPlayerLevel(currentLevel + 1);
-                NetworkManager.dataManager.SetStars();
-#endif
-                GameObject.Find("CanvasGlobal").transform.Find("MenuComplete").gameObject.SetActive(true);
-                SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.complete[1]);
-                if (OnWin != null) OnWin();
-            }
-
-
+            Destroy(gameObject);
         }
     }
-
-    public void MenuPlayEvent()
-    {
-        if (OnMenuPlay != null) OnMenuPlay();
-    }
-
-
-    #endregion
-
     void LockBoosts()
     {
-        foreach (BoostIcon item in inGameBoosts)
+        foreach (BoostIcon item in InGameBoosts)
         {
             if (item != ActivatedBoost)
                 item.LockBoost();
@@ -365,13 +240,11 @@ public class LevelManager : MonoBehaviour
 
     public void UnLockBoosts()
     {
-        foreach (BoostIcon item in inGameBoosts)
+        foreach (BoostIcon item in InGameBoosts)
         {
             item.UnLockBoost();
         }
     }
-
-
     public void LoadLevel()
     {
         currentLevel = PlayerPrefs.GetInt("OpenLevel");
@@ -390,61 +263,45 @@ public class LevelManager : MonoBehaviour
         GameObject.Find("CanvasGlobal").GetComponent<GraphicRaycaster>().enabled = true;
         if (enable)
         {
-            if (aspect == 1.6f)
-                GetComponent<Camera>().orthographicSize = 6.25f;                    //16:10
-            else if (aspect == 1.78f)
-                GetComponent<Camera>().orthographicSize = 7f;    //16:9
-            else if (aspect == 1.5f)
-                GetComponent<Camera>().orthographicSize = 5.9f;                  //3:2
-            else if (aspect == 1.33f)
-                GetComponent<Camera>().orthographicSize = 5.25f;                  //4:3
-            else if (aspect == 1.67f)
-                GetComponent<Camera>().orthographicSize = 6.6f;                  //5:3
-            else if (aspect == 1.25f)
-                GetComponent<Camera>().orthographicSize = 4.9f;                  //5:4
-            else if (aspect == 2.06f)
-                GetComponent<Camera>().orthographicSize = 8.2f;                  //2960:1440
-            else if (aspect == 2.17f)
-                GetComponent<Camera>().orthographicSize = 8.7f;                  //iphone x
-
             GetComponent<Camera>().GetComponent<MapCamera>().SetPosition(new Vector2(0, GetComponent<Camera>().transform.position.y));
         }
         else
         {
-            InitScript.DateOfExit = DateTime.Now.ToString();  //1.4
-            
+            InitScript.DateOfExit = DateTime.Now.ToString();
+
+            LastMatchColor = -1;
+
             GetComponent<Camera>().orthographicSize = 6.5f;
-            level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.zero;//2.2
+            Level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.zero;//2.2
             if (aspect == 2.06f)
-                GetComponent<Camera>().orthographicSize = 7.6f;                  //2960:1440
+                GetComponent<Camera>().orthographicSize = 7.6f;//2960:1440
             else if (aspect == 2.17f)
             {
-                GetComponent<Camera>().orthographicSize = 8.1f;                  //iphone x
-                level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.down * 50;//2.2
+                GetComponent<Camera>().orthographicSize = 8.1f;//iphone x
+                Level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.down * 50;//2.2
 
             }
 
-            level.transform.Find("Canvas").GetComponent<GraphicRaycaster>().enabled = false;
-            level.transform.Find("Canvas").GetComponent<GraphicRaycaster>().enabled = true;
+            Level.transform.Find("Canvas").GetComponent<GraphicRaycaster>().enabled = false;
+            Level.transform.Find("Canvas").GetComponent<GraphicRaycaster>().enabled = true;
 
         }
         Camera.main.GetComponent<MapCamera>().enabled = enable;
-        levelsMap.SetActive(!enable);
-        levelsMap.SetActive(enable);
-        level.SetActive(!enable);
+        LevelsMap.SetActive(!enable);
+        LevelsMap.SetActive(enable);
+        Level.SetActive(!enable);
 
         if (enable)
-            gameField.gameObject.SetActive(false);
+            GameField.gameObject.SetActive(false);
 
         if (!enable)
             Camera.main.transform.position = new Vector3(0, 0, -10);
-        foreach (Transform item in gameField.transform)
+        foreach (Transform item in GameField.transform)
         {
             Destroy(item.gameObject);
         }
     }
-
-    // Use this for initialization
+    
     void Start()
     {
 #if UNITY_INAPPS
@@ -456,25 +313,20 @@ public class LevelManager : MonoBehaviour
 
 #endif
         _combineManager = new CombineManager();
-        Instance = this;
-        Instance = this;
-        //        if (!LevelManager.THIS.enableInApps)
-        //            GameObject.Find("CanvasMap/Gems").gameObject.SetActive(false);//2.1.2
 
-        GameStatus = GameState.Map;
+        //TODO Change State gameStatus = GameState.Map;
+        
         for (int i = 0; i < 20; i++)
         {
-            //itemExplPool[i] = Instantiate(Resources.Load("Prefabs/Effects/ItemExpl"), transform.position, Quaternion.identity) as GameObject;
-            //itemExplPool[i].GetComponent<SpriteRenderer>().enabled = false;
-
-            // itemExplPool[i].SetActive(false);
+            itemExplPool[i] = Instantiate(Resources.Load("Prefabs/Effects/ItemExpl"), transform.position, Quaternion.identity) as GameObject;
+            itemExplPool[i].GetComponent<SpriteRenderer>().enabled = false;
+            
         }
         passLevelCounter = 0;
     }
 
     void InitLevel()
     {
-
         GenerateLevel();
         GenerateOutline();
         ReGenLevel();
@@ -483,74 +335,11 @@ public class LevelManager : MonoBehaviour
             StopCoroutine(TimeTick());
             StartCoroutine(TimeTick());
         }
-//        InitTargets();
-        gameField.gameObject.SetActive(true);
+        GameField.gameObject.SetActive(true);
 
     }
 
-    void PrepareGame()
-    {
-        ActivatedBoost = null;
-        Score = 0;
-        stars = 0;
-        moveID = 0;
-
-
-        blocksObject.SetActive(false);
-        ingrObject.SetActive(false);
-        scoreTargetObject.SetActive(false);
-
-        star1Anim.SetActive(false);
-        star2Anim.SetActive(false);
-        star3Anim.SetActive(false);
-
-        collectItems[0] = CollectItems.None;
-        collectItems[1] = CollectItems.None;
-
-        ingrTarget[0] = Ingredients.None;
-        ingrTarget[1] = Ingredients.None;
-
-        ingrCountTarget[0] = 0;
-        ingrCountTarget[1] = 0;
-
-        TargetBlocks = 0;
-        EnableMap(false);
-
-
-        gameField.transform.position = Vector3.zero;
-        firstSquarePosition = gameField.transform.position;
-
-        squaresArray = new Square[maxCols * maxRows];
-        LoadLevel();
-        for (int row = 0; row < maxRows; row++)
-        {
-            for (int col = 0; col < maxCols; col++)
-            {
-                if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.BLOCK)
-                    TargetBlocks++;
-                else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
-                    TargetBlocks += 2;
-            }
-        }
-        //float getSize = maxCols - 9;
-        //if (getSize < maxRows - 9)
-        //    getSize = maxRows - 9;
-        //if (getSize > 0)
-        //    camera.orthographicSize = 6.5f + getSize * 0.5f;
-        GameObject.Find("Canvas").transform.Find("PrePlay").gameObject.SetActive(true);
-        if (limitType == LIMIT.MOVES)
-        {
-            inGameBoosts[0].gameObject.SetActive(true);
-            inGameBoosts[1].gameObject.SetActive(false);
-        }
-        else
-        {
-            inGameBoosts[0].gameObject.SetActive(false);
-            inGameBoosts[1].gameObject.SetActive(true);
-
-        }
-        OnEnterGame();
-    }
+    #region Public Helper Methods
 
     public void CheckCollectedTarget(GameObject _item)
     {
@@ -581,32 +370,33 @@ public class LevelManager : MonoBehaviour
 
     public GameObject GetExplFromPool()
     {
-        for (int i = 0; i < itemExplPool.Length; i++)
+        foreach (var t in itemExplPool)
         {
-            if (!itemExplPool[i].GetComponent<SpriteRenderer>().enabled)
+            if (!t.GetComponent<SpriteRenderer>().enabled)
             {
-                // itemExplPool[i].SetActive(true);
-                itemExplPool[i].GetComponent<SpriteRenderer>().enabled = true;
-                StartCoroutine(HideDelayed(itemExplPool[i]));
-                return itemExplPool[i];
+                t.GetComponent<SpriteRenderer>().enabled = true;
+                StartCoroutine(HideDelayed(t));
+                return t;
             }
-
         }
+
         return null;
     }
 
-    IEnumerator HideDelayed(GameObject gm)
+    #endregion
+
+
+    private IEnumerator HideDelayed(GameObject gm)
     {
         yield return new WaitForSeconds(1f);
         gm.GetComponent<Animator>().SetTrigger("stop");
         gm.GetComponent<Animator>().SetInteger("color", 10);
         gm.GetComponent<SpriteRenderer>().enabled = false;
-        //gm.SetActive(false);
     }
 
-    IEnumerator StartAnimateIngredient(GameObject item, Vector2 pos)
+    private IEnumerator StartAnimateIngredient(GameObject item, Vector2 pos)
     {
-        _ingredientFly = true;
+        ingredientFly = true;
         GameObject[] ingr = new GameObject[2];
         ingr[0] = ingrObject.transform.Find("Ingr1").gameObject;
         ingr[1] = ingrObject.transform.Find("Ingr2").gameObject;
@@ -629,26 +419,24 @@ public class LevelManager : MonoBehaviour
             item.transform.Rotate(Vector3.back, Time.deltaTime * 1000);
             yield return new WaitForFixedUpdate();
         }
-        //     SoundBase.Instance.audio.PlayOneShot(SoundBase.Instance.getStarIngr);
         Destroy(item);
-        if (GameStatus == GameState.Playing && !IsIngredientFalling())//1.6.1
+        if (GameManager.Instance.GetState<Playing>() && !IsIngredientFalling())
             CheckWinLose();
-        _ingredientFly = false;
+        ingredientFly = false;
     }
 
-    public void CheckWinLose()
+    private void CheckWinLose()
     {
-        //		print ("check win lose");
         if (limit <= 0)
         {
             bool lose = false;
             limit = 0;
             if (targetObject.Any(i => !i.Done())) lose = true;
             if (lose)
-                GameStatus = GameState.PreFailed;
-            else if (Score >= Instance.star1 && targetObject.All(i => i.Done()))
+                GameManager.Instance.ChangeState<PreFailed>();
+            else if (Score >= star1 && targetObject.All(i => i.Done()))
             {
-                GameStatus = GameState.PreWinAnimations;
+                GameManager.Instance.ChangeState<PreWinAnimations>();
             }
         }
         else
@@ -656,10 +444,8 @@ public class LevelManager : MonoBehaviour
             bool win = targetObject.All(i => i.Done());
             if (win)
             {
-                    GameStatus = GameState.PreWinAnimations;
+                GameManager.Instance.ChangeState<PreWinAnimations>();
             }
-
-
         }
     }
 
@@ -679,16 +465,15 @@ public class LevelManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
         yield return new WaitForSeconds(0.3f);
-        while (GetAllExtaItems().Count > 0 && GameStatus != GameState.Win)
-        { //1.6
+        while (GetAllExtaItems().Count > 0 && !GameManager.Instance.GetState<Win>())
+        {
             Item item = GetAllExtaItems()[0];
             item.DestroyItem();
             _dragBlocked = true;
             yield return new WaitForSeconds(0.1f);
             FindMatches();
             yield return new WaitForSeconds(1f);
-
-            //           GenerateNewItems();
+            
             while (_dragBlocked)
                 yield return new WaitForFixedUpdate();
         }
@@ -704,19 +489,18 @@ public class LevelManager : MonoBehaviour
         GameObject.Find("Canvas").transform.Find("PreCompleteBanner").gameObject.SetActive(false);
 
 
-        GameStatus = GameState.Win;
+       GameManager.Instance.ChangeState<Win>();
     }
 
     void Update()
     {
-        //  AvctivatedBoostView = ActivatedBoost;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             NoMatches();
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            GameStatus = GameState.PreWinAnimations;
+            GameManager.Instance.ChangeState<PreWinAnimations>();
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
@@ -724,7 +508,7 @@ public class LevelManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.F2))
-        {   //save items state
+        { 
             print("Saving items...");
             int[] items = new int[99];
 
@@ -746,7 +530,7 @@ public class LevelManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.F3))
-        {   //load items state
+        { 
             print("load items...");
 
             int[] items = new int[99];
@@ -766,42 +550,42 @@ public class LevelManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Escape))
         {
-            if (LevelManager.Instance.GameStatus == GameState.Playing)
+            if (GameManager.Instance.GetState<Playing>())
                 GameObject.Find("CanvasGlobal").transform.Find("MenuPause").gameObject.SetActive(true);
-            else if (LevelManager.Instance.GameStatus == GameState.Map)
+            else if (GameManager.Instance.GetState<Map>())
                 Application.Quit();
 
         }
 
 
-        if (LevelManager.Instance.GameStatus == GameState.Playing)
+        if (GameManager.Instance.GetState<Playing>())
         {
             if (Input.GetMouseButtonDown(0))
             {
-                OnStartPlay();
+                GameEvents.OnStartPlay?.Invoke();
                 Collider2D hit = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 if (hit != null)
                 {
                     Item item = hit.gameObject.GetComponent<Item>();
-                    if (!LevelManager.Instance.DragBlocked && LevelManager.Instance.GameStatus == GameState.Playing)
+                    if (!DragBlocked && GameManager.Instance.GetState<Playing>())
                     {
-                        if (LevelManager.Instance.ActivatedBoost.type == BoostType.Bomb && item.currentType != ItemsTypes.BOMB && item.currentType != ItemsTypes.INGREDIENT)
+                        if (ActivatedBoost.type == BoostType.Bomb && item.currentType != ItemsTypes.BOMB && item.currentType != ItemsTypes.INGREDIENT)
                         {
                             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.boostBomb);
-                            LevelManager.Instance.DragBlocked = true;
+                            DragBlocked = true;
                             GameObject obj = Instantiate(Resources.Load("Prefabs/Effects/bomb"), item.transform.position, item.transform.rotation) as GameObject;
                             obj.GetComponent<SpriteRenderer>().sortingOrder = 4;
                             obj.GetComponent<BoostAnimation>().square = item.square;
-                            LevelManager.Instance.ActivatedBoost = null;
+                            ActivatedBoost = null;
                         }
-                        else if (LevelManager.Instance.ActivatedBoost.type == BoostType.Random_color && item.currentType != ItemsTypes.BOMB)
+                        else if (ActivatedBoost.type == BoostType.Random_color && item.currentType != ItemsTypes.BOMB)
                         {
                             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.boostColorReplace);
-                            LevelManager.Instance.DragBlocked = true;
+                            DragBlocked = true;
                             GameObject obj = Instantiate(Resources.Load("Prefabs/Effects/random_color_item"), item.transform.position, item.transform.rotation) as GameObject;
                             obj.GetComponent<BoostAnimation>().square = item.square;
                             obj.GetComponent<SpriteRenderer>().sortingOrder = 4;
-                            LevelManager.Instance.ActivatedBoost = null;
+                            ActivatedBoost = null;
                         }
                         else if (item.square.type != SquareTypes.WIREBLOCK)
                         {
@@ -827,20 +611,20 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    IEnumerator TimeTick()
+    private IEnumerator TimeTick()
     {
         while (true)
         {
-            if (GameStatus == GameState.Playing)
+            if (GameManager.Instance.GetState<Playing>())
             {
-                if (LevelManager.Instance.limitType == LIMIT.TIME)
+                if (limitType == LIMIT.TIME)
                 {
-                    LevelManager.Instance.limit--;
+                    limit--;
                     if (IsAllItemsFallDown())
                         CheckWinLose();
                 }
             }
-            if (GameStatus == GameState.Map)
+            if (GameManager.Instance.GetState<Map>())
                 yield break;
             yield return new WaitForSeconds(1);
         }
@@ -871,7 +655,7 @@ public class LevelManager : MonoBehaviour
         float yOffset = 0;
         if (target == Target.INGREDIENT)
             yOffset = 0.3f;
-        Animation anim = gameField.GetComponent<Animation>();
+        Animation anim = GameField.GetComponent<Animation>();
         AnimationClip clip = new AnimationClip();
         AnimationCurve curveX = new AnimationCurve(new Keyframe(0, pos.x + 15), new Keyframe(0.7f, pos.x - 0.2f), new Keyframe(0.8f, pos.x));
         AnimationCurve curveY = new AnimationCurve(new Keyframe(0, pos.y + yOffset), new Keyframe(1, pos.y + yOffset));
@@ -881,7 +665,7 @@ public class LevelManager : MonoBehaviour
         clip.AddEvent(new AnimationEvent() { time = 1, functionName = "EndAnimGamField" });
         anim.AddClip(clip, "appear");
         anim.Play("appear");
-        gameField.transform.position = new Vector2(pos.x + 15, pos.y + yOffset);
+        GameField.transform.position = new Vector2(pos.x + 15, pos.y + yOffset);
 
     }
 
@@ -893,23 +677,23 @@ public class LevelManager : MonoBehaviour
         {
             square.GetComponent<SpriteRenderer>().sprite = squareSprite1;
         }
-        square.transform.SetParent(gameField);
+        square.transform.SetParent(GameField);
         square.transform.localPosition = firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight);
         squaresArray[row * maxCols + col] = square.GetComponent<Square>();
         square.GetComponent<Square>().row = row;
         square.GetComponent<Square>().col = col;
         square.GetComponent<Square>().type = SquareTypes.EMPTY;
-        if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.EMPTY)
+        if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.EMPTY)
         {
             CreateObstacles(col, row, square, SquareTypes.NONE);
         }
-        else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.NONE)
+        else if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.NONE)
         {
             square.GetComponent<SpriteRenderer>().enabled = false;
             square.GetComponent<Square>().type = SquareTypes.NONE;
 
         }
-        else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.BLOCK)
+        else if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.BLOCK)
         {
             GameObject block = Instantiate(blockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -920,7 +704,7 @@ public class LevelManager : MonoBehaviour
             // TargetBlocks++;
             CreateObstacles(col, row, square, SquareTypes.NONE);
         }
-        else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
+        else if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
         {
             GameObject block = Instantiate(blockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1155,7 +939,7 @@ public class LevelManager : MonoBehaviour
 
     void CreateObstacles(int col, int row, GameObject square, SquareTypes type)
     {
-        if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.WIREBLOCK && type == SquareTypes.NONE) || type == SquareTypes.WIREBLOCK)
+        if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.WIREBLOCK && type == SquareTypes.NONE) || type == SquareTypes.WIREBLOCK)
         {
             GameObject block = Instantiate(wireBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1165,7 +949,7 @@ public class LevelManager : MonoBehaviour
             block.GetComponent<SpriteRenderer>().sortingOrder = 3;
             //   TargetBlocks++;
         }
-        else if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.SOLIDBLOCK && type == SquareTypes.NONE) || type == SquareTypes.SOLIDBLOCK)
+        else if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.SOLIDBLOCK && type == SquareTypes.NONE) || type == SquareTypes.SOLIDBLOCK)
         {
             GameObject block = Instantiate(solidBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1176,9 +960,9 @@ public class LevelManager : MonoBehaviour
 
             //  TargetBlocks++;
         }
-        else if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.UNDESTROYABLE && type == SquareTypes.NONE) || type == SquareTypes.UNDESTROYABLE)
+        else if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.UNDESTROYABLE && type == SquareTypes.NONE) || type == SquareTypes.UNDESTROYABLE)
         {
-            GameObject block = Instantiate(undestroyableBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
+            GameObject block = Instantiate(undesroyableBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
             block.transform.localPosition = new Vector3(0, 0, -0.5f);
             square.GetComponent<Square>().block.Add(block);
@@ -1186,7 +970,7 @@ public class LevelManager : MonoBehaviour
 
             //  TargetBlocks++;
         }
-        else if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.THRIVING && type == SquareTypes.NONE) || type == SquareTypes.THRIVING)
+        else if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.THRIVING && type == SquareTypes.NONE) || type == SquareTypes.THRIVING)
         {
             GameObject block = Instantiate(thrivingBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1230,12 +1014,14 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator NoMatchesCor()
     {
-        if (GameStatus == GameState.Playing)
+        if (GameManager.Instance.GetState<Playing>())
         {
             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.noMatch);
 
             GameObject.Find("Canvas").transform.Find("NoMoreMatches").gameObject.SetActive(true);
-            GameStatus = GameState.RegenLevel;
+           
+            GameManager.Instance.ChangeState<RegenLevel>();
+            
             yield return new WaitForSeconds(1);
             ReGenLevel();
         }
@@ -1245,42 +1031,29 @@ public class LevelManager : MonoBehaviour
     {
         itemsHided = false;
         DragBlocked = true;
-        if (GameStatus != GameState.Playing && GameStatus != GameState.RegenLevel)
+        if (!GameManager.Instance.GetState<Playing>() && !GameManager.Instance.GetState<RegenLevel>())
             DestroyItems();
-        else if (GameStatus == GameState.RegenLevel)
+        else if (GameManager.Instance.GetState<RegenLevel>())
             DestroyItems(true);
-        if (OnLevelLoaded != null)
-        {
-            OnLevelLoaded();
-            StartCoroutine(RegenMatches());
-            OnLevelLoaded();
-        }
+        
+        GameEvents.OnLevelLoaded?.Invoke();
+        StartCoroutine(RegenMatches());
+        GameEvents.OnLevelLoaded?.Invoke();
     }
 
-    IEnumerator RegenMatches(bool onlyFalling = false)
+    IEnumerator RegenMatches(bool falling = false)
     {
-        if (GameStatus == GameState.RegenLevel)
+        if (GameManager.Instance.GetState<RegenLevel>())
         {
-            //while (!itemsHided)
-            //{
             yield return new WaitForSeconds(0.5f);
-            //}
         }
-        if (!onlyFalling)
+        if (!falling)
             GenerateNewItems(false);
         else
-            LevelManager.Instance.onlyFalling = true;
-        //   yield return new WaitForSeconds(1f);
+           onlyFalling = true;
         yield return new WaitForFixedUpdate();
 
         List<List<Item>> combs = GetMatches();
-        //while (!matchesGot)
-        //{
-        //    yield return new WaitForFixedUpdate();
-
-        //}
-        //combs = newCombines;
-        //matchesGot = false;
         do
         {
             foreach (List<Item> comb in combs)
@@ -1293,27 +1066,16 @@ public class LevelManager : MonoBehaviour
                 }
             }
             combs = GetMatches();
-            //while (!matchesGot)
-            //{
-            //    yield return new WaitForFixedUpdate();
-
-            //}
-            //combs = newCombines;
-            //matchesGot = false;
-
-            //     yield return new WaitForFixedUpdate();
-        } while (combs.Count > 0);
+        } 
+        while (combs.Count > 0);
         yield return new WaitForFixedUpdate();
         SetPreBoosts();
-        LevelManager.Instance.onlyFalling = false;
-        if (GameStatus == GameState.RegenLevel)
-            GameStatus = GameState.Playing;
-        if (!onlyFalling)//2.1.5 prevents early move
+        onlyFalling = false;
+        if (GameManager.Instance.GetState<RegenLevel>())
+            GameManager.Instance.ChangeState<Playing>();
+        if (!onlyFalling)
             DragBlocked = false;
-        StartCoroutine(AI.THIS.CheckPossibleCombines());//2.1.5 prevents early move
-
-        //StartCoroutine(CheckFallingAtStart());
-
+        StartCoroutine(AI.THIS.CheckPossibleCombines());
     }
 
     void SetPreBoosts()
@@ -1382,7 +1144,7 @@ public class LevelManager : MonoBehaviour
             }
             catch (Exception ex)
             {
-                GameStatus = GameState.Win;
+                GameManager.Instance.ChangeState<Win>();
             }
         }
         return list2;
@@ -1432,7 +1194,7 @@ public class LevelManager : MonoBehaviour
     public IEnumerator FindMatchDelay()
     {
         yield return new WaitForSeconds(0.2f);
-        LevelManager.Instance.FindMatches();
+        FindMatches();
 
     }
 
@@ -1444,7 +1206,6 @@ public class LevelManager : MonoBehaviour
     public List<List<Item>> GetMatches(FindSeparating separating = FindSeparating.NONE, int matches = 3)
     {
         _newCombines = new List<List<Item>>();
-        //       List<Item> countedSquares = new List<Item>();
         countedSquares = new Hashtable();
         countedSquares.Clear();
         for (int col = 0; col < maxCols; col++)
@@ -1462,9 +1223,31 @@ public class LevelManager : MonoBehaviour
                 }
             }
         }
-        //print("global " + countedSquares.Count);
-        //  Debug.Break();
         return _newCombines;
+    }
+
+    IEnumerator GetMatchesCor(FindSeparating separating = FindSeparating.NONE, int matches = 3, bool Smooth = true)
+    {
+        Hashtable countedSquares = new Hashtable();
+        for (int col = 0; col < maxCols; col++)
+        {
+            for (int row = 0; row < maxRows; row++)
+            {
+
+                if (GetSquare(col, row) != null)
+                {
+                    if (!countedSquares.ContainsValue(GetSquare(col, row).item))
+                    {
+                        List<Item> newCombine = GetSquare(col, row).FindMatchesAround(separating, matches, countedSquares);
+                        if (newCombine.Count >= matches)
+                            _newCombines.Add(newCombine);
+                    }
+                }
+            }
+        }
+        matchesGot = true;
+        yield return new WaitForFixedUpdate();
+
     }
     IEnumerator FallingDown()
     {
@@ -1483,22 +1266,29 @@ public class LevelManager : MonoBehaviour
 
         while (true)
         {
-
-            //find matches
             yield return new WaitForSeconds(0.1f);
 
-            _combinedItems.Clear();
-            _combinedItems = _combineManager.GetCombine();
+            combinedItems.Clear();
+            combinedItems = _combineManager.GetCombine();
 
-            if (_combinedItems.Count > 0)
+
+            if (combinedItems.Count > 0)
                 combo++;
-            foreach (List<Item> desrtoyItems in _combinedItems)
+            foreach (List<Item> desrtoyItems in combinedItems)
             {
                 foreach (Item item in desrtoyItems)
                 {
                     if (item.currentType != ItemsTypes.NONE)
                         yield return new WaitForSeconds(0.1f);
-                    item.DestroyItem(true);
+                    item.DestroyItem(true); 
+                    if (item.currentType != ItemsTypes.NONE)
+                    {
+                        //while (!item.animationFinished)
+                        //{
+                        //    yield return new WaitForFixedUpdate();
+                        //}
+                    }
+
                 }
             }
 
@@ -1522,12 +1312,14 @@ public class LevelManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
             }
+
+            //falling down
             for (int i = 0; i < 20; i++)
-            {
+            {   //just for testing
                 for (int col = 0; col < maxCols; col++)
                 {
                     for (int row = maxRows - 1; row >= 0; row--)
-                    {
+                    {   //need to enumerate rows from bottom to top
                         if (GetSquare(col, row) != null)
                             GetSquare(col, row).FallOut();
                     }
@@ -1561,6 +1353,8 @@ public class LevelManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
             }
+
+            //detect near empty squares to fall into
             nearEmptySquareDetected = false;
 
             for (int col = 0; col < maxCols; col++)
@@ -1604,6 +1398,8 @@ public class LevelManager : MonoBehaviour
                 }
             }
         }
+
+        //thrive thriving blocks
         if (!thrivingBlockDestroyed)
         {
             bool thrivingBlockSelected = false;
@@ -1645,22 +1441,19 @@ public class LevelManager : MonoBehaviour
 
         thrivingBlockDestroyed = false;
 
-        if (GameStatus == GameState.Playing && !_ingredientFly)
-            LevelManager.Instance.CheckWinLose();
+        if (GameManager.Instance.GetState<Playing>() && !ingredientFly)
+            CheckWinLose();
 
-        if (combo > 2 && GameStatus == GameState.Playing)
+        if (combo > 2 && GameManager.Instance.GetState<Playing>())
         {
             gratzWords[UnityEngine.Random.Range(0, gratzWords.Length)].SetActive(true);
             combo = 0;
         }
+        LastMatchColor = -1;
         CheckItemsPositions();
         DragBlocked = false;
-        if (GameStatus == GameState.Playing)
+        if (GameManager.Instance.GetState<Playing>())
             StartCoroutine(AI.THIS.CheckPossibleCombines());
-
-
-
-
     }
 
     void CheckItemsPositions()
@@ -1747,7 +1540,7 @@ public class LevelManager : MonoBehaviour
 
     bool IsIngredientFalling()
     {
-        if (GameStatus == GameState.PreWinAnimations)
+        if (GameManager.Instance.GetState<PreWinAnimations>())
             return true;
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
         foreach (GameObject item in items)
@@ -1765,7 +1558,7 @@ public class LevelManager : MonoBehaviour
 
     bool IsAllItemsFallDown()
     {
-        if (GameStatus == GameState.PreWinAnimations)
+        if (GameManager.Instance.GetState<PreWinAnimations>())
             return true;
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
         foreach (GameObject item in items)
@@ -1847,7 +1640,43 @@ public class LevelManager : MonoBehaviour
         }
         return itemsList;
     }
-    
+
+    public List<Item> GetItemsCross(Square square, List<Item> exceptList = null, int COLOR = -1)
+    {
+        if (exceptList == null)
+            exceptList = new List<Item>();
+        int c = square.col;
+        int r = square.row;
+        List<Item> itemsList = new List<Item>();
+        Item item = null;
+        item = GetSquare(c - 1, r, true).item;
+        if (exceptList.IndexOf(item) <= -1)
+        {
+            if (item.color == COLOR || COLOR == -1)
+                itemsList.Add(item);
+        }
+        item = GetSquare(c + 1, r, true).item;
+        if (exceptList.IndexOf(item) <= -1)
+        {
+            if (item.color == COLOR || COLOR == -1)
+                itemsList.Add(item);
+        }
+        item = GetSquare(c, r - 1, true).item;
+        if (exceptList.IndexOf(item) <= -1)
+        {
+            if (item.color == COLOR || COLOR == -1)
+                itemsList.Add(item);
+        }
+        item = GetSquare(c, r + 1, true).item;
+        if (exceptList.IndexOf(item) <= -1)
+        {
+            if (item.color == COLOR || COLOR == -1)
+                itemsList.Add(item);
+        }
+
+        return itemsList;
+    }
+
     public List<Item> GetItems()
     {
         List<Item> itemsList = new List<Item>();
@@ -1881,7 +1710,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private void CheckIngredient()
+    public void CheckIngredient()
     {
         int row = maxRows;
         List<Square> sqList = GetBottomRow();
@@ -1897,7 +1726,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private List<Square> GetBottomRow()
+    public List<Square> GetBottomRow()
     {
         List<Square> itemsList = new List<Square>();
         int listCounter = 0;
@@ -1917,7 +1746,7 @@ public class LevelManager : MonoBehaviour
         return itemsList;
     }
 
-    private IEnumerator StartIdleCor()
+    IEnumerator StartIdleCor()
     {
         for (int col = 0; col < maxCols; col++)
         {
@@ -1932,10 +1761,10 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForFixedUpdate();
     }
 
-    public void StrippedShow(GameObject obj, bool horizontal)
+    public void StrippedShow(GameObject obj, bool horrizontal)
     {
         GameObject effect = Instantiate(stripesEffect, obj.transform.position, Quaternion.identity) as GameObject;
-        if (!horizontal)
+        if (!horrizontal)
             effect.transform.Rotate(Vector3.back, 90);
         Destroy(effect, 1);
     }
@@ -1958,18 +1787,20 @@ public class LevelManager : MonoBehaviour
                 poptxt.transform.GetComponentInChildren<Outline>().effectColor = scoresColorsOutline[Mathf.Clamp(color, 0, scoresColorsOutline.Length)];
             }
             poptxt.transform.SetParent(parent);
-            poptxt.transform.position = pos;
+            //   poptxt.transform.position += Vector3.right * 1;
+            poptxt.transform.position = pos;//2.1.6
             poptxt.transform.localScale = Vector3.one / 1.5f;
             Destroy(poptxt, 0.3f);
         }
     }
 
-    private void UpdateBar()
+    void UpdateBar()
     {
         ProgressBarScript.Instance.UpdateDisplay((float)Score * 100f / ((float)star1 / ((star1 * 100f / star3)) * 100f) / 100f);
+
     }
 
-    private void CheckStars()
+    void CheckStars()
     {
         if (Score >= star1 && stars <= 0)
         {
@@ -2034,15 +1865,15 @@ public class LevelManager : MonoBehaviour
                 maxCols = int.Parse(sizes[0]);
                 maxRows = int.Parse(sizes[1]);
                 squaresArray = new Square[maxCols * maxRows];
-                _levelSquaresFile = new SquareBlocks[maxRows * maxCols];
-                for (int i = 0; i < _levelSquaresFile.Length; i++)
+                levelSquaresFile = new SquareBlocks[maxRows * maxCols];
+                for (int i = 0; i < levelSquaresFile.Length; i++)
                 {
 
                     SquareBlocks sqBlocks = new SquareBlocks();
                     sqBlocks.Block = SquareTypes.EMPTY;
                     sqBlocks.Obstacle = SquareTypes.NONE;
 
-                    _levelSquaresFile[i] = sqBlocks;
+                    levelSquaresFile[i] = sqBlocks;
                 }
             }
             else if (line.StartsWith("LIMIT"))
@@ -2057,6 +1888,8 @@ public class LevelManager : MonoBehaviour
                 string blocksString = line.Replace("COLOR LIMIT", string.Empty).Trim();
                 colorLimit = int.Parse(blocksString);
             }
+
+            //check third line to get missions
             else if (line.StartsWith("STARS"))
             {
                 string blocksString = line.Replace("STARS", string.Empty).Trim();
@@ -2064,8 +1897,8 @@ public class LevelManager : MonoBehaviour
                 star1 = int.Parse(blocksNumbers[0]);
                 star2 = int.Parse(blocksNumbers[1]);
                 star3 = int.Parse(blocksNumbers[2]);
-                if (ProgressBarScript.Instance != null)
-                    ProgressBarScript.Instance.InitBar();
+                if (ProgressBarScript.Instance != null)//2.1.2
+                    ProgressBarScript.Instance.InitBar();//2.1.2
             }
             else if (line.StartsWith("COLLECT COUNT "))
             {
@@ -2090,12 +1923,13 @@ public class LevelManager : MonoBehaviour
                 }
             }
             else
-            {
+            { //Maps
+              //Split lines again to get map numbers
                 string[] st = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < st.Length; i++)
                 {
-                    _levelSquaresFile[mapLine * maxCols + i].Block = (SquareTypes)int.Parse(st[i][0].ToString());
-                    _levelSquaresFile[mapLine * maxCols + i].Obstacle = (SquareTypes)int.Parse(st[i][1].ToString());
+                    levelSquaresFile[mapLine * maxCols + i].Block = (SquareTypes)int.Parse(st[i][0].ToString());
+                    levelSquaresFile[mapLine * maxCols + i].Obstacle = (SquareTypes)int.Parse(st[i][1].ToString());
                 }
                 mapLine++;
             }

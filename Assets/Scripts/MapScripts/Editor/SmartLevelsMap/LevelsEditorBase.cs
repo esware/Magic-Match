@@ -8,7 +8,7 @@ public abstract class LevelsEditorBase : UnityEditor.Editor
 {
     protected List<MapLevel> GetMapLevels()
     {
-        return FindObjectsOfType<MapLevel>().OrderBy(ml => ml.Number).ToList();
+        return FindObjectsOfType<MapLevel>().OrderBy(ml => ml.number).ToList();
     }
 
     protected MapLevel CreateMapLevel(Vector3 position, int number, MapLevel mapLevelPrefab)
@@ -22,7 +22,7 @@ public abstract class LevelsEditorBase : UnityEditor.Editor
     {
         for (int i = 0; i < mapLevels.Count; i++)
         {
-            mapLevels[i].Number = i + 1;
+            mapLevels[i].number = i + 1;
             mapLevels[i].name = string.Format("Level{0:00}", i + 1);
         }
     }
@@ -32,7 +32,7 @@ public abstract class LevelsEditorBase : UnityEditor.Editor
         MapScripts.Scripts.Path path = FindObjectOfType<MapScripts.Scripts.Path>();
         path.waypoints.Clear();
         foreach (MapLevel mapLevel in mapLevels)
-            path.waypoints.Add(mapLevel.PathPivot);
+            path.waypoints.Add(mapLevel.pathPivot);
     }
 
     protected void SetAllMapLevelsAsDirty()

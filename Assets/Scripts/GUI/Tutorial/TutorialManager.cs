@@ -15,14 +15,14 @@ namespace Dev.Scripts.GUI.Tutorial
 
 	void OnEnable ()
 	{
-		LevelManager.OnLevelLoaded += CheckNewTarget;
-		LevelManager.OnStartPlay += DisableTutorial;
+		GameEvents.OnLevelLoaded += CheckNewTarget;
+		GameEvents.OnStartPlay += DisableTutorial;
 	}
 
 	void OnDisable ()
 	{
-		LevelManager.OnLevelLoaded -= CheckNewTarget;
-		LevelManager.OnStartPlay -= DisableTutorial;
+		GameEvents.OnLevelLoaded -= CheckNewTarget;
+		GameEvents.OnStartPlay -= DisableTutorial;
 	}
 
 	void DisableTutorial ()

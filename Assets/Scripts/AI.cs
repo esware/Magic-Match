@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GameStates;
 
 public enum CombineType
 {
@@ -110,17 +111,17 @@ public class AI : MonoBehaviour
 			yield return new WaitForEndOfFrame();
 		}
 		//if game is not in Playing status - wait
-		while (LevelManager.Instance.GameStatus != GameState.Playing)
+		while (!GameManager.Instance.GetState<Playing>())
 		{
 			yield return new WaitForEndOfFrame();
 		}
 
 		//if drag have not blocked and game status Playing - continue
-		if (!LevelManager.Instance.DragBlocked && LevelManager.Instance.GameStatus == GameState.Playing)
+		if (!LevelManager.Instance.DragBlocked && GameManager.Instance.GetState<Playing>())
 		{
 			nextMoveItems = new List<Item>();
 
-			if (LevelManager.Instance.GameStatus != GameState.Playing)
+			if (!GameManager.Instance.GetState<Playing>())
 				yield break;
 
 

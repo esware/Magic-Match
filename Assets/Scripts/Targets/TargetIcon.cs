@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Dev.Scripts.Targets;
+using GameStates;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -58,7 +59,7 @@ public class TargetIcon : MonoBehaviour
         private void Update()
         {
             if(target?.Done() ?? false) SetCheck();
-            else if(LevelManager.Instance.GameStatus == GameState.PreFailed || LevelManager.Instance.GameStatus == GameState.GameOver) SetFailed();
+            else if(GameManager.Instance.GetState<PreFailed>() || GameManager.Instance.GetState<GameOver>()) SetFailed();
             else if((!target?.Done() ?? false) && checkObject.gameObject.activeSelf) SetContinue();
         }
 

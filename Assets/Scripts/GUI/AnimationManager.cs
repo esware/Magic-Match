@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Dev.Scripts.System;
+using GameStates;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -117,7 +118,7 @@ namespace Dev.Scripts.GUI
             {
                 videoButton.gameObject.SetActive(false);
             }
-#elif GOOGLE_MOBILE_ADS//2.2
+#elif GOOGLE_MOBILE_ADS
 			bool stillShow = true;
 #if UNITY_ADS
         stillShow = !InitScript.Instance.GetRewardedUnityAdsReady ();
@@ -204,20 +205,20 @@ namespace Dev.Scripts.GUI
         }
         if (name == "MenuPause")
         {
-            if (LevelManager.Instance.GameStatus == GameState.Playing)
-                LevelManager.Instance.GameStatus = GameState.Pause;
+            if (GameManager.Instance.GetState<Playing>())
+                GameManager.Instance.ChangeState<PauseState>();
         }
 
         if (name == "PrePlay")
         {
             CloseMenu();
-            LevelManager.Instance.GameStatus = GameState.WaitForPopup;
+            GameManager.Instance.ChangeState<WaitForPopup>();
 
         }
         if (name == "PreFailed")
         {
             if (LevelManager.Instance.limit <= 0)
-                LevelManager.Instance.GameStatus = GameState.GameOver;
+                GameManager.Instance.ChangeState<GameOver>();
             transform.Find("Video").gameObject.SetActive(false);
 
             CloseMenu();
@@ -250,13 +251,12 @@ namespace Dev.Scripts.GUI
 
             if (InitScript.Instance.enableUnityAds)
             {
-
                 if (InitScript.Instance.GetRewardedUnityAdsReady())
                 {
                     transform.Find("Video").gameObject.SetActive(true);
                 }
             }
-#elif GOOGLE_MOBILE_ADS//2.2
+#elif GOOGLE_MOBILE_ADS
 			bool stillShow = true;
 #if UNITY_ADS
         stillShow = !InitScript.Instance.GetRewardedUnityAdsReady ();
@@ -324,24 +324,22 @@ namespace Dev.Scripts.GUI
         }
         if (gameObject.name == "MenuComplete")
         {
-            LevelManager.Instance.GameStatus = GameState.Map;
-            //2.1
+            GameManager.Instance.ChangeState<Map>();
             PlayerPrefs.SetInt("OpenLevel", LevelManager.Instance.currentLevel + 1);
-            LevelManager.Instance.LoadLevel();//2.1.5  Switch target
-            if (LevelsMap._instance.GetMapLevels().Count >= LevelManager.Instance.currentLevel)
+            LevelManager.Instance.LoadLevel();
+            if (LevelsMap.Instance.GetMapLevels().Count >= LevelManager.Instance.currentLevel)
                 GameObject.Find("CanvasGlobal").transform.Find("MenuPlay").gameObject.SetActive(true);
         }
         if (gameObject.name == "MenuFailed")
         {
-            LevelManager.Instance.GameStatus = GameState.Map;
+            GameManager.Instance.ChangeState<Map>();
         }
 
         if (SceneManager.GetActiveScene().name == "game")
         {
-            if (LevelManager.Instance.GameStatus == GameState.Pause)
+            if (GameManager.Instance.GetState<PauseState>())
             {
-                LevelManager.Instance.GameStatus = GameState.WaitAfterClose;
-
+                GameManager.Instance.ChangeState<WaitAfterClose>();
             }
         }
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.swish[1]);
@@ -369,8 +367,7 @@ namespace Dev.Scripts.GUI
             if (InitScript.Gems >= 12)
             {
                 InitScript.Instance.SpendGems(12);
-                //                LevelData.LimitAmount += 12;
-                LevelManager.Instance.GameStatus = GameState.WaitAfterClose;
+                GameManager.Instance.ChangeState<WaitAfterClose>();
                 gameObject.SetActive(false);
 
             }
@@ -381,16 +378,15 @@ namespace Dev.Scripts.GUI
         }
         else if (gameObject.name == "MenuFailed")
         {
-            LevelManager.Instance.GameStatus = GameState.Map;
+            GameManager.Instance.ChangeState<Map>();
         }
         else if (gameObject.name == "MenuPlay")
         {
             if (InitScript.lifes > 0)
             {
                 InitScript.Instance.SpendLife(1);
-                LevelManager.Instance.GameStatus = GameState.PrepareGame;
+                GameManager.Instance.ChangeState<PrepareGame>();
                 CloseMenu();
-                //Application.LoadLevel( "game" );
             }
             else
             {
@@ -401,22 +397,20 @@ namespace Dev.Scripts.GUI
         else if (gameObject.name == "MenuPause")
         {
             CloseMenu();
-            LevelManager.Instance.GameStatus = GameState.Playing;
+            GameManager.Instance.ChangeState<Playing>();
         }
     }
 
     public void PlayTutorial()
     {
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
-        LevelManager.Instance.GameStatus = GameState.Playing;
-        //    mainscript.Instance.dropDownTime = Time.time + 0.5f;
-        //        CloseMenu();
+        GameManager.Instance.ChangeState<Playing>();
     }
 
     public void BackToMap()
     {
         Time.timeScale = 1;
-        LevelManager.Instance.GameStatus = GameState.GameOver;
+        GameManager.Instance.ChangeState<GameOver>();
         CloseMenu();
     }
 
@@ -426,7 +420,7 @@ namespace Dev.Scripts.GUI
         CloseMenu();
     }
 
-    public void Again()//2.2.2
+    public void Again()
     {
         GameObject gm = new GameObject();
         gm.AddComponent<RestartLevel>();
@@ -553,7 +547,7 @@ namespace Dev.Scripts.GUI
         else
             LevelManager.Instance.limit += LevelManager.Instance.extraFailedSecs;
         GetComponent<Animation>()["bannerFailed"].speed = 1;
-        LevelManager.Instance.GameStatus = GameState.Playing;
+        GameManager.Instance.ChangeState<Playing>();
     }
 
     public void GiveUp()
@@ -579,7 +573,6 @@ namespace Dev.Scripts.GUI
         {
             InitScript.Instance.SpendGems(price);
             InitScript.Instance.BuyBoost(boostType, price, count);
-            //InitScript.Instance.SpendBoost(boostType);
             CloseMenu();
         }
         else

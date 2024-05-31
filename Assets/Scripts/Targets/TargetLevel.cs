@@ -13,7 +13,9 @@ namespace Dev.Scripts.Targets
     }
     
     [Serializable]
-    public class TargetList : ReorderableArray<TargetObject> {
+    public class TargetList : ReorderableArray<TargetObject>
+    {
+        
     }
 
     [Serializable]
@@ -22,7 +24,7 @@ namespace Dev.Scripts.Targets
         public Target type;
         public Sprite icon;
         public int color;
-        [FormerlySerializedAs("count")]public int targetCount;
+        public int targetCount;
         [HideInInspector] public int countCollected;
         [HideInInspector] public TargetIcon guiObj;
 

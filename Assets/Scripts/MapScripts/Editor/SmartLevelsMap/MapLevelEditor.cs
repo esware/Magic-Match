@@ -50,11 +50,11 @@ public class MapLevelEditor : LevelsEditorBase
 
     private void UpdateSceneName()
     {
-        string oldSceneName = _mapLevel.SceneName;
-        string newSceneName = _mapLevel.LevelScene == null ? null : _mapLevel.LevelScene.name;
+        string oldSceneName = _mapLevel.sceneName;
+        string newSceneName = _mapLevel.levelScene == null ? null : _mapLevel.levelScene.name;
         if (oldSceneName != newSceneName)
         {
-            _mapLevel.SceneName = newSceneName;
+            _mapLevel.sceneName = newSceneName;
             EditorUtility.SetDirty(_mapLevel);
         }
     }
@@ -63,13 +63,13 @@ public class MapLevelEditor : LevelsEditorBase
     {
         Vector2 position = GetInterpolatedPosition(ind, mapLevels);
         LevelsMap levelsMap = FindObjectOfType<LevelsMap>();
-        MapLevel mapLevel = CreateMapLevel(position, ind, levelsMap.MapLevelPrefab);
+        MapLevel mapLevel = CreateMapLevel(position, ind, levelsMap.mapLevelPrefab);
         mapLevel.transform.parent = _mapLevel.transform.parent;
         mapLevel.transform.SetSiblingIndex(ind);
         mapLevels.Insert(ind, mapLevel);
         UpdateLevelsNumber(mapLevels);
         UpdatePathWaypoints(mapLevels);
-        SetStarsEnabled(levelsMap, levelsMap.StarsEnabled);
+        SetStarsEnabled(levelsMap, levelsMap.starsEnabled);
         Selection.activeGameObject = mapLevel.gameObject;
     }
 
@@ -99,7 +99,7 @@ public class MapLevelEditor : LevelsEditorBase
             mapLevels.Any()
                 ? mapLevels[Mathf.Max(0, ind - 1)].gameObject
                 : levelsMap.gameObject;
-        SetStarsEnabled(levelsMap, levelsMap.StarsEnabled);
+        SetStarsEnabled(levelsMap, levelsMap.starsEnabled);
         _pendingDeletedGameObject = _mapLevel.gameObject;
     }
 

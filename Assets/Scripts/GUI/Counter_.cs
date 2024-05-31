@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Dev.Scripts.Targets;
+using GameStates;
 using UnityEngine.UI;
 
 namespace Dev.Scripts.GUI
@@ -60,7 +61,7 @@ namespace Dev.Scripts.GUI
 				int seconds = Mathf.FloorToInt (LevelManager.Instance.limit - minutes * 60);
 				txt.text = "" + string.Format ("{0:00}:{1:00}", minutes, seconds);
 				txt.transform.localScale = Vector3.one * 0.68f;
-				if (LevelManager.Instance.limit <= 30 && LevelManager.Instance.GameStatus == GameState.Playing) {
+				if (LevelManager.Instance.limit <= 30 &&  GameManager.Instance.GetState<Playing>()) {
 					txt.color = new Color (216f / 255f, 0, 0);
 					txt.GetComponent<Outline> ().effectColor = Color.white;
 					if (lastTime + 30f < Time.time) {

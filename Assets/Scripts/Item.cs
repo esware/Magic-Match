@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Dev.Scripts.GUI;
+using GameStates;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -639,7 +640,7 @@ public class Item : MonoBehaviour
         float startTime = Time.time;
         Vector3 startPos = transform.position;
         float speed = 10;
-        if (LevelManager.Instance.GameStatus == GameState.PreWinAnimations)
+        if (GameManager.Instance.GetState<PreWinAnimations>())
             speed = 10;
         float distance = Vector3.Distance(startPos, _square.transform.position);
         float fracJourney = 0;
@@ -900,7 +901,7 @@ public class Item : MonoBehaviour
 
             FiveSec.GetComponent<Animation>().Play("5secfly");
             Destroy(FiveSec, 1);
-            if (LevelManager.Instance.GameStatus == GameState.Playing)
+            if (GameManager.Instance.GetState<Playing>())
                 LevelManager.Instance.limit += 5;
         }
 
@@ -920,7 +921,7 @@ public class Item : MonoBehaviour
             DestroyVertical();
         else if (currentType == ItemsTypes.PACKAGE)
             DestroyPackage();
-        else if (currentType == ItemsTypes.BOMB && LevelManager.Instance.GameStatus == GameState.PreWinAnimations)
+        else if (currentType == ItemsTypes.BOMB && GameManager.Instance.GetState<PreWinAnimations>())
             CheckChocoBomb(this, LevelManager.Instance.GetRandomItems(1)[0]);
 
         if (NextType != ItemsTypes.NONE)
