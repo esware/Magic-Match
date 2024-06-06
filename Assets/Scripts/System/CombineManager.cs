@@ -6,45 +6,45 @@ namespace Dev.Scripts.System
 {
     public class CombineManager
 {
-	List<Combine> combines = new List<Combine> ();
-	List<Combine> tempCombines = new List<Combine> ();
-	Dictionary<Item, Combine> dic = new Dictionary<Item, Combine> ();
-	private int maxCols;
-	private int maxRows;
-	bool vChecking;
+	private List<Combine> _combines = new List<Combine> ();
+	private List<Combine> _tempCombines = new List<Combine> ();
+	private Dictionary<Item, Combine> _dic = new Dictionary<Item, Combine> ();
+	private int _maxCols;
+	private int _maxRows;
+	bool _vChecking;
 
 	public List<List<Item>> GetCombine ()
 	{
 
 		List<List<Item>> combinedItems = new List<List<Item>> ();
-		maxCols = LevelManager.Instance.maxCols;
-		maxRows = LevelManager.Instance.maxRows;
-		combines.Clear ();
-		tempCombines.Clear ();
-		dic.Clear ();
+		_maxCols = GameManager.Instance.maxCols;
+		_maxRows = GameManager.Instance.maxRows;
+		_combines.Clear ();
+		_tempCombines.Clear ();
+		_dic.Clear ();
 		int color = -1;
 		Combine combine = new Combine ();
-		vChecking = false;
-		//Horrizontal searching
-		for (int row = 0; row < maxRows; row++) {
+		_vChecking = false;
+
+		for (int row = 0; row < _maxRows; row++) {
 			color = -1;
-			for (int col = 0; col < maxCols; col++) {
-				Square square = LevelManager.Instance.GetSquare (col, row);
+			for (int col = 0; col < _maxCols; col++) {
+				Square square = GameManager.Instance.GetSquare (col, row);
 				if (IsSquareNotNull (square)) {
 					CheckMatches (square.item, color, ref combine);
-					color = square.item.color;
+					color = square.item.Color;
 				}
 			}
 		}
-		vChecking = true;
+		_vChecking = true;
 		//Vertical searching
-		for (int col = 0; col < maxCols; col++) {
+		for (int col = 0; col < _maxCols; col++) {
 			color = -1;
-			for (int row = 0; row < maxRows; row++) {
-				Square square = LevelManager.Instance.GetSquare (col, row);
+			for (int row = 0; row < _maxRows; row++) {
+				Square square = GameManager.Instance.GetSquare (col, row);
 				if (IsSquareNotNull (square)) {
 					CheckMatches (square.item, color, ref combine);
-					color = square.item.color;
+					color = square.item.Color;
 				}
 			}
 		}
@@ -53,7 +53,7 @@ namespace Dev.Scripts.System
 		CheckCombines ();
 //		Debug.Log ("combines detected " + combines.Count);
 		//inspect combines
-		foreach (Combine cmb in combines) {
+		foreach (Combine cmb in _combines) {
 //			Debug.Log ("h: " + cmb.hCount + " v: " + cmb.vCount);
 //			Debug.Log (cmb.items.Count);
 //			Debug.Log (cmb.nextType);
@@ -61,10 +61,10 @@ namespace Dev.Scripts.System
 			if (cmb.nextType != ItemsTypes.NONE) {
 				Item item = cmb.items [UnityEngine.Random.Range (0, cmb.items.Count)];
 
-				Item draggedItem = LevelManager.Instance.lastDraggedItem;
+				Item draggedItem = GameManager.Instance.lastDraggedItem;
 				if (draggedItem) {
-					if (draggedItem.color != item.color)
-						draggedItem = LevelManager.Instance.lastSwitchedItem;
+					if (draggedItem.Color != item.Color)
+						draggedItem = GameManager.Instance.lastSwitchedItem;
 					//check the dragged item found in this combine or not and change this type
 					if (cmb.items.IndexOf (draggedItem) >= 0) {
 						item = draggedItem;
@@ -85,20 +85,20 @@ namespace Dev.Scripts.System
 		List<Combine> countedCombines = new List<Combine> ();
 
 		//find and merge cross combines (+)
-		foreach (Combine comb in tempCombines) {
-			if (tempCombines.Count >= 2) {
+		foreach (Combine comb in _tempCombines) {
+			if (_tempCombines.Count >= 2) {
 				foreach (Item item in comb.items) {
 					Combine newComb = FindCombineInDic (item);  
 					if (comb != newComb && countedCombines.IndexOf (newComb) < 0 && countedCombines.IndexOf (comb) < 0 && IsCombineMatchThree (newComb)) {
 						countedCombines.Add (newComb);
 						countedCombines.Add (comb);
 						Combine mergedCombine = MergeCombines (comb, newComb);
-						combines.Add (mergedCombine);
+						_combines.Add (mergedCombine);
 						foreach (Item item_ in comb.items) {
-							dic [item_] = mergedCombine;						
+							_dic [item_] = mergedCombine;						
 						}
 						foreach (Item item_ in newComb.items) {
-							dic [item_] = mergedCombine;						
+							_dic [item_] = mergedCombine;						
 						}
 
 						break;
@@ -108,9 +108,9 @@ namespace Dev.Scripts.System
 		} 
 
 		//find simple combines (3,4,5) 
-		foreach (Combine comb in tempCombines) {
-			if (combines.IndexOf (comb) < 0 && IsCombineMatchThree (comb) && countedCombines.IndexOf (comb) < 0) {
-				combines.Add (comb);
+		foreach (Combine comb in _tempCombines) {
+			if (_combines.IndexOf (comb) < 0 && IsCombineMatchThree (comb) && countedCombines.IndexOf (comb) < 0) {
+				_combines.Add (comb);
 				comb.nextType = SetNextItemType (comb);
 			}
 		}
@@ -144,8 +144,8 @@ namespace Dev.Scripts.System
 		if (combine.hCount >= 3 && combine.vCount >= 3)
 			return ItemsTypes.PACKAGE;
 		if (combine.hCount > 3 || combine.vCount > 3) {
-			if (LevelManager.Instance.lastDraggedItem) {
-				Vector2 dir = LevelManager.Instance.lastDraggedItem.moveDirection;
+			if (GameManager.Instance.lastDraggedItem) {
+				Vector2 dir = GameManager.Instance.lastDraggedItem.moveDirection;
 				if (Math.Abs (dir.x) > Math.Abs (dir.y))
 					return ItemsTypes.HORIZONTAL_STRIPPED;
 				else
@@ -170,11 +170,11 @@ namespace Dev.Scripts.System
 	void AddItemToCombine (Combine combine, Item item)
 	{
 		combine.AddingItem = item;
-		dic [item] = combine;
+		_dic [item] = combine;
 
 		if (IsCombineMatchThree (combine)) {
-			if (tempCombines.IndexOf (combine) < 0) {
-				tempCombines.Add (combine);
+			if (_tempCombines.IndexOf (combine) < 0) {
+				_tempCombines.Add (combine);
 				//Debug.Log("add " + combine.GetHashCode());
 			}
 		}
@@ -201,12 +201,12 @@ namespace Dev.Scripts.System
 	{
 		Combine combine = null;
 		Item leftItem = item.GetLeftItem ();
-		if (CheckColor (item, leftItem) && !vChecking)
+		if (CheckColor (item, leftItem) && !_vChecking)
 			combine = FindCombineInDic (leftItem);
 		if (combine != null)
 			return combine;
 		Item topItem = item.GetTopItem ();
-		if (CheckColor (item, topItem) && vChecking)
+		if (CheckColor (item, topItem) && _vChecking)
 			combine = FindCombineInDic (topItem);
 		if (combine != null)
 			return combine;
@@ -218,7 +218,7 @@ namespace Dev.Scripts.System
 	Combine FindCombineInDic (Item item)
 	{
 		Combine combine;
-		if (dic.TryGetValue (item, out combine)) {
+		if (_dic.TryGetValue (item, out combine)) {
 			return combine;
 		}
 		return new Combine ();
@@ -227,7 +227,7 @@ namespace Dev.Scripts.System
 	bool CheckColor (Item item, Item nextItem)
 	{
 		if (nextItem) {
-			if (nextItem.color == item.color && nextItem.currentType != ItemsTypes.BOMB && nextItem.currentType != ItemsTypes.INGREDIENT)//2.0
+			if (nextItem.Color == item.Color && nextItem.currentType != ItemsTypes.BOMB && nextItem.currentType != ItemsTypes.INGREDIENT)//2.0
 				return true;
 		}
 		return false;

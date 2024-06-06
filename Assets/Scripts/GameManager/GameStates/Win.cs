@@ -5,21 +5,21 @@ namespace GameStates
 {
     public class Win:GameState
     {
-        private LevelManager _levelManager;
+        private GameManager _gameManager;
         public override void EnterState()
         {
-            _levelManager= LevelManager.Instance;
+            _gameManager= GameManager.Instance;
             
             if (!InitScript.Instance.losingLifeEveryGame)
                 InitScript.Instance.AddLife(1);
             
             GameEvents.OnMenuComplete?.Invoke();
             
-            if (PlayerPrefs.GetInt(string.Format("Level.{0:000}.StarsCount", _levelManager.currentLevel), 0) < _levelManager.stars)
-                PlayerPrefs.SetInt(string.Format("Level.{0:000}.StarsCount", _levelManager.currentLevel), _levelManager.stars);
-            if (LevelManager.Score > PlayerPrefs.GetInt("Score" + _levelManager.currentLevel))
+            if (PlayerPrefs.GetInt(string.Format("Level.{0:000}.StarsCount", _gameManager.currentLevel), 0) < _gameManager.stars)
+                PlayerPrefs.SetInt(string.Format("Level.{0:000}.StarsCount", _gameManager.currentLevel), _gameManager.stars);
+            if (GameManager.Score > PlayerPrefs.GetInt("Score" + _gameManager.currentLevel))
             {
-                PlayerPrefs.SetInt("Score" + _levelManager.currentLevel, LevelManager.Score);
+                PlayerPrefs.SetInt("Score" + _gameManager.currentLevel, GameManager.Score);
             }
 
 #if PLAYFAB

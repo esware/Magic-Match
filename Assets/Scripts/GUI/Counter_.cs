@@ -32,17 +32,17 @@ namespace Dev.Scripts.GUI
 	void Update ()
 	{
 		if (name == "Score") {
-			txt.text = "" + LevelManager.Score;
+			txt.text = "" + GameManager.Score;
 		}
 		if (name == "BestScore") {
 			txt.text = "Best score:" + PlayerPrefs.GetInt ("Score" + PlayerPrefs.GetInt ("OpenLevel"));
 		}
 
 		if (name == "Limit") {
-			if (LevelManager.Instance.limitType == LIMIT.MOVES) {
-				txt.text = "" + LevelManager.Instance.limit;
+			if (GameManager.Instance.limitType == LIMIT.MOVES) {
+				txt.text = "" + GameManager.Instance.limit;
 				txt.transform.localScale = Vector3.one;
-				if (LevelManager.Instance.limit <= 5) {
+				if (GameManager.Instance.limit <= 5) {
 //					txt.color = new Color (216f / 255f, 0, 0);
 //					txt.GetComponent<Outline> ().effectColor = Color.white;
 					if (!alert) {
@@ -57,11 +57,11 @@ namespace Dev.Scripts.GUI
 				}
 
 			} else {
-				int minutes = Mathf.FloorToInt (LevelManager.Instance.limit / 60F);
-				int seconds = Mathf.FloorToInt (LevelManager.Instance.limit - minutes * 60);
+				int minutes = Mathf.FloorToInt (GameManager.Instance.limit / 60F);
+				int seconds = Mathf.FloorToInt (GameManager.Instance.limit - minutes * 60);
 				txt.text = "" + string.Format ("{0:00}:{1:00}", minutes, seconds);
 				txt.transform.localScale = Vector3.one * 0.68f;
-				if (LevelManager.Instance.limit <= 30 &&  GameManager.Instance.GetState<Playing>()) {
+				if (GameManager.Instance.limit <= 30 &&  GameManager.Instance.GetState<Playing>()) {
 					txt.color = new Color (216f / 255f, 0, 0);
 					txt.GetComponent<Outline> ().effectColor = Color.white;
 					if (lastTime + 30f < Time.time) {
@@ -77,13 +77,13 @@ namespace Dev.Scripts.GUI
 			}
 		}
 		if (name == "TargetBlocks") {
-			txt.text = "" + LevelManager.Instance.TargetBlocks;
+			txt.text = "" + GameManager.Instance.TargetBlocks;
 		}
 		if (name == "TargetIngr1") {
-			txt.text = "" + LevelManager.Instance.ingrCountTarget [0];
+			txt.text = "" + GameManager.Instance.ingrCountTarget [0];
 		}
 		if (name == "TargetIngr2") {
-			txt.text = "" + LevelManager.Instance.ingrCountTarget [1];
+			txt.text = "" + GameManager.Instance.ingrCountTarget [1];
 		}
 		if (name == "Lifes") {
 			txt.text = "" + InitScript.Instance.GetLife ();
@@ -93,21 +93,21 @@ namespace Dev.Scripts.GUI
 			txt.text = "" + InitScript.Gems;
 		}
 		if (name == "TargetScore") {
-			txt.text = "" + LevelManager.Instance.star1;
+			txt.text = "" + GameManager.Instance.star1;
 		}
 		if (name == "Level") {
 			txt.text = "" + levelNum;
 		}
 		
 		if (name == "TargetDescription1") {
-			if (LevelManager.Instance.target == Target.SCORE)
-				txt.text = LevelManager.Instance.targetDiscriptions [0].Replace ("%n", "" + LevelManager.Instance.star1);
-			else if (LevelManager.Instance.target == Target.BLOCKS)
-				txt.text = LevelManager.Instance.targetDiscriptions [1];
-			else if (LevelManager.Instance.target == Target.INGREDIENT)
-				txt.text = LevelManager.Instance.targetDiscriptions [2];
-			else if (LevelManager.Instance.target == Target.COLLECT)
-				txt.text = LevelManager.Instance.targetDiscriptions [3];
+			if (GameManager.Instance.target == Target.SCORE)
+				txt.text = GameManager.Instance.targetDiscriptions [0].Replace ("%n", "" + GameManager.Instance.star1);
+			else if (GameManager.Instance.target == Target.BLOCKS)
+				txt.text = GameManager.Instance.targetDiscriptions [1];
+			else if (GameManager.Instance.target == Target.INGREDIENT)
+				txt.text = GameManager.Instance.targetDiscriptions [2];
+			else if (GameManager.Instance.target == Target.COLLECT)
+				txt.text = GameManager.Instance.targetDiscriptions [3];
 
 		}
 

@@ -13,8 +13,8 @@ namespace Dev.Scripts.GUI
         // Use this for initialization
         void OnEnable ()
         {
-            if (LevelManager.Instance != null)
-                GetComponent<Image> ().sprite = pictures [Mathf.Clamp( (int)((float)LevelManager.Instance.currentLevel / (float)changeBackgoundEveryLevels - 0.01f),0, pictures.Length)];//2.2.2
+            if (GameManager.Instance != null)
+                GetComponent<Image> ().sprite = pictures [Mathf.Clamp( (int)((float)GameManager.Instance.currentLevel / (float)changeBackgoundEveryLevels - 0.01f),0, pictures.Length)];//2.2.2
 
 //			GetComponent<Image> ().sprite = pictures [(int)((float)LevelManager.Instance.currentLevel / 20f - 0.01f)];
 

@@ -89,7 +89,7 @@ public class LevelMakerEditor : EditorWindow
             var camera = Camera.main;
             if (camera != null)
             {
-                LevelManager lm = camera.GetComponent<LevelManager>();
+                GameManager lm = camera.GetComponent<GameManager>();
                 InitScript initscript = camera.GetComponent<InitScript>();
                 if (oldList == null)
                 {
@@ -361,7 +361,7 @@ public class LevelMakerEditor : EditorWindow
 
     void GUIAds()
     {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
+        GameManager lm = Camera.main.GetComponent<GameManager>();
         InitScript initscript = Camera.main.GetComponent<InitScript>();
         bool oldenableAds = initscript.enableUnityAds;
 
@@ -578,7 +578,7 @@ public class LevelMakerEditor : EditorWindow
 
     void GUIInappSettings()
     {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
+        GameManager lm = Camera.main.GetComponent<GameManager>();
         
         GUILayout.Space(10);
         bool oldenableInApps = lm.enableInApps;
@@ -676,7 +676,7 @@ public class LevelMakerEditor : EditorWindow
 
     void GUISettings()
     {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
+        GameManager lm = Camera.main.GetComponent<GameManager>();
         InitScript initscript = Camera.main.GetComponent<InitScript>();
         GUILayout.Label("Game settings:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
         GUILayout.BeginHorizontal();
@@ -865,7 +865,7 @@ public class LevelMakerEditor : EditorWindow
 
     void ResetSettings()
     {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
+        GameManager lm = Camera.main.GetComponent<GameManager>();
         lm.scoreForItem = 10;
         lm.scoreForBlock = 100;
         lm.scoreForWireBlock = 100;
@@ -901,7 +901,7 @@ public class LevelMakerEditor : EditorWindow
 
     void GUIShops()
     {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
+        GameManager lm = Camera.main.GetComponent<GameManager>();
 
         GUILayout.Label("Shop settings:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
 
@@ -1001,7 +1001,7 @@ public class LevelMakerEditor : EditorWindow
 
     void ResetShops()
     {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
+        GameManager lm = Camera.main.GetComponent<GameManager>();
 
         lm.gemsProducts[0].count = 10;
         lm.gemsProducts[0].price = 0.99f;
@@ -1044,7 +1044,7 @@ public class LevelMakerEditor : EditorWindow
 
     void TestLevel(bool playNow = true, bool testByPlay = true)
     {
-        LevelManager lm = Camera.main.GetComponent<LevelManager>();
+        GameManager lm = Camera.main.GetComponent<GameManager>();
         PlayerPrefs.SetInt("OpenLevelTest", levelNumber);
         PlayerPrefs.SetInt("OpenLevel", levelNumber);
         PlayerPrefs.Save();

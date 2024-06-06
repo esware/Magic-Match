@@ -31,15 +31,12 @@ public class Square : MonoBehaviour
     public SquareTypes type;
 
     public List<GameObject> block = new List<GameObject>();
-    private int ccc;
 
-    // Use this for initialization
     void Start()
     {
-        // GenItem();
-        if (row == LevelManager.Instance.maxRows - 1)
+        if (row == GameManager.Instance.maxRows - 1)
         {
-            if (LevelManager.Instance.target == Target.INGREDIENT && (LevelManager.Instance.ingrTarget[0] == Ingredients.Ingredient1 || LevelManager.Instance.ingrTarget[1] == Ingredients.Ingredient1 || LevelManager.Instance.ingrTarget[0] == Ingredients.Ingredient2 || LevelManager.Instance.ingrTarget[1] == Ingredients.Ingredient2))
+            if (GameManager.Instance.target == Target.INGREDIENT && (GameManager.Instance.ingrTarget[0] == Ingredients.Ingredient1 || GameManager.Instance.ingrTarget[1] == Ingredients.Ingredient1 || GameManager.Instance.ingrTarget[0] == Ingredients.Ingredient2 || GameManager.Instance.ingrTarget[1] == Ingredients.Ingredient2))
             {
                 GameObject obj = Instantiate(Resources.Load("Prefabs/arrow_ingredients")) as GameObject;
                 obj.transform.SetParent(transform);
@@ -53,11 +50,9 @@ public class Square : MonoBehaviour
     {
         if (IsNone() && !CanGoInto())
             return null;
-        GameObject item = Instantiate(LevelManager.Instance.itemPrefab) as GameObject;
+        GameObject item = Instantiate(GameManager.Instance.itemPrefab) as GameObject;
         item.transform.localScale = Vector2.one * 0.6f;
         item.GetComponent<Item>().square = this;
-        //if (!falling)
-        //    item.GetComponent<Item>().anim.SetTrigger("reAppear");
 
         item.transform.SetParent(transform.parent);
         if (falling)
@@ -75,28 +70,28 @@ public class Square : MonoBehaviour
     {
         if (col == 0 && !safe)
             return null;
-        return LevelManager.Instance.GetSquare(col - 1, row, safe);
+        return GameManager.Instance.GetSquare(col - 1, row, safe);
     }
 
     public Square GetNeighborRight(bool safe = false)
     {
-        if (col >= LevelManager.Instance.maxCols && !safe)
+        if (col >= GameManager.Instance.maxCols && !safe)
             return null;
-        return LevelManager.Instance.GetSquare(col + 1, row, safe);
+        return GameManager.Instance.GetSquare(col + 1, row, safe);
     }
 
     public Square GetNeighborTop(bool safe = false)
     {
         if (row == 0 && !safe)
             return null;
-        return LevelManager.Instance.GetSquare(col, row - 1, safe);
+        return GameManager.Instance.GetSquare(col, row - 1, safe);
     }
 
     public Square GetNeighborBottom(bool safe = false)
     {
-        if (row >= LevelManager.Instance.maxRows && !safe)
+        if (row >= GameManager.Instance.maxRows && !safe)
             return null;
-        return LevelManager.Instance.GetSquare(col, row + 1, safe);
+        return GameManager.Instance.GetSquare(col, row + 1, safe);
     }
 
     Hashtable FindMoreMatches(int spr_COLOR, Hashtable countedSquares, FindSeparating separating, Hashtable countedSquaresGlobal = null)
@@ -107,17 +102,15 @@ public class Square : MonoBehaviour
             globalCounter = false;
             countedSquaresGlobal = new Hashtable();
         }
-        ccc++;
         if (this.item == null)
             return countedSquares;
         if (this.item.destroying)
             return countedSquares;
-        //    if (LevelManager.THIS.countedSquares.ContainsValue(this.item) && globalCounter) return countedSquares;
-        if (this.item.color == spr_COLOR && !countedSquares.ContainsValue(this.item) && this.item.currentType != ItemsTypes.INGREDIENT && item.currentType != ItemsTypes.BOMB)
-        {  //2.0
-            if (LevelManager.Instance.onlyFalling && this.item.justCreatedItem)
+        if (this.item.Color == spr_COLOR && !countedSquares.ContainsValue(this.item) && this.item.currentType != ItemsTypes.INGREDIENT && item.currentType != ItemsTypes.BOMB)
+        { 
+            if (GameManager.Instance.onlyFalling && this.item.justCreatedItem)
                 countedSquares.Add(countedSquares.Count - 1, this.item);
-            else if (!LevelManager.Instance.onlyFalling)
+            else if (!GameManager.Instance.onlyFalling)
                 countedSquares.Add(countedSquares.Count - 1, this.item);
             else
                 return countedSquares;
@@ -156,12 +149,12 @@ public class Square : MonoBehaviour
 
         if (separating != FindSeparating.HORIZONTAL)
         {
-            countedSquares = this.FindMoreMatches(this.item.color, countedSquares, FindSeparating.VERTICAL, countedSquaresGlobal);
+            countedSquares = this.FindMoreMatches(this.item.Color, countedSquares, FindSeparating.VERTICAL, countedSquaresGlobal);
         }
 
         foreach (DictionaryEntry de in countedSquares)
         {
-            LevelManager.Instance.countedSquares.Add(LevelManager.Instance.countedSquares.Count - 1, de.Value);
+            GameManager.Instance.countedSquares.Add(GameManager.Instance.countedSquares.Count - 1, de.Value);
         }
 
         if (countedSquares.Count < matches)
@@ -169,12 +162,12 @@ public class Square : MonoBehaviour
 
         if (separating != FindSeparating.VERTICAL)
         {
-            countedSquares = this.FindMoreMatches(this.item.color, countedSquares, FindSeparating.HORIZONTAL, countedSquaresGlobal);
+            countedSquares = this.FindMoreMatches(this.item.Color, countedSquares, FindSeparating.HORIZONTAL, countedSquaresGlobal);
         }
 
         foreach (DictionaryEntry de in countedSquares)
         {
-            LevelManager.Instance.countedSquares.Add(LevelManager.Instance.countedSquares.Count - 1, de.Value);
+            GameManager.Instance.countedSquares.Add(GameManager.Instance.countedSquares.Count - 1, de.Value);
         }
 
         if (countedSquares.Count < matches)
@@ -184,21 +177,8 @@ public class Square : MonoBehaviour
         {
             newList.Add((Item)de.Value);
         }
-        // print(countedSquares.Count);
         return newList;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void FallInto()
-    {
-        //if(item == null)
-    }
-
     public void FallOut()
     {
         if (item != null)
@@ -208,13 +188,13 @@ public class Square : MonoBehaviour
             {
                 if (nextSquare.IsNone())
                 {
-                    for (int i = row + 1; i < LevelManager.Instance.maxRows; i++)
+                    for (int i = row + 1; i < GameManager.Instance.maxRows; i++)
                     {
-                        if (LevelManager.Instance.GetSquare(col, i) != null)
+                        if (GameManager.Instance.GetSquare(col, i) != null)
                         {
-                            if (!LevelManager.Instance.GetSquare(col, i).IsNone())
+                            if (!GameManager.Instance.GetSquare(col, i).IsNone())
                             {
-                                nextSquare = LevelManager.Instance.GetSquare(col, i);
+                                nextSquare = GameManager.Instance.GetSquare(col, i);
                                 break;
                             }
                         }
@@ -258,7 +238,7 @@ public class Square : MonoBehaviour
             return;
         if (type != SquareTypes.SOLIDBLOCK && type != SquareTypes.THRIVING)
         {
-            List<Square> sqList = GetAllNeghbors();
+            List<Square> sqList = GetAllNeighbors();
             foreach (Square sq in sqList)
             {
                 if (sq.type == SquareTypes.SOLIDBLOCK || sq.type == SquareTypes.THRIVING)
@@ -269,25 +249,24 @@ public class Square : MonoBehaviour
         {
             if (type == SquareTypes.BLOCK)
             {
-                LevelManager.Instance.CheckCollectedTarget(gameObject.transform.Find("Block(Clone)").gameObject);
-                LevelManager.Instance.PopupScore(LevelManager.Instance.scoreForBlock, transform.position, 0);
-                LevelManager.Instance.TargetBlocks--;
+                GameManager.Instance.CheckCollectedTarget(gameObject.transform.Find("Block(Clone)").gameObject);
+                GameManager.Instance.PopupScore(GameManager.Instance.scoreForBlock, transform.position, 0);
+                GameManager.Instance.TargetBlocks--;
                 block[block.Count - 1].GetComponent<SpriteRenderer>().enabled = false;
             }
             if (type == SquareTypes.WIREBLOCK)
             {
-                LevelManager.Instance.PopupScore(LevelManager.Instance.scoreForWireBlock, transform.position, 0);
+                GameManager.Instance.PopupScore(GameManager.Instance.scoreForWireBlock, transform.position, 0);
             }
             if (type == SquareTypes.SOLIDBLOCK)
             {
-                LevelManager.Instance.PopupScore(LevelManager.Instance.scoreForSolidBlock, transform.position, 0);
+                GameManager.Instance.PopupScore(GameManager.Instance.scoreForSolidBlock, transform.position, 0);
             }
             if (type == SquareTypes.THRIVING)
             {
-                LevelManager.Instance.PopupScore(LevelManager.Instance.scoreForThrivingBlock, transform.position, 0);
-                LevelManager.Instance.thrivingBlockDestroyed = true;
+                GameManager.Instance.PopupScore(GameManager.Instance.scoreForThrivingBlock, transform.position, 0);
+                GameManager.Instance.thrivingBlockDestroyed = true;
             }
-            //Destroy( block[block.Count-1]);
             if (type != SquareTypes.BLOCK)
             {
                 SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.block_destroy);
@@ -308,12 +287,7 @@ public class Square : MonoBehaviour
 
     }
 
-    public void GenThriveBlock(Square newSquare)
-    {
-
-    }
-
-    public List<Square> GetAllNeghbors()
+    public List<Square> GetAllNeighbors()
     {
         List<Square> sqList = new List<Square>();
         Square nextSquare = null;
@@ -336,7 +310,7 @@ public class Square : MonoBehaviour
     {
         for (int i = row; i >= 0; i--)
         {
-            if (LevelManager.Instance.GetSquare(col, i).type == SquareTypes.SOLIDBLOCK || LevelManager.Instance.GetSquare(col, i).type == SquareTypes.UNDESTROYABLE || LevelManager.Instance.GetSquare(col, i).type == SquareTypes.THRIVING)
+            if (GameManager.Instance.GetSquare(col, i).type == SquareTypes.SOLIDBLOCK || GameManager.Instance.GetSquare(col, i).type == SquareTypes.UNDESTROYABLE || GameManager.Instance.GetSquare(col, i).type == SquareTypes.THRIVING)
                 return true;
         }
         return false;

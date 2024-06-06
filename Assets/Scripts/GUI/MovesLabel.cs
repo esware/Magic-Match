@@ -20,8 +20,8 @@ namespace Dev.Scripts.GUI
 
         void Reset () 
         {
-            if (LevelManager.Instance != null) {
-                if (LevelManager.Instance.limitType == LIMIT.MOVES)
+            if (GameManager.Instance != null) {
+                if (GameManager.Instance.limitType == LIMIT.MOVES)
                     GetComponent<Image> ().sprite = sprites [0];
                 else
                     GetComponent<Image> ().sprite = sprites [1];

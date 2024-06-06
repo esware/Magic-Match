@@ -53,7 +53,7 @@ public class AI : MonoBehaviour
 	/// <returns></returns>
 	Square GetSquare(int row, int col)
 	{
-		return LevelManager.Instance.GetSquare(col, row);
+		return GameManager.Instance.GetSquare(col, row);
 	}
 
 	/// <summary>
@@ -68,7 +68,7 @@ public class AI : MonoBehaviour
 			return;
 		if (square.item != null)
 		{
-			if (square.item.color == COLOR)
+			if (square.item.Color == COLOR)
 			{
 				if (moveThis && square.type != SquareTypes.WIREBLOCK)
 				{
@@ -99,14 +99,14 @@ public class AI : MonoBehaviour
 		allowShowTip = true;
 
 		//get max positions of squares
-		int maxRow = LevelManager.Instance.maxRows;
-		int maxCol = LevelManager.Instance.maxCols;
+		int maxRow = GameManager.Instance.maxRows;
+		int maxCol = GameManager.Instance.maxCols;
 
 		//variable to check: are we got tip or not
 		gotTip = false;
 
 		//break, if the main scripts have not ready yet
-		while (LevelManager.Instance == null)
+		while (GameManager.Instance == null)
 		{
 			yield return new WaitForEndOfFrame();
 		}
@@ -117,7 +117,7 @@ public class AI : MonoBehaviour
 		}
 
 		//if drag have not blocked and game status Playing - continue
-		if (!LevelManager.Instance.DragBlocked && GameManager.Instance.GetState<Playing>())
+		if (!GameManager.Instance.DragBlocked && GameManager.Instance.GetState<Playing>())
 		{
 			nextMoveItems = new List<Item>();
 
@@ -130,11 +130,11 @@ public class AI : MonoBehaviour
 			//Iteration for search possible combination 
 			for (int COLOR = 0; COLOR < it.items.Length; COLOR++)
 			{
-				for (int col = 0; col < LevelManager.Instance.maxCols; col++)
+				for (int col = 0; col < GameManager.Instance.maxCols; col++)
 				{
-					for (int row = 0; row < LevelManager.Instance.maxRows; row++)
+					for (int row = 0; row < GameManager.Instance.maxRows; row++)
 					{
-						Square square = LevelManager.Instance.GetSquare(col, row);
+						Square square = GameManager.Instance.GetSquare(col, row);
 						if (square.type == SquareTypes.WIREBLOCK || square.item == null)
 							continue;
 						//current square called x
@@ -385,7 +385,7 @@ public class AI : MonoBehaviour
 							{//1.6
 								if (square.item != null)
 								{
-									if (square.item.color == COLOR)
+									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.up;
 										nextMoveItems.Add(square.item);
@@ -401,7 +401,7 @@ public class AI : MonoBehaviour
 							{//1.6
 								if (square.item != null)
 								{
-									if (square.item.color == COLOR)
+									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.down;
 										nextMoveItems.Add(square.item);
@@ -417,7 +417,7 @@ public class AI : MonoBehaviour
 							{//1.6
 								if (square.item != null)
 								{
-									if (square.item.color == COLOR)
+									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.right;
 										nextMoveItems.Add(square.item);
@@ -433,7 +433,7 @@ public class AI : MonoBehaviour
 							{//1.6
 								if (square.item != null)
 								{
-									if (square.item.color == COLOR)
+									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.left;
 										nextMoveItems.Add(square.item);
@@ -481,16 +481,16 @@ public class AI : MonoBehaviour
 
 			}
 			//if we don't get any tip.  call nomatches to regenerate level
-			if (!LevelManager.Instance.DragBlocked)
+			if (!GameManager.Instance.DragBlocked)
 			{
 				if (!gotTip)
-					LevelManager.Instance.NoMatches();
+					GameManager.Instance.NoMatches();
 			}
 
 		}
 		yield return new WaitForEndOfFrame();
 		//find possible combination again 
-		if (!LevelManager.Instance.DragBlocked)
+		if (!GameManager.Instance.DragBlocked)
 			StartCoroutine(CheckPossibleCombines());
 
 		// }
@@ -514,16 +514,16 @@ public class AI : MonoBehaviour
 			corCount--;
 			yield break;
 		}
-		if (LevelManager.Instance.DragBlocked && !allowShowTip)
+		if (GameManager.Instance.DragBlocked && !allowShowTip)
 		{
 			corCount--;
 			yield break;
 		}
-		tipID = LevelManager.Instance.moveID;
+		tipID = GameManager.Instance.moveID;
 		//while (!LevelManager.THIS.DragBlocked && allowShowTip)
 		//{
 		yield return new WaitForSeconds(1);
-		if (LevelManager.Instance.DragBlocked && !allowShowTip && tipID != LevelManager.Instance.moveID)
+		if (GameManager.Instance.DragBlocked && !allowShowTip && tipID != GameManager.Instance.moveID)
 		{
 			corCount--;
 			yield break;

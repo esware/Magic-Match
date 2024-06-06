@@ -13,12 +13,12 @@ namespace GameStates
 
         public override void UpdateState()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Win");
         }
 
         public override void ExitState()
         {
-            throw new System.NotImplementedException();
+            
         }
         
         List<Item> GetAllExtaItems()
@@ -37,7 +37,7 @@ namespace GameStates
         }
         private IEnumerator PreWinAnimationsCor()
         {
-            var levelManager = LevelManager.Instance;
+            var levelManager = GameManager.Instance;
             GameObject.Find("Canvas").transform.Find("CompleteLabel").gameObject.SetActive(true);
             yield return new WaitForSeconds(1);
 

@@ -69,7 +69,7 @@ public class NetworkDataManager
         _dataManager.GetPlayerScore((value) =>
         {
             NetworkDataManager.LevelScoreCurrentRecord = value;
-            PlayerPrefs.SetInt("Score" + LevelManager.Instance.currentLevel, NetworkDataManager.LevelScoreCurrentRecord);
+            PlayerPrefs.SetInt("Score" + GameManager.Instance.currentLevel, NetworkDataManager.LevelScoreCurrentRecord);
             PlayerPrefs.Save();
         });
     }
@@ -109,7 +109,7 @@ public class NetworkDataManager
 
     public void SetStars()
     {
-        int level = LevelManager.Instance.currentLevel;
+        int level = GameManager.Instance.currentLevel;
         int stars = PlayerPrefs.GetInt(string.Format("Level.{0:000}.StarsCount", level));
         _dataManager.SetStars(stars, level);
     }

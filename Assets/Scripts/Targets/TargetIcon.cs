@@ -20,8 +20,8 @@ public class TargetIcon : MonoBehaviour
             {
                 if (targetObject == null)
                 {
-                    if (LevelManager.Instance != null)
-                        targetObject = LevelManager.Instance.targetObject.First(i => i.icon.name == imageRenderer.sprite.name);
+                    if (GameManager.Instance != null)
+                        targetObject = GameManager.Instance.targetObject.First(i => i.icon.name == imageRenderer.sprite.name);
                 }
                 return targetObject;
             }
@@ -36,11 +36,8 @@ public class TargetIcon : MonoBehaviour
             textObj.text = target.targetCount.ToString();
             if (target.type == Target.SCORE)
             {
-//                textObj.gameObject.SetActive(false);
-//                imageRenderer.gameObject.SetActive(false);
-                count = LevelManager.Instance.star1;
+                count = GameManager.Instance.star1;
                 textObj.text = "1";
-//                transform.parent = transform.parent.parent;
             }
             else if(target.type == Target.BLOCKS)
             {
@@ -83,9 +80,9 @@ public class TargetIcon : MonoBehaviour
             textObj.gameObject.SetActive(true);
         }
         
-        string GetBlocks() => LevelManager.Instance.TargetBlocks.ToString();
+        string GetBlocks() => GameManager.Instance.TargetBlocks.ToString();
 
         string GetCount() => target?.GetCount().ToString();
 
-        int GetScoreTarget() => count - LevelManager.Score;
+        int GetScoreTarget() => count - GameManager.Score;
     }

@@ -21,7 +21,7 @@ namespace Dev.Scripts.System
 
         IEnumerator WaitForLoad(Scene scene)
         {
-            yield return new WaitUntil(()=>LevelManager.Instance != null);
+            yield return new WaitUntil(()=>GameManager.Instance != null);
             if(scene.name == "game")
             {
                 Debug.Log("restart");
@@ -44,7 +44,7 @@ namespace Dev.Scripts.System
         
         public void StartGame()
         {
-            if (InitScript.lifes > 0)
+            if (InitScript.Lifes > 0)
             {
                 InitScript.Instance.SpendLife(1);
                 GameManager.Instance.ChangeState<PrepareGame>();
@@ -60,7 +60,7 @@ namespace Dev.Scripts.System
         {
 
             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
-            if (InitScript.lifes < InitScript.Instance.CapOfLife)
+            if (InitScript.Lifes < InitScript.Instance.CapOfLife)
                 GameObject.Find("CanvasGlobal").transform.Find("LiveShop").gameObject.SetActive(true);
 
         }

@@ -13,13 +13,13 @@ namespace Dev.Scripts.GUI
 	// Use this for initialization
 	void OnEnable ()
 	{
-		FailedCost = LevelManager.Instance.failedCost;
+		FailedCost = GameManager.Instance.failedCost;
 		transform.Find ("Buy/Price").GetComponent<Text> ().text = "" + FailedCost;
-		if (LevelManager.Instance.limitType == LIMIT.MOVES)
+		if (GameManager.Instance.limitType == LIMIT.MOVES)
 			buyButton.sprite = buyButtons [0];
-		else if (LevelManager.Instance.limitType == LIMIT.TIME)
+		else if (GameManager.Instance.limitType == LIMIT.TIME)
 			buyButton.sprite = buyButtons [1];
-		if (!LevelManager.Instance.enableInApps)
+		if (!GameManager.Instance.enableInApps)
 			transform.Find ("Buy").gameObject.SetActive (false);
 		
 		SetTargets ();
@@ -31,31 +31,31 @@ namespace Dev.Scripts.GUI
 		Transform TargetCheck2 = transform.Find ("Banner/Targets/TargetCheck2");
 		Transform TargetUnCheck1 = transform.Find ("Banner/Targets/TargetUnCheck1");
 		Transform TargetUnCheck2 = transform.Find ("Banner/Targets/TargetUnCheck2");
-		if (LevelManager.Score < LevelManager.Instance.star1) {
+		if (GameManager.Score < GameManager.Instance.star1) {
 			TargetCheck2.gameObject.SetActive (false);
 			TargetUnCheck2.gameObject.SetActive (true);
 		} else {
 			TargetCheck2.gameObject.SetActive (true);
 			TargetUnCheck2.gameObject.SetActive (false);
 		}
-		if (LevelManager.Instance.target == Target.BLOCKS) {
-			if (LevelManager.Instance.TargetBlocks > 0) {
+		if (GameManager.Instance.target == Target.BLOCKS) {
+			if (GameManager.Instance.TargetBlocks > 0) {
 				TargetCheck1.gameObject.SetActive (false);
 				TargetUnCheck1.gameObject.SetActive (true);
 			} else {
 				TargetCheck1.gameObject.SetActive (true);
 				TargetUnCheck1.gameObject.SetActive (false);
 			}
-		} else if (LevelManager.Instance.target == Target.INGREDIENT || LevelManager.Instance.target == Target.COLLECT) {
-			if (LevelManager.Instance.ingrCountTarget [0] > 0 || LevelManager.Instance.ingrCountTarget [1] > 0) {
+		} else if (GameManager.Instance.target == Target.INGREDIENT || GameManager.Instance.target == Target.COLLECT) {
+			if (GameManager.Instance.ingrCountTarget [0] > 0 || GameManager.Instance.ingrCountTarget [1] > 0) {
 				TargetCheck1.gameObject.SetActive (false);
 				TargetUnCheck1.gameObject.SetActive (true);
 			} else {
 				TargetCheck1.gameObject.SetActive (true);
 				TargetUnCheck1.gameObject.SetActive (false);
 			}
-		} else if (LevelManager.Instance.target == Target.SCORE) {
-			if (LevelManager.Score < LevelManager.Instance.star1) {
+		} else if (GameManager.Instance.target == Target.SCORE) {
+			if (GameManager.Score < GameManager.Instance.star1) {
 				TargetCheck1.gameObject.SetActive (false);
 				TargetUnCheck1.gameObject.SetActive (true);
 			} else {

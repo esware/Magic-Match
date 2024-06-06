@@ -93,7 +93,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4131540538421854581}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6ad17be4db34f6aae1644d3b59a833a, type: 3}
   m_Name: 
@@ -116,6 +116,6 @@ Animation:
   m_Animations:
   - {fileID: 7400000, guid: ce16b419dfe194c4f9436017d53a50be, type: 2}
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0

@@ -41,7 +41,7 @@ namespace Dev.Scripts.Targets
         {
             if (type == Target.COLLECT)
             {
-                if(item.GetComponent<Item>()?.color == color)
+                if(item.GetComponent<Item>()?.Color == color)
                 {
                     countCollected+=c;
                     return true;
@@ -66,7 +66,7 @@ namespace Dev.Scripts.Targets
             }
             else if (type == Target.SCORE)
             {
-                countCollected = LevelManager.Score;
+                countCollected = GameManager.Score;
             }
             return false;
         }

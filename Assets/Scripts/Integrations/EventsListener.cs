@@ -35,24 +35,32 @@ namespace Dev.Scripts.Integrations
         }
 
         #region GAME_EVENTS
-        void OnMapState() {
+        void OnMapState() 
+        {
         }
-        void OnEnterGame() {
-            AnalyticsEvent("OnEnterGame", LevelManager.Instance.currentLevel);
+        void OnEnterGame() 
+        {
+            AnalyticsEvent("OnEnterGame", GameManager.Instance.currentLevel);
         }
-        void OnLevelLoaded() {
+        void OnLevelLoaded()
+        {
         }
-        void OnMenuPlay() {
+        void OnMenuPlay() 
+        {
         }
-        void OnMenuComplete() {
+        void OnMenuComplete() 
+        {
         }
-        void OnStartPlay() {
+        void OnStartPlay() 
+        {
         }
-        void OnWin() {
-            AnalyticsEvent("OnWin", LevelManager.Instance.currentLevel);
+        void OnWin() 
+        {
+            AnalyticsEvent("OnWin", GameManager.Instance.currentLevel);
         }
-        void OnLose() {
-            AnalyticsEvent("OnLose", LevelManager.Instance.currentLevel);
+        void OnLose() 
+        {
+            AnalyticsEvent("OnLose", GameManager.Instance.currentLevel);
         }
 
         #endregion

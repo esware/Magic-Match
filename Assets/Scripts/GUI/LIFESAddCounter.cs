@@ -32,7 +32,7 @@ namespace Dev.Scripts.GUI
             InitScript.DateOfExit = DateTime.Now.ToString();
 
         DateTime dateOfExit = DateTime.Parse(InitScript.DateOfExit);
-        if (DateTime.Now.Subtract(dateOfExit).TotalSeconds > TotalTimeForRestLife * (InitScript.Instance.CapOfLife - InitScript.lifes))
+        if (DateTime.Now.Subtract(dateOfExit).TotalSeconds > TotalTimeForRestLife * (InitScript.Instance.CapOfLife - InitScript.Lifes))
         {
             //Debug.Log(dateOfExit + " " + InitScript.today);
             InitScript.Instance.RestoreLifes();
@@ -59,7 +59,7 @@ namespace Dev.Scripts.GUI
         int minutes = Mathf.FloorToInt((InitScript.RestLifeTimer - hours * 3600) / 60);
         int seconds = Mathf.FloorToInt((InitScript.RestLifeTimer - hours * 3600) - minutes * 60);
         //print(hours + " :" + minutes + " :" + seconds);
-        if (InitScript.RestLifeTimer <= 1 && InitScript.lifes < InitScript.Instance.CapOfLife)
+        if (InitScript.RestLifeTimer <= 1 && InitScript.Lifes < InitScript.Instance.CapOfLife)
         {
             InitScript.Instance.AddLife(1);
             ResetTimer();
@@ -78,7 +78,7 @@ namespace Dev.Scripts.GUI
         if (!startTimer && DateTime.Now.Subtract(DateTime.Now).Days == 0)
         {
             InitScript.DateOfRestLife = DateTime.Now;
-            if (InitScript.lifes < InitScript.Instance.CapOfLife)
+            if (InitScript.Lifes < InitScript.Instance.CapOfLife)
             {
                 if (CheckPassedTime())
                     startTimer = true;
@@ -91,7 +91,7 @@ namespace Dev.Scripts.GUI
 
         if (gameObject.activeSelf)
         {
-            if (InitScript.lifes < InitScript.Instance.CapOfLife)
+            if (InitScript.Lifes < InitScript.Instance.CapOfLife)
             {
                 if (InitScript.Instance.TotalTimeForRestLifeHours > 0)
                 {

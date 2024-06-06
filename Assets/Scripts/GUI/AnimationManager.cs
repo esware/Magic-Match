@@ -86,8 +86,8 @@ namespace Dev.Scripts.GUI
         {
             for (int i = 1; i <= 4; i++)
             {
-                transform.Find("Image/Pack" + i + "/Count").GetComponent<Text>().text = "" + LevelManager.Instance.gemsProducts[i - 1].count;
-                transform.Find("Image/Pack" + i + "/Buy/Price").GetComponent<Text>().text = "$" + LevelManager.Instance.gemsProducts[i - 1].price;
+                transform.Find("Image/Pack" + i + "/Count").GetComponent<Text>().text = "" + GameManager.Instance.gemsProducts[i - 1].count;
+                transform.Find("Image/Pack" + i + "/Buy/Price").GetComponent<Text>().text = "$" + GameManager.Instance.gemsProducts[i - 1].price;
             }
         }
         if (name == "MenuComplete")
@@ -217,7 +217,7 @@ namespace Dev.Scripts.GUI
         }
         if (name == "PreFailed")
         {
-            if (LevelManager.Instance.limit <= 0)
+            if (GameManager.Instance.limit <= 0)
                 GameManager.Instance.ChangeState<GameOver>();
             transform.Find("Video").gameObject.SetActive(false);
 
@@ -275,7 +275,7 @@ namespace Dev.Scripts.GUI
 
     IEnumerator MenuComplete()
     {
-        for (int i = 1; i <= LevelManager.Instance.stars; i++)
+        for (int i = 1; i <= GameManager.Instance.stars; i++)
         {
             //  SoundBase.Instance.audio.PlayOneShot( SoundBase.Instance.scoringStar );
             transform.Find("Image").Find("Star" + i).gameObject.SetActive(true);
@@ -287,13 +287,13 @@ namespace Dev.Scripts.GUI
     IEnumerator MenuCompleteScoring()
     {
         Text scores = transform.Find("Image").Find("Score").GetComponent<Text>();
-        for (int i = 0; i <= LevelManager.Score; i += 500)
+        for (int i = 0; i <= GameManager.Score; i += 500)
         {
             scores.text = "" + i;
             // SoundBase.Instance.audio.PlayOneShot( SoundBase.Instance.scoring );
             yield return new WaitForSeconds(0.00001f);
         }
-        scores.text = "" + LevelManager.Score;
+        scores.text = "" + GameManager.Score;
     }
 
     public void Info()
@@ -325,9 +325,9 @@ namespace Dev.Scripts.GUI
         if (gameObject.name == "MenuComplete")
         {
             GameManager.Instance.ChangeState<Map>();
-            PlayerPrefs.SetInt("OpenLevel", LevelManager.Instance.currentLevel + 1);
-            LevelManager.Instance.LoadLevel();
-            if (LevelsMap.Instance.GetMapLevels().Count >= LevelManager.Instance.currentLevel)
+            PlayerPrefs.SetInt("OpenLevel", GameManager.Instance.currentLevel + 1);
+            GameManager.Instance.LoadLevel();
+            if (LevelsMap.Instance.GetMapLevels().Count >= GameManager.Instance.currentLevel)
                 GameObject.Find("CanvasGlobal").transform.Find("MenuPlay").gameObject.SetActive(true);
         }
         if (gameObject.name == "MenuFailed")
@@ -382,7 +382,7 @@ namespace Dev.Scripts.GUI
         }
         else if (gameObject.name == "MenuPlay")
         {
-            if (InitScript.lifes > 0)
+            if (InitScript.Lifes > 0)
             {
                 InitScript.Instance.SpendLife(1);
                 GameManager.Instance.ChangeState<PrepareGame>();
@@ -502,7 +502,7 @@ namespace Dev.Scripts.GUI
     {
 
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
-        if (InitScript.lifes < InitScript.Instance.CapOfLife)
+        if (InitScript.Lifes < InitScript.Instance.CapOfLife)
             GameObject.Find("CanvasGlobal").transform.Find("LiveShop").gameObject.SetActive(true);
 
     }
@@ -542,10 +542,10 @@ namespace Dev.Scripts.GUI
 
     public void GoOnFailed()
     {
-        if (LevelManager.Instance.limitType == LIMIT.MOVES)
-            LevelManager.Instance.limit += LevelManager.Instance.extraFailedMoves;
+        if (GameManager.Instance.limitType == LIMIT.MOVES)
+            GameManager.Instance.limit += GameManager.Instance.extraFailedMoves;
         else
-            LevelManager.Instance.limit += LevelManager.Instance.extraFailedSecs;
+            GameManager.Instance.limit += GameManager.Instance.extraFailedSecs;
         GetComponent<Animation>()["bannerFailed"].speed = 1;
         GameManager.Instance.ChangeState<Playing>();
     }

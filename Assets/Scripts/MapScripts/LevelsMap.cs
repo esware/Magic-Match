@@ -90,15 +90,18 @@ public class LevelsMap : MonoBehaviour
 
 	#region API
 
-	public  void CompleteLevel (int number) {
+	public  void CompleteLevel (int number) 
+	{
 		CompleteLevelInternal (number, 1);
 	}
 
-	public  void CompleteLevel (int number, int starsCount) {
+	public  void CompleteLevel (int number, int starsCount) 
+	{
 		CompleteLevelInternal (number, starsCount);
 	}
 
-	internal void OnLevelSelected (int number) {
+	internal void OnLevelSelected (int number) 
+	{
 		if (LevelSelected != null && !IsLevelLocked (number))
             LevelSelected (Instance, new LevelReachedEventArgs (number));
 

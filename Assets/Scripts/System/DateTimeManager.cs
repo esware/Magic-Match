@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Dev.Scripts.System
 {
@@ -73,12 +74,12 @@ public static class DateTimeManager
 
     public static void SetDateTimeNow(string dateTime)
     {
-        PlayerPrefs.SetString(dateTime, DateTime.Now.ToString());
+        PlayerPrefs.SetString(dateTime, DateTime.Now.ToString(CultureInfo.CurrentCulture));
     }
 
     public static DateTime GetLastDateTime(string dateTime)
     {
-        return DateTime.Parse(PlayerPrefs.GetString(dateTime, DateTime.Now.ToString()));
+        return DateTime.Parse(PlayerPrefs.GetString(dateTime, DateTime.Now.ToString(CultureInfo.CurrentCulture)));
     }
 
 }

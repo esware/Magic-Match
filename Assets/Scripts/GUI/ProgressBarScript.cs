@@ -5,20 +5,21 @@ using UnityEngine.UI;
 
 namespace Dev.Scripts.GUI
 {
-    public class ProgressBarScript : MonoBehaviour {
+    public class ProgressBarScript : MonoBehaviour 
+    {
         Image slider;
         public static ProgressBarScript Instance;
         float maxWidth;
         public GameObject[] stars;
-        // Use this for initialization
         void OnEnable () {
             Instance = this;
             slider = GetComponent<Image> ();
             maxWidth = 1;
-            InitBar ();//2.1.2
+            InitBar ();
         }
 
-        public void InitBar () {//2.1.2
+        public void InitBar () 
+        {
             ResetBar ();
             PrepareStars ();
 
@@ -36,12 +37,7 @@ namespace Dev.Scripts.GUI
         public void AddValue (float x) {
             UpdateDisplay (slider.fillAmount * 100 / maxWidth / 100 + x);
         }
-	
-        // Update is called once per frame
-        void Update () {
-		
-        }
-
+        
         public bool IsFull () {
             if (slider.fillAmount >= maxWidth) { 
                 ResetBar ();
@@ -55,10 +51,10 @@ namespace Dev.Scripts.GUI
         }
 
         void PrepareStars () {
-            if (LevelManager.Instance != null) {
+            if (GameManager.Instance != null) {
                 float width = GetComponent<RectTransform> ().rect.width;
-                stars [0].transform.localPosition = new Vector3 (LevelManager.Instance.star1 * 100 / LevelManager.Instance.star3 * width / 100 - (width / 2f), stars [0].transform.localPosition.y, 0);
-                stars [1].transform.localPosition = new Vector3 (LevelManager.Instance.star2 * 100 / LevelManager.Instance.star3 * width / 100 - (width / 2f), stars [1].transform.localPosition.y, 0);
+                stars [0].transform.localPosition = new Vector3 (GameManager.Instance.star1 * 100 / GameManager.Instance.star3 * width / 100 - (width / 2f), stars [0].transform.localPosition.y, 0);
+                stars [1].transform.localPosition = new Vector3 (GameManager.Instance.star2 * 100 / GameManager.Instance.star3 * width / 100 - (width / 2f), stars [1].transform.localPosition.y, 0);
                 stars [0].transform.GetChild (0).gameObject.SetActive (false);
                 stars [1].transform.GetChild (0).gameObject.SetActive (false);
                 stars [2].transform.GetChild (0).gameObject.SetActive (false);
