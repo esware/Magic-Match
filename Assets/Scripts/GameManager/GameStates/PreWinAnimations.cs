@@ -13,7 +13,7 @@ namespace GameStates
 
         public override void UpdateState()
         {
-            Debug.Log("Win");
+            
         }
 
         public override void ExitState()
@@ -75,6 +75,7 @@ namespace GameStates
 
 
             //TODO Change game state gameStatus = GameState.Win;
+            GameManager.Instance.ChangeState<Win>();
         }
     }
 }

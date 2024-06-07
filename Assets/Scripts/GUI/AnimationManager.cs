@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Dev.Scripts.System;
 using GameStates;
+using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -26,9 +27,7 @@ namespace Dev.Scripts.GUI
         if (PlayOnEnable)
         {
             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.swish[0]);
-
-            //if( !GetComponent<SequencePlayer>().sequenceArray[0].isPlaying )
-            //    GetComponent<SequencePlayer>().Play();
+            
         }
         if (name == "MenuPlay")
         {
@@ -165,7 +164,7 @@ namespace Dev.Scripts.GUI
 
     public void GoRate()
     {
-#if UNITY_ANDROID//2.1.5 ios rate link
+#if UNITY_ANDROID
         Application.OpenURL(InitScript.Instance.RateURL);
 #elif UNITY_IOS
 		Application.OpenURL(InitScript.Instance.RateURLIOS);
@@ -180,12 +179,6 @@ namespace Dev.Scripts.GUI
         {
             transform.Find("Image/Video").gameObject.SetActive(true);
         }
-
-        //if( PlayOnEnable )
-        //{
-        //    if( !GetComponent<SequencePlayer>().sequenceArray[0].isPlaying )
-        //        GetComponent<SequencePlayer>().sequenceArray[0].Play
-        //}
     }
 
     public void OnFinished()
@@ -286,7 +279,7 @@ namespace Dev.Scripts.GUI
 
     IEnumerator MenuCompleteScoring()
     {
-        Text scores = transform.Find("Image").Find("Score").GetComponent<Text>();
+        var scores = transform.Find("Image").Find("Score").GetComponent<TextMeshProUGUI>();
         for (int i = 0; i <= GameManager.Score; i += 500)
         {
             scores.text = "" + i;

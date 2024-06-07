@@ -276,6 +276,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         _currentState.UpdateState();
+        
         if (Input.GetKeyDown(KeyCode.Space))
         {
             NoMatches();
@@ -1606,49 +1607,7 @@ public class GameManager : MonoBehaviour
              CheckWinLose();
          _ingredientFly = false;
      }
-     private IEnumerator PreWinAnimationsCor()
-     {
-
-         GameObject.Find("Canvas").transform.Find("CompleteLabel").gameObject.SetActive(true);
-         yield return new WaitForSeconds(1);
-
-         List<Item> items = GetRandomItems(Mathf.Clamp(limitType == LIMIT.MOVES ? limit : 8, 0, 15)); //2.2.2
-         foreach (Item item in items)
-         {
-             if (limitType == LIMIT.MOVES)
-                 limit--;
-             item.NextType = (ItemsTypes)UnityEngine.Random.Range(1, 3);
-             item.ChangeType();
-             yield return new WaitForSeconds(0.5f);
-         }
-         yield return new WaitForSeconds(0.3f);
-         while (GetAllExtaItems().Count > 0 && !GetState<Win>())
-         {
-             Item item = GetAllExtaItems()[0];
-             item.DestroyItem();
-             _dragBlocked = true;
-             yield return new WaitForSeconds(0.1f);
-             FindMatches();
-             yield return new WaitForSeconds(1f);
-            
-             while (_dragBlocked)
-                 yield return new WaitForFixedUpdate();
-         }
-         yield return new WaitForSeconds(1f);
-         while (_dragBlocked || GetMatches().Count > 0)
-             yield return new WaitForSeconds(0.2f);
-
-         GameObject.Find("Canvas").transform.Find("CompleteLabel").gameObject.SetActive(false);
-         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.complete[0]);
-
-         GameObject.Find("Canvas").transform.Find("PreCompleteBanner").gameObject.SetActive(true);
-         yield return new WaitForSeconds(3);
-         GameObject.Find("Canvas").transform.Find("PreCompleteBanner").gameObject.SetActive(false);
-
-
-         ChangeState<Win>();
-     }
-    private IEnumerator FallingDown()
+     private IEnumerator FallingDown()
     {
         bool nearEmptySquareDetected = false;
         int combo = 0;
