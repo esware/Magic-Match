@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Dev.Scripts.GUI;
 using Dev.Scripts.System;
@@ -20,6 +21,9 @@ public struct GameEvents
     public static Action OnStartPlay;
     public static Action OnWin;
     public static Action OnLose;
+
+    public static Action<int> OnLevelSelected;
+    public static Action<int> OnLevelReached;
 }
 public class SquareBlocks
 {
@@ -209,7 +213,7 @@ public class GameManager : MonoBehaviour
                 foreach (Item item in items)
                 {
                     if (item != null)
-                      item.anim.SetBool("stop", true);
+                      item.anim.SetBool(Stop, true);
                 }
             }
             else
@@ -231,12 +235,13 @@ public class GameManager : MonoBehaviour
     internal int LastMatchColor;
     private CombineManager _combineManager;
     public TargetObject[] targetObject;
-    
+
+    private Camera _mainCam;
     private GameState _currentState;
     
+    private static readonly int Stop = Animator.StringToHash("stop");
 
-    
-    
+
     void Awake()
     {
         if (_instance == null)
@@ -248,22 +253,22 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        _mainCam = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
     void Start()
     {
          ChangeState<Map>();
         _currentState.EnterState();
+        
 #if UNITY_INAPPS
 
         gameObject.AddComponent<UnityInAppsIntegration>();
-        enableInApps = true;//1.6.1
+        enableInApps = true;
 #else
         enableInApps = false;
 
 #endif
         _combineManager = new CombineManager();
-
-        //TODO Change State gameStatus = GameState.Map;
         
         for (int i = 0; i < 20; i++)
         {
@@ -346,7 +351,7 @@ public class GameManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 GameEvents.OnStartPlay?.Invoke();
-                Collider2D hit = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Collider2D hit = Physics2D.OverlapPoint(_mainCam.ScreenToWorldPoint(Input.mousePosition));
                 if (hit != null)
                 {
                     Item item = hit.gameObject.GetComponent<Item>();
@@ -382,7 +387,7 @@ public class GameManager : MonoBehaviour
             }
             else if (Input.GetMouseButtonUp(0))
             {
-                Collider2D hit = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Collider2D hit = Physics2D.OverlapPoint(_mainCam.ScreenToWorldPoint(Input.mousePosition));
                 if (hit != null)
                 {
                     Item item = hit.gameObject.GetComponent<Item>();
@@ -393,10 +398,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    
-    
-    
-    
     #region Public Methods
     
     public void ChangeState<T>() where T : GameState
@@ -446,9 +447,10 @@ public class GameManager : MonoBehaviour
 
         GameField.transform.position = Vector3.zero;
         firstSquarePosition = GameField.transform.position;
-
         squaresArray = new Square[maxCols * maxRows];
+        
         LoadLevel();
+        
         for (int row = 0; row < maxRows; row++)
         {
             for (int col = 0; col < maxCols; col++)
@@ -482,41 +484,56 @@ public class GameManager : MonoBehaviour
         }
     }
     
+    public void InitLevel()
+    {
+        GenerateLevel();
+        GenerateOutline();
+        ReGenLevel();
+        if (limitType == LIMIT.TIME)
+        {
+            StopCoroutine(TimeTick());
+            StartCoroutine(TimeTick());
+        }
+        GameField.gameObject.SetActive(true);
+    }
     public void LoadLevel()
     {
-        currentLevel = PlayerPrefs.GetInt("OpenLevel");
+        currentLevel = PlayerPrefs.GetInt(PlayerPrefsKeys.OpenLevel);
         if (currentLevel == 0)
             currentLevel = 1;
         LoadDataFromLocal(currentLevel);
 
     }
-
     public void EnableMap(bool enable)
     {
         float aspect = (float)Screen.height / (float)Screen.width;
-        GetComponent<Camera>().orthographicSize = 5.3f;
+        _mainCam.orthographicSize = 5.3f;
         aspect = (float)Math.Round(aspect, 2);
+        
         GameObject.Find("CanvasGlobal").GetComponent<GraphicRaycaster>().enabled = false;
         GameObject.Find("CanvasGlobal").GetComponent<GraphicRaycaster>().enabled = true;
+        
         if (enable)
         {
-            GetComponent<Camera>().GetComponent<MapCamera>().SetPosition(new Vector2(0, GetComponent<Camera>().transform.position.y));
+            _mainCam.GetComponent<MapCamera>().SetPosition(new Vector2(0,_mainCam.transform.position.y));
         }
         else
         {
             InitScript.DateOfExit = DateTime.Now.ToString();
 
             LastMatchColor = -1;
-
-            GetComponent<Camera>().orthographicSize = 6.5f;
-            level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.zero;//2.2
-            if (aspect == 2.06f)
-                GetComponent<Camera>().orthographicSize = 7.6f;//2960:1440
-            else if (aspect == 2.17f)
+            _mainCam.orthographicSize = 6.5f;
+            level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
+            
+            const float tolerance = 0.01f;
+            if (Mathf.Abs(aspect - 2.06f) < tolerance)
             {
-                GetComponent<Camera>().orthographicSize = 8.1f;//iphone x
-                level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.down * 50;//2.2
-
+                _mainCam.orthographicSize = 7.6f;
+            }
+            else if (Mathf.Abs(aspect - 2.17f) < tolerance)
+            {
+                _mainCam.orthographicSize = 8.1f;
+                level.transform.Find("Canvas/Panel").GetComponent<RectTransform>().anchoredPosition = Vector3.down * 50;
             }
 
             level.transform.Find("Canvas").GetComponent<GraphicRaycaster>().enabled = false;
@@ -538,7 +555,6 @@ public class GameManager : MonoBehaviour
             Destroy(item.gameObject);
         }
     }
-    
     public void CheckCollectedTarget(GameObject _item)
     {
         _item.GetComponent<Item>();
@@ -588,7 +604,9 @@ public class GameManager : MonoBehaviour
             count = items.Length;
         foreach (GameObject item in items)
         {
-            if (item.GetComponent<Item>().currentType == ItemsTypes.NONE && item.GetComponent<Item>().NextType == ItemsTypes.NONE && !item.GetComponent<Item>().destroying)
+            if (item.GetComponent<Item>().currentType == ItemsTypes.NONE && 
+                item.GetComponent<Item>().NextType == ItemsTypes.NONE && 
+                !item.GetComponent<Item>().destroying)
             {
                 list.Add(item.GetComponent<Item>());
             }
@@ -660,12 +678,9 @@ public class GameManager : MonoBehaviour
                 return null;
             return squaresArray[row * maxCols + col];
         }
-        else
-        {
-            row = Mathf.Clamp(row, 0, maxRows - 1);
-            col = Mathf.Clamp(col, 0, maxCols - 1);
-            return squaresArray[row * maxCols + col];
-        }
+        row = Mathf.Clamp(row, 0, maxRows - 1);
+        col = Mathf.Clamp(col, 0, maxCols - 1);
+        return squaresArray[row * maxCols + col];
     }
     public void DestroyDoubleBomb(int col)
     {
@@ -697,8 +712,7 @@ public class GameManager : MonoBehaviour
                 poptxt.transform.GetComponentInChildren<Outline>().effectColor = scoresColorsOutline[Mathf.Clamp(color, 0, scoresColorsOutline.Length)];
             }
             poptxt.transform.SetParent(parent);
-            //   poptxt.transform.position += Vector3.right * 1;
-            poptxt.transform.position = pos;//2.1.6
+            poptxt.transform.position = pos;
             poptxt.transform.localScale = Vector3.one / 1.5f;
             Destroy(poptxt, 0.3f);
         }
@@ -798,18 +812,6 @@ public class GameManager : MonoBehaviour
                 item.LockBoost();
         }
     }
-    public void InitLevel()
-    {
-        GenerateLevel();
-        GenerateOutline();
-        ReGenLevel();
-        if (limitType == LIMIT.TIME)
-        {
-            StopCoroutine(TimeTick());
-            StartCoroutine(TimeTick());
-        }
-        GameField.gameObject.SetActive(true);
-    }
     private void CheckWinLose()
     {
         if (limit <= 0)
@@ -898,7 +900,6 @@ public class GameManager : MonoBehaviour
     }
     private void DestroyItems(bool withoutEffects = false)
     {
-
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
         foreach (GameObject item in items)
         {
@@ -1639,13 +1640,13 @@ public class GameManager : MonoBehaviour
                     if (item.currentType != ItemsTypes.NONE)
                         yield return new WaitForSeconds(0.1f);
                     item.DestroyItem(true); 
-                    if (item.currentType != ItemsTypes.NONE)
+                    /*if (item.currentType != ItemsTypes.NONE)
                     {
-                        //while (!item.animationFinished)
-                        //{
-                        //    yield return new WaitForFixedUpdate();
-                        //}
-                    }
+                        while (!item.animationFinished)
+                        {
+                            yield return new WaitForFixedUpdate();
+                        }
+                    }*/
 
                 }
             }

@@ -60,7 +60,7 @@ namespace Dev.Scripts.System
         {
 
             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
-            if (InitScript.Lifes < InitScript.Instance.CapOfLife)
+            if (InitScript.Lifes < InitScript.Instance.capOfLife)
                 GameObject.Find("CanvasGlobal").transform.Find("LiveShop").gameObject.SetActive(true);
 
         }

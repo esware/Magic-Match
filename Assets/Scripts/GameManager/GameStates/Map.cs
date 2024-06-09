@@ -8,7 +8,7 @@ namespace GameStates
         public override void EnterState()
         {
             Debug.Log("Map State");
-            if (PlayerPrefs.GetInt("OpenLevelTest") <= 0)
+            if (PlayerPrefs.GetInt(PlayerPrefsKeys.OpenLevelTest) <= 0)
             {
                 MusicBase.Instance.GetComponent<AudioSource>().Stop();
                 MusicBase.Instance.GetComponent<AudioSource>().loop = true;
@@ -19,7 +19,7 @@ namespace GameStates
             }
             else
             {
-                PlayerPrefs.SetInt("OpenLevelTest", 0);
+                PlayerPrefs.SetInt(PlayerPrefsKeys.OpenLevelTest, 0);
                 PlayerPrefs.Save();
             }
 

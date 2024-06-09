@@ -25,7 +25,7 @@ namespace Dev.Scripts.GUI.Avatar
 
 #endif
         public void ShowPicture () {
-            image.sprite = InitScript.profilePic;
+            image.sprite = InitScript.ProfilePic;
             image.enabled = true;
         }
 

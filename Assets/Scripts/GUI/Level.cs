@@ -5,20 +5,25 @@ using UnityEngine.UI;
 
 namespace Dev.Scripts.GUI
 {
-    public class Level : MonoBehaviour {
+    public class Level : MonoBehaviour
+    {
         public int number;
         public Text label;
         public GameObject lockimage;
-
-        // Use this for initialization
-        void Start () {
-            if( PlayerPrefs.GetInt( "Score" + (number-1) ) > 0  )
+        
+        void Start ()
+        {
+            if( PlayerPrefs.GetInt(PlayerPrefsKeys.Score + (number-1) ) > 0  )
             {
                 lockimage.gameObject.SetActive( false );
                 label.text = "" + number;
             }
+            else
+            {
+                lockimage.gameObject.SetActive( true );
+            }
 
-            int stars = PlayerPrefs.GetInt( string.Format( "Level.{0:000}.StarsCount", number ), 0 );
+            int stars = PlayerPrefs.GetInt($"Level.{number:000}.StarsCount", 0 );
 
             if( stars > 0 )
             {
@@ -28,17 +33,6 @@ namespace Dev.Scripts.GUI
                 }
 
             }
-
-        }
-	
-        // Update is called once per frame
-        void Update () {
-	
-        }
-
-        public void StartLevel()
-        {
-//        InitScript.Instance.OnLevelClicked(number);
 
         }
     }

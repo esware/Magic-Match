@@ -285,26 +285,6 @@ public class LevelMakerEditor : EditorWindow
             Selection.activeGameObject = obj;
             obj.SetActive(!obj.activeSelf);
         }
-        //if (GUILayout.Button("fonts", new GUILayoutOption[] { GUILayout.Width(100) }))
-        //{
-        //    EditorGUIUtility.PingObject(obj);
-        //    Selection.activeGameObject = obj;
-        //    obj.SetActive(!obj.activeSelf);
-        //    Transform objTransform = obj.transform;
-        //    GameObject[] objects = new GameObject[2];
-        //    int i = 0;
-        //    foreach (Transform item in objTransform)
-        //    {
-        //        if (item.GetComponent<Text>() != null)
-        //        {
-        //            objects[i] = item.gameObject;
-        //            i++;
-        //        }
-        //    }
-        //    //Selection.objects = objects;
-        //   // Selection.GetFiltered(typeof( Text), SelectionMode.TopLevel);
-        //    SetSearchFilter("text", 2);
-        //}
 
         GUILayout.EndHorizontal();
     }
@@ -367,12 +347,7 @@ public class LevelMakerEditor : EditorWindow
 
         GUILayout.Label("Ads settings:", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });
         GUILayout.BeginHorizontal();
-
-        //UNITY ADS
-
-        //		initscript.enableUnityAds = EditorGUILayout.Toggle ("Enable Unity ads", initscript.enableUnityAds, new GUILayoutOption[] {//1.6.1
-        //			GUILayout.Width (200)
-        //		});
+        
         GUILayout.Label("Unity ads", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });//1.6.1
         GUILayout.Label("Install: Windows->\n Services->Ads - ON", new GUILayoutOption[] { GUILayout.Width(130) });
         if (GUILayout.Button("Help", new GUILayoutOption[] { GUILayout.Width(80) }))
@@ -381,12 +356,7 @@ public class LevelMakerEditor : EditorWindow
         }
 
         GUILayout.EndHorizontal();
-
         GUILayout.Space(10);
-
-        //		if (oldenableAds != initscript.enableUnityAds)//1.6.1
-        //			SetScriptingDefineSymbols ();
-        //		if (initscript.enableUnityAds) {
         GUILayout.BeginHorizontal();
         GUILayout.Space(20);
         initscript.rewardedGems = EditorGUILayout.IntField("Rewarded gems", initscript.rewardedGems, new GUILayoutOption[] {
@@ -395,16 +365,11 @@ public class LevelMakerEditor : EditorWindow
         });
         GUILayout.EndHorizontal();
         GUILayout.Space(10);
-        //		}
+
 
         //GOOGLE MOBILE ADS
-
         bool oldenableGoogleMobileAds = initscript.enableGoogleMobileAds;
         GUILayout.BeginHorizontal();
-        //		initscript.enableGoogleMobileAds = EditorGUILayout.Toggle ("Enable Google Mobile Ads", initscript.enableGoogleMobileAds, new GUILayoutOption[] {//1.6.1
-        //			GUILayout.Width (50),
-        //			GUILayout.MaxWidth (200)
-        //		});
         GUILayout.Label("Google mobile ads", EditorStyles.boldLabel, new GUILayoutOption[] { GUILayout.Width(150) });//1.6.1
         if (GUILayout.Button("Install", new GUILayoutOption[] { GUILayout.Width(100) }))
         {
@@ -416,7 +381,7 @@ public class LevelMakerEditor : EditorWindow
         }
 
         GUILayout.EndHorizontal();
-
+/*
         GUILayout.Space(10);
         GUILayout.BeginHorizontal();
         GUILayout.Space(20);
@@ -446,7 +411,7 @@ public class LevelMakerEditor : EditorWindow
             GUILayout.Width (220),
             GUILayout.MaxWidth (220)
         });
-        GUILayout.EndHorizontal();
+        GUILayout.EndHorizontal();*/
 
         GUILayout.BeginHorizontal();
         {
@@ -797,7 +762,7 @@ public class LevelMakerEditor : EditorWindow
             GUILayout.BeginVertical();
 
 
-            initscript.CapOfLife = EditorGUILayout.IntField("Max of lifes", initscript.CapOfLife, new GUILayoutOption[] {
+            initscript.capOfLife = EditorGUILayout.IntField("Max of lifes", initscript.capOfLife, new GUILayoutOption[] {
                 GUILayout.Width (200),
                 GUILayout.MaxWidth (200)
             });
@@ -812,9 +777,9 @@ public class LevelMakerEditor : EditorWindow
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             GUILayout.Space(30);
-            initscript.TotalTimeForRestLifeHours = EditorGUILayout.FloatField("", initscript.TotalTimeForRestLifeHours, new GUILayoutOption[] { GUILayout.Width(50) });
-            initscript.TotalTimeForRestLifeMin = EditorGUILayout.FloatField("", initscript.TotalTimeForRestLifeMin, new GUILayoutOption[] { GUILayout.Width(50) });
-            initscript.TotalTimeForRestLifeSec = EditorGUILayout.FloatField("", initscript.TotalTimeForRestLifeSec, new GUILayoutOption[] { GUILayout.Width(50) });
+            initscript.totalTimeForRestLifeHours = EditorGUILayout.FloatField("", initscript.totalTimeForRestLifeHours, new GUILayoutOption[] { GUILayout.Width(50) });
+            initscript.totalTimeForRestLifeMin = EditorGUILayout.FloatField("", initscript.totalTimeForRestLifeMin, new GUILayoutOption[] { GUILayout.Width(50) });
+            initscript.totalTimeForRestLifeSec = EditorGUILayout.FloatField("", initscript.totalTimeForRestLifeSec, new GUILayoutOption[] { GUILayout.Width(50) });
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
 
@@ -828,7 +793,7 @@ public class LevelMakerEditor : EditorWindow
         }
         GUILayout.Space(20);
 
-        initscript.FirstGems = EditorGUILayout.IntField("Start gems", initscript.FirstGems, new GUILayoutOption[] {
+        initscript.firstGems = EditorGUILayout.IntField("Start gems", initscript.firstGems, new GUILayoutOption[] {
             GUILayout.Width (200),
             GUILayout.MaxWidth (200)
         });
@@ -887,10 +852,10 @@ public class LevelMakerEditor : EditorWindow
         lm.scoresColorsOutline[5] = new Color(19 / 255f, 111 / 255f, 0 / 255f);
 
         InitScript initscript = Camera.main.GetComponent<InitScript>();
-        initscript.CapOfLife = 5;
-        initscript.TotalTimeForRestLifeHours = 0;
-        initscript.TotalTimeForRestLifeMin = 15;
-        initscript.TotalTimeForRestLifeSec = 0;
+        initscript.capOfLife = 5;
+        initscript.totalTimeForRestLifeHours = 0;
+        initscript.totalTimeForRestLifeMin = 15;
+        initscript.totalTimeForRestLifeSec = 0;
         lm.lifeShop.CostIfRefill = 12;
         EditorUtility.SetDirty(lm);
     }

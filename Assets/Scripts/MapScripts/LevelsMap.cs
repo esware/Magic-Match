@@ -81,13 +81,6 @@ public class LevelsMap : MonoBehaviour
 			mapCamera.SetPosition (waypointsMover.transform.position);
 	}
 
-	#region Events
-
-	public static event EventHandler<LevelReachedEventArgs> LevelSelected;
-	public static event EventHandler<LevelReachedEventArgs> LevelReached;
-
-	#endregion
-
 	#region API
 
 	public  void CompleteLevel (int number) 
@@ -102,9 +95,14 @@ public class LevelsMap : MonoBehaviour
 
 	internal void OnLevelSelected (int number) 
 	{
-		if (LevelSelected != null && !IsLevelLocked (number))
+		/*if (LevelSelected != null && !IsLevelLocked (number))
             LevelSelected (Instance, new LevelReachedEventArgs (number));
-
+*/
+		
+		if (!IsLevelLocked(number))
+		{
+			GameEvents.OnLevelSelected?.Invoke(number);
+		}
 		if (!Instance.isConfirmationEnabled)
 			GoToLevel (number);
 	}
@@ -185,13 +183,13 @@ public class LevelsMap : MonoBehaviour
 		}
 	}
 
-	private void RaiseLevelReached (int number) {
+	private void RaiseLevelReached (int number) 
+	{
 		MapLevel mapLevel = GetLevel (number);
 		if (!string.IsNullOrEmpty (mapLevel.sceneName))
 			SceneManager.LoadScene (mapLevel.sceneName);
 
-		if (LevelReached != null)
-			LevelReached (this, new LevelReachedEventArgs (number));
+		GameEvents.OnLevelReached?.Invoke(number);
 	}
 
 	public MapLevel GetLevel (int number) {
@@ -204,7 +202,8 @@ public class LevelsMap : MonoBehaviour
 		Reset ();
 	}
 
-	public void SetStarsEnabled (bool bEnabled) {
+	public void SetStarsEnabled (bool bEnabled) 
+	{
 		starsEnabled = bEnabled;
 		int starsCount = 0;
 		foreach (MapLevel mapLevel in GetMapLevels()) {

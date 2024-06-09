@@ -45,14 +45,16 @@ public class NetworkManager : MonoBehaviour
         get => _userID;
         set
         {
-            if (value != PlayerPrefs.GetString("UserID") && PlayerPrefs.GetString("UserID") != "" && _userID != "" && _userID != null)
+            if (value != PlayerPrefs.GetString(PlayerPrefsKeys.UserID) 
+                && PlayerPrefs.GetString(PlayerPrefsKeys.UserID) != "" 
+                && !string.IsNullOrEmpty(_userID))
             {
                 PlayerPrefs.DeleteAll();
                 LevelsMap.Instance.Reset();
             }
 
             _userID = value;
-            PlayerPrefs.SetString("UserID", _userID);
+            PlayerPrefs.SetString(PlayerPrefsKeys.UserID, _userID);
             PlayerPrefs.Save();
         }
     }

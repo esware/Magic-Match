@@ -16,15 +16,15 @@ namespace Dev.Scripts.GUI
 {
     public class AnimationManager : MonoBehaviour
 {
-    public bool PlayOnEnable = true;
-    bool WaitForPickupFriends;
+    public bool playOnEnable = true;
+    private bool _waitForPickupFriends;
 
-    bool WaitForAksFriends;
-    Dictionary<string, string> parameters;
+    private bool _waitForAksFriends;
+    private Dictionary<string, string> _parameters;
 
     void OnEnable()
     {
-        if (PlayOnEnable)
+        if (playOnEnable)
         {
             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.swish[0]);
             
@@ -35,7 +35,9 @@ namespace Dev.Scripts.GUI
             {
                 transform.Find("Image").Find("Star" + i).gameObject.SetActive(false);
             }
-            int stars = PlayerPrefs.GetInt(string.Format("Level.{0:000}.StarsCount", PlayerPrefs.GetInt("OpenLevel")), 0);
+
+            int stars = new PlayerPrefsMapProgressManager().LoadLevelStarsCount(GameManager.Instance.currentLevel);
+
             if (stars > 0 && stars <= 3)
             {
                 for (int i = 1; i <= stars; i++)
@@ -69,12 +71,12 @@ namespace Dev.Scripts.GUI
 
         if (name == "Settings" || name == "MenuPause")
         {
-            if (PlayerPrefs.GetInt("Sound") == 0)
+            if (PlayerPrefs.GetInt(PlayerPrefsKeys.Sound) == 0)
                 transform.Find("Image/Sound/SoundOff").gameObject.SetActive(true);
             else
                 transform.Find("Image/Sound/SoundOff").gameObject.SetActive(false);
 
-            if (PlayerPrefs.GetInt("Music") == 0)
+            if (PlayerPrefs.GetInt(PlayerPrefsKeys.Music) == 0)
                 transform.Find("Image/Music/MusicOff").gameObject.SetActive(true);
             else
                 transform.Find("Image/Music/MusicOff").gameObject.SetActive(false);
@@ -161,18 +163,7 @@ namespace Dev.Scripts.GUI
         }
         return RewardedAdsType.GetGoOn;
     }
-
-    public void GoRate()
-    {
-#if UNITY_ANDROID
-        Application.OpenURL(InitScript.Instance.RateURL);
-#elif UNITY_IOS
-		Application.OpenURL(InitScript.Instance.RateURLIOS);
-#endif
-        PlayerPrefs.SetInt("Rated", 1);
-        PlayerPrefs.Save();
-    }
-
+    
     void OnDisable()
     {
         if (transform.Find("Image/Video") != null)
@@ -318,7 +309,7 @@ namespace Dev.Scripts.GUI
         if (gameObject.name == "MenuComplete")
         {
             GameManager.Instance.ChangeState<Map>();
-            PlayerPrefs.SetInt("OpenLevel", GameManager.Instance.currentLevel + 1);
+            PlayerPrefs.SetInt(PlayerPrefsKeys.OpenLevel, GameManager.Instance.currentLevel + 1);
             GameManager.Instance.LoadLevel();
             if (LevelsMap.Instance.GetMapLevels().Count >= GameManager.Instance.currentLevel)
                 GameObject.Find("CanvasGlobal").transform.Find("MenuPlay").gameObject.SetActive(true);
@@ -432,7 +423,7 @@ namespace Dev.Scripts.GUI
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
         if (pack.name == "Pack1")
         {
-            InitScript.waitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -447,7 +438,7 @@ namespace Dev.Scripts.GUI
 
         if (pack.name == "Pack2")
         {
-            InitScript.waitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -461,7 +452,7 @@ namespace Dev.Scripts.GUI
         }
         if (pack.name == "Pack3")
         {
-            InitScript.waitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -475,7 +466,7 @@ namespace Dev.Scripts.GUI
         }
         if (pack.name == "Pack4")
         {
-            InitScript.waitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -495,7 +486,7 @@ namespace Dev.Scripts.GUI
     {
 
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
-        if (InitScript.Lifes < InitScript.Instance.CapOfLife)
+        if (InitScript.Lifes < InitScript.Instance.capOfLife)
             GameObject.Find("CanvasGlobal").transform.Find("LiveShop").gameObject.SetActive(true);
 
     }
@@ -581,19 +572,19 @@ namespace Dev.Scripts.GUI
         if (!Off.activeSelf)
         {
             SoundBase.Instance.GetComponent<AudioSource>().volume = 0;
-            InitScript.sound = false;
+            InitScript.Sound = false;
 
             Off.SetActive(true);
         }
         else
         {
             SoundBase.Instance.GetComponent<AudioSource>().volume = 1;
-            InitScript.sound = true;
+            InitScript.Sound = true;
 
             Off.SetActive(false);
 
         }
-        PlayerPrefs.SetInt("Sound", (int)SoundBase.Instance.GetComponent<AudioSource>().volume);
+        PlayerPrefs.SetInt(PlayerPrefsKeys.Sound, (int)SoundBase.Instance.GetComponent<AudioSource>().volume);
         PlayerPrefs.Save();
 
     }
@@ -603,19 +594,19 @@ namespace Dev.Scripts.GUI
         if (!Off.activeSelf)
         {
             GameObject.Find("Music").GetComponent<AudioSource>().volume = 0;
-            InitScript.music = false;
+            InitScript.Music = false;
 
             Off.SetActive(true);
         }
         else
         {
             GameObject.Find("Music").GetComponent<AudioSource>().volume = 1;
-            InitScript.music = true;
+            InitScript.Music = true;
 
             Off.SetActive(false);
 
         }
-        PlayerPrefs.SetInt("Music", (int)GameObject.Find("Music").GetComponent<AudioSource>().volume);
+        PlayerPrefs.SetInt(PlayerPrefsKeys.Music, (int)GameObject.Find("Music").GetComponent<AudioSource>().volume);
         PlayerPrefs.Save();
 
     }
