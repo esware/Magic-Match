@@ -9,15 +9,11 @@ namespace Dev.Scripts.GUI
     {
         public Sprite[] pictures;
         [Header("How often to change background per levels")]
-        public int changeBackgoundEveryLevels = 20 ; //2.2.2
-        // Use this for initialization
+        public int changeBackgoundEveryLevels = 20 ;
         void OnEnable ()
         {
             if (GameManager.Instance != null)
                 GetComponent<Image> ().sprite = pictures [Mathf.Clamp( (int)((float)GameManager.Instance.currentLevel / (float)changeBackgoundEveryLevels - 0.01f),0, pictures.Length)];//2.2.2
-
-//			GetComponent<Image> ().sprite = pictures [(int)((float)LevelManager.Instance.currentLevel / 20f - 0.01f)];
-
 
         }
 

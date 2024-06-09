@@ -2,7 +2,8 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class Tutorial : MonoBehaviour {
+public class Tutorial : MonoBehaviour 
+{
     public Sprite[] sprites;
     public Image image;
     int i;

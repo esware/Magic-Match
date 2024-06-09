@@ -3,7 +3,8 @@ using System;
 
 namespace Dev.Scripts.Integrations
 {
-    public interface IDataManager {
+    public interface IDataManager
+     {
         void SetPlayerScore (int level, int score);
 
         void SetPlayerLevel (int level) ;

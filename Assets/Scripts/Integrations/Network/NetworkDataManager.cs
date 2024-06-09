@@ -17,6 +17,8 @@ public class NetworkDataManager
     public static int LatestReachedLevel = 0;
     public static int LevelScoreCurrentRecord = 0;
 
+    private PlayerPrefsMapProgressManager _progressManager;
+
     public NetworkDataManager()
     {
 #if PLAYFAB
@@ -28,6 +30,8 @@ public class NetworkDataManager
         GameEvents.OnEnterGame += GetPlayerScore;
         NetworkManager.OnLogoutEvent += Logout;
         NetworkManager.OnLoginEvent += GetBoosterData;
+
+        _progressManager = new PlayerPrefsMapProgressManager();
     }
 
     public void Logout()
@@ -110,7 +114,7 @@ public class NetworkDataManager
     public void SetStars()
     {
         int level = GameManager.Instance.currentLevel;
-        int stars = PlayerPrefs.GetInt(string.Format("Level.{0:000}.StarsCount", level));
+        int stars = _progressManager.LoadLevelStarsCount(level);
         _dataManager.SetStars(stars, level);
     }
 
