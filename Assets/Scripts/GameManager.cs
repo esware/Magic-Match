@@ -1633,22 +1633,27 @@ public class GameManager : MonoBehaviour
 
             if (combinedItems.Count > 0)
                 combo++;
-            foreach (List<Item> desrtoyItems in combinedItems)
+            List<Item> itemsToDestroy = new List<Item>();
+            foreach (List<Item> destroyItems in combinedItems)
             {
-                foreach (Item item in desrtoyItems)
+                foreach (Item item in destroyItems)
                 {
-                    if (item.currentType != ItemsTypes.NONE)
-                        yield return new WaitForSeconds(0.1f);
-                    item.DestroyItem(true); 
-                    /*if (item.currentType != ItemsTypes.NONE)
-                    {
-                        while (!item.animationFinished)
-                        {
-                            yield return new WaitForFixedUpdate();
-                        }
-                    }*/
-
+                    itemsToDestroy.Add(item);
                 }
+            }
+
+            foreach (Item item in itemsToDestroy)
+            {
+                if (item.currentType != ItemsTypes.NONE)
+                    yield return new WaitForSeconds(0.1f);
+                item.DestroyItem(true); 
+                /*if (item.currentType != ItemsTypes.NONE)
+                {
+                    while (!item.animationFinished)
+                    {
+                        yield return new WaitForFixedUpdate();
+                    }
+                }*/
             }
 
             foreach (Item item in destroyAnyway)

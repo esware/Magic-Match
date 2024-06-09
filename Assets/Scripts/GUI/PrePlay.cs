@@ -19,6 +19,7 @@ namespace Dev.Scripts.GUI
             blocksObject.SetActive(false);
             ingrObject.SetActive(false);
             scoreTargetObject.SetActive(false);
+            
             GameObject ingr1 = ingrObject.transform.Find("Ingredient1").gameObject;
             GameObject ingr2 = ingrObject.transform.Find("Ingredient2").gameObject;
 

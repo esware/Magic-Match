@@ -33,7 +33,7 @@ namespace Dev.Scripts.GUI
         {
             for (int i = 1; i <= 3; i++)
             {
-                transform.Find("Image").Find("Star" + i).gameObject.SetActive(false);
+                transform.Find("Panel/Stars").Find("Star" + i).gameObject.SetActive(false);
             }
 
             int stars = new PlayerPrefsMapProgressManager().LoadLevelStarsCount(GameManager.Instance.currentLevel);
@@ -42,7 +42,7 @@ namespace Dev.Scripts.GUI
             {
                 for (int i = 1; i <= stars; i++)
                 {
-                    transform.Find("Image").Find("Star" + i).gameObject.SetActive(true);
+                    transform.Find("Panel/Stars").Find("Star" + i).gameObject.SetActive(true);
                 }
 
             }
@@ -50,7 +50,7 @@ namespace Dev.Scripts.GUI
             {
                 for (int i = 1; i <= 3; i++)
                 {
-                    transform.Find("Image").Find("Star" + i).gameObject.SetActive(false);
+                    transform.Find("Panel/Stars").Find("Star" + i).gameObject.SetActive(false);
                 }
 
             }
@@ -72,15 +72,27 @@ namespace Dev.Scripts.GUI
         if (name == "Settings" || name == "MenuPause")
         {
             if (PlayerPrefs.GetInt(PlayerPrefsKeys.Sound) == 0)
+            {
                 transform.Find("Image/Sound/SoundOff").gameObject.SetActive(true);
+                transform.Find("Image/Sound/SoundOn").gameObject.SetActive(false);
+            }
             else
+            {
                 transform.Find("Image/Sound/SoundOff").gameObject.SetActive(false);
+                transform.Find("Image/Sound/SoundOn").gameObject.SetActive(true);
+            }
+
 
             if (PlayerPrefs.GetInt(PlayerPrefsKeys.Music) == 0)
+            {
                 transform.Find("Image/Music/MusicOff").gameObject.SetActive(true);
+                transform.Find("Image/Music/MusicOn").gameObject.SetActive(false);
+            }
             else
+            {
                 transform.Find("Image/Music/MusicOff").gameObject.SetActive(false);
-
+                transform.Find("Image/Music/MusicOn").gameObject.SetActive(true);
+            }
         }
 
         if (name == "GemsShop")
@@ -95,12 +107,12 @@ namespace Dev.Scripts.GUI
         {
             for (int i = 1; i <= 3; i++)
             {
-                transform.Find("Image").Find("Star" + i).gameObject.SetActive(false);
+                transform.Find("Panel/Stars").Find("Star" + i).gameObject.SetActive(false);
             }
 
         }
 
-        var videoAdsButton = transform.Find("Image/Video");
+        var videoAdsButton = transform.Find("Panel/Video");
         if (videoAdsButton == null) videoAdsButton = transform.Find("Video");
         if (videoAdsButton != null )
         {
@@ -181,10 +193,9 @@ namespace Dev.Scripts.GUI
         }
         if (name == "MenuPlay")
         {
-            //            InitScript.Instance.currentTarget = InitScript.Instance.targets[PlayerPrefs.GetInt( "OpenLevel" )];
-            transform.Find("Image/Boost1").GetComponent<BoostIcon>().InitBoost();
-            transform.Find("Image/Boost2").GetComponent<BoostIcon>().InitBoost();
-            transform.Find("Image/Boost3").GetComponent<BoostIcon>().InitBoost();
+            transform.Find("Panel/Boost1").GetComponent<BoostIcon>().InitBoost();
+            transform.Find("Panel/Boost2").GetComponent<BoostIcon>().InitBoost();
+            transform.Find("Panel/Boost3").GetComponent<BoostIcon>().InitBoost();
 
         }
         if (name == "MenuPause")
@@ -217,15 +228,7 @@ namespace Dev.Scripts.GUI
             gameObject.SetActive(false);
 
     }
-
-    void TargetCheck(bool check, int n = 1)
-    {
-        Transform TargetCheck = transform.Find("Image/TargetCheck" + n);
-        Transform TargetUnCheck = transform.Find("Image/TargetUnCheck" + n);
-        TargetCheck.gameObject.SetActive(check);
-        TargetUnCheck.gameObject.SetActive(!check);
-    }
-
+    
     public void WaitForGiveUp()
     {
         if (name == "PreFailed")
@@ -261,8 +264,7 @@ namespace Dev.Scripts.GUI
     {
         for (int i = 1; i <= GameManager.Instance.stars; i++)
         {
-            //  SoundBase.Instance.audio.PlayOneShot( SoundBase.Instance.scoringStar );
-            transform.Find("Image").Find("Star" + i).gameObject.SetActive(true);
+            transform.Find("Panel/Stars").Find("Star" + i).gameObject.SetActive(true);
             SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.star[i - 1]);
             yield return new WaitForSeconds(0.5f);
         }
@@ -270,7 +272,7 @@ namespace Dev.Scripts.GUI
 
     IEnumerator MenuCompleteScoring()
     {
-        var scores = transform.Find("Image").Find("Score").GetComponent<TextMeshProUGUI>();
+        var scores = transform.Find("Panel/ScoreBanner").Find("Score").GetComponent<TextMeshProUGUI>();
         for (int i = 0; i <= GameManager.Score; i += 500)
         {
             scores.text = "" + i;
@@ -319,7 +321,7 @@ namespace Dev.Scripts.GUI
             GameManager.Instance.ChangeState<Map>();
         }
 
-        if (SceneManager.GetActiveScene().name == "game")
+        if (SceneManager.GetActiveScene().name == "Game")
         {
             if (GameManager.Instance.GetState<PauseState>())
             {

@@ -10,7 +10,7 @@ namespace Dev.Scripts.Targets
         private readonly List<TargetIcon> _targetIcons = new List<TargetIcon>();
         private void OnEnable()
         {
-            _levelNum = PlayerPrefs.GetInt(PlayerPrefsKeys.OpenLevel)+1;
+            _levelNum = PlayerPrefs.GetInt(PlayerPrefsKeys.OpenLevel);
             var targetObj = Resources.Load<TargetLevel>("Targets/Level" + _levelNum);
             foreach (var target in targetObj.targets)
             {

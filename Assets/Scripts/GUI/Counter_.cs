@@ -34,7 +34,9 @@ namespace Dev.Scripts.GUI
 		}
 		if (name == "BestScore")
 		{
-			_text.text = "Best score:" + PlayerPrefs.GetInt (PlayerPrefsKeys.Score + PlayerPrefs.GetInt (PlayerPrefsKeys.OpenLevel));
+			int currentLevel = PlayerPrefs.GetInt(PlayerPrefsKeys.OpenLevel);
+			int bestScore = PlayerPrefs.GetInt(PlayerPrefsKeys.Score + currentLevel);
+			_text.text = "Best score: " + bestScore;
 		}
 
 		if (name == "Limit")
