@@ -9,12 +9,12 @@ namespace Dev.Scripts.GUI
 {
 	public Sprite[] buyButtons;
 	public Image buyButton;
-	int FailedCost;
-	// Use this for initialization
+	private int _failedCost;
+	
 	void OnEnable ()
 	{
-		FailedCost = GameManager.Instance.failedCost;
-		transform.Find ("Buy/Price").GetComponent<Text> ().text = "" + FailedCost;
+		_failedCost = GameManager.Instance.failedCost;
+		transform.Find ("Buy/Price").GetComponent<Text> ().text = "" + _failedCost;
 		if (GameManager.Instance.limitType == LIMIT.MOVES)
 			buyButton.sprite = buyButtons [0];
 		else if (GameManager.Instance.limitType == LIMIT.TIME)

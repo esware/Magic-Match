@@ -240,6 +240,7 @@ public class GameManager : MonoBehaviour
     private GameState _currentState;
     
     private static readonly int Stop = Animator.StringToHash("stop");
+    private static readonly int Color1 = Animator.StringToHash("color");
 
 
     void Awake()
@@ -1273,7 +1274,6 @@ public class GameManager : MonoBehaviour
         {
             for (col = 1; col < maxCols - 1; col++)
             {
-                //  if (GetSquare(col, row).type == SquareTypes.NONE)
                 SetOutline(col, row, 0);
             }
         }
@@ -1436,10 +1436,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        //Vector3 pos = GameField.transform.TransformPoint((Vector3)firstSquarePosition + new Vector3(col * squareWidth - squareWidth / 2, -row * squareHeight, 10));
-        //line.SetVertexCount(linePoint + 1);
-        //line.SetPosition(linePoint++, pos);
-
     }
     private GameObject CreateOutline(Square square)
     {
@@ -1574,8 +1570,8 @@ public class GameManager : MonoBehaviour
      private IEnumerator HideDelayed(GameObject gm)
      {
          yield return new WaitForSeconds(1f);
-         gm.GetComponent<Animator>().SetTrigger("stop");
-         gm.GetComponent<Animator>().SetInteger("color", 10);
+         gm.GetComponent<Animator>().SetTrigger(Stop);
+         gm.GetComponent<Animator>().SetInteger(Color1, 10);
          gm.GetComponent<SpriteRenderer>().enabled = false;
      }
      private IEnumerator StartAnimateIngredient(GameObject item, Vector2 pos)
