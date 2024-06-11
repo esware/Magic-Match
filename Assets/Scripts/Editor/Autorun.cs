@@ -2,7 +2,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.IO;
-using Editor;
 using UnityEngine.SceneManagement;
 
 [InitializeOnLoad]
@@ -19,9 +18,9 @@ public class Autorun
         EditorApplication.update -= InitProject;
         if (EditorApplication.timeSinceStartup < 10 || !EditorPrefs.GetBool(Application.dataPath+"AlreadyOpened"))
         {
-            if (SceneManager.GetActiveScene().name != "game" && Directory.Exists("Assets/Scenes"))
+            if (SceneManager.GetActiveScene().name != "Game" && Directory.Exists("Assets/Scenes"))
             {
-                EditorSceneManager.OpenScene("Assets/Scenes/game.unity");
+                EditorSceneManager.OpenScene("Assets/Scenes/Game.unity");
 
             }
             LevelMakerEditor.Init();

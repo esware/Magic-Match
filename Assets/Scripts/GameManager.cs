@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour
     public BoostIcon activatedBoost;
     public string androidSharingPath;
     public string iosSharingPath;
-
+    public string[] inAppIDs;
     public BoostIcon ActivatedBoost
     {
         get => activatedBoost == null ? emptyBoostIcon : activatedBoost;

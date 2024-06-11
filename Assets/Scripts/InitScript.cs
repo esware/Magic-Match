@@ -152,7 +152,11 @@ public class InitScript : MonoBehaviour
     
     private string _lastResponse = string.Empty;
     private string _status = "Ready";
-    
+    public string admobUIDAndroid;
+    public string admobUIDIOS;
+    public string admobRewardedUIDAndroid;
+    public string admobRewardedUIDIOS;
+
     #endregion
     
     #region Properties
@@ -188,7 +192,6 @@ public class InitScript : MonoBehaviour
         }
         else
         {
-            //RestLifeTimer = (totalTimeForRestLifeHours * 3600) + (totalTimeForRestLifeMin * 60) + totalTimeForRestLifeSec;
             RestLifeTimer = 15 * 60;
         }
         
