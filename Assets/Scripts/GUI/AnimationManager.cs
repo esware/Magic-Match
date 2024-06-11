@@ -99,8 +99,8 @@ namespace Dev.Scripts.GUI
         {
             for (int i = 1; i <= 4; i++)
             {
-                transform.Find("Image/Pack" + i + "/Count").GetComponent<Text>().text = "" + GameManager.Instance.gemsProducts[i - 1].count;
-                transform.Find("Image/Pack" + i + "/Buy/Price").GetComponent<Text>().text = "$" + GameManager.Instance.gemsProducts[i - 1].price;
+                transform.Find("Image/Pack" + i + "/Count").GetComponent<TextMeshProUGUI>().text = "" + GameManager.Instance.gemsProducts[i - 1].count;
+                transform.Find("Image/Pack" + i + "/Buy/Price").GetComponent<TextMeshProUGUI>().text = "$" + GameManager.Instance.gemsProducts[i - 1].price;
             }
         }
         if (name == "MenuComplete")
@@ -425,7 +425,7 @@ namespace Dev.Scripts.GUI
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
         if (pack.name == "Pack1")
         {
-            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<TextMeshProUGUI>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -434,13 +434,13 @@ namespace Dev.Scripts.GUI
 #if UNITY_INAPPS
             UnityInAppsIntegration.THIS.BuyProductID(LevelManager.THIS.InAppIDs[0]);
 #else
-            Debug.LogError("Unity-inapps not enable. More info: https://docs.google.com/document/d/1HeN8JtQczTVetkMnd8rpSZp_TZZkEA7_kan7vvvsMw0/edit#heading=h.60xg5ccbex9m");//2.1.6
+            Debug.LogError("Unity-inapps not enable");
 #endif
         }
 
         if (pack.name == "Pack2")
         {
-            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<TextMeshProUGUI>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -449,12 +449,12 @@ namespace Dev.Scripts.GUI
 #if UNITY_INAPPS
             UnityInAppsIntegration.THIS.BuyProductID(LevelManager.THIS.InAppIDs[1]);
 #else
-            Debug.LogError("Unity-inapps not enable. More info: https://docs.google.com/document/d/1HeN8JtQczTVetkMnd8rpSZp_TZZkEA7_kan7vvvsMw0/edit#heading=h.60xg5ccbex9m");//2.1.6
+            Debug.LogError("Unity-inapps not enable.");
 #endif
         }
         if (pack.name == "Pack3")
         {
-            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<TextMeshProUGUI>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -463,12 +463,12 @@ namespace Dev.Scripts.GUI
 #if UNITY_INAPPS
             UnityInAppsIntegration.THIS.BuyProductID(LevelManager.THIS.InAppIDs[2]);
 #else
-            Debug.LogError("Unity-inapps not enable. More info: https://docs.google.com/document/d/1HeN8JtQczTVetkMnd8rpSZp_TZZkEA7_kan7vvvsMw0/edit#heading=h.60xg5ccbex9m");//2.1.6
+            Debug.LogError("Unity-inapps not enable.");
 #endif
         }
         if (pack.name == "Pack4")
         {
-            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<Text>().text.Replace("x ", ""));
+            InitScript.WaitedPurchaseGems = int.Parse(pack.transform.Find("Count").GetComponent<TextMeshProUGUI>().text.Replace("x ", ""));
 #if UNITY_WEBPLAYER || UNITY_WEBGL
             InitScript.Instance.PurchaseSucceded();
             CloseMenu();
@@ -477,7 +477,7 @@ namespace Dev.Scripts.GUI
 #if UNITY_INAPPS
             UnityInAppsIntegration.THIS.BuyProductID(LevelManager.THIS.InAppIDs[3]);
 #else
-            Debug.LogError("Unity-inapps not enable. More info: https://docs.google.com/document/d/1HeN8JtQczTVetkMnd8rpSZp_TZZkEA7_kan7vvvsMw0/edit#heading=h.60xg5ccbex9m");//2.1.6
+            Debug.LogError("Unity-inapps not enable. ");
 #endif
         }
         CloseMenu();
@@ -496,9 +496,9 @@ namespace Dev.Scripts.GUI
     public void BuyLife(GameObject button)
     {
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
-        if (InitScript.Gems >= int.Parse(button.transform.Find("Price").GetComponent<Text>().text))
+        if (InitScript.Gems >= int.Parse(button.transform.Find("Price").GetComponent<TextMeshProUGUI>().text))
         {
-            InitScript.Instance.SpendGems(int.Parse(button.transform.Find("Price").GetComponent<Text>().text));
+            InitScript.Instance.SpendGems(int.Parse(button.transform.Find("Price").GetComponent<TextMeshProUGUI>().text));
             InitScript.Instance.RestoreLifes();
             CloseMenu();
         }
@@ -513,9 +513,9 @@ namespace Dev.Scripts.GUI
     {
         if (GetComponent<Animation>()["bannerFailed"].speed == 0)
         {
-            if (InitScript.Gems >= int.Parse(button.transform.Find("Price").GetComponent<Text>().text))
+            if (InitScript.Gems >= int.Parse(button.transform.Find("Price").GetComponent<TextMeshProUGUI>().text))
             {
-                InitScript.Instance.SpendGems(int.Parse(button.transform.Find("Price").GetComponent<Text>().text));
+                InitScript.Instance.SpendGems(int.Parse(button.transform.Find("Price").GetComponent<TextMeshProUGUI>().text));
                 button.GetComponent<Button>().interactable = false;
                 GoOnFailed();
             }
