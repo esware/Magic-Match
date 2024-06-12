@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8449394266507467392}
   - component: {fileID: 4420414197120772958}
   - component: {fileID: 5551952408559730959}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: SolidBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}

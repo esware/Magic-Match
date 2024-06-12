@@ -3,15 +3,16 @@ using UnityEngine.EventSystems;
 
 public class MapCamera : MonoBehaviour
 {
+    public float smoothSpeed = 0.125f; 
+    public new Camera camera;
+    public Bounds bounds;
+    
+    
+    private Vector2 _deltaV;
+    private Vector3 _targetPosition;
+    private bool _isMoving;
     private Vector2 _prevPosition;
     private Transform _transform;
-
-    public Camera camera;
-    public Bounds bounds;
-    private Vector2 deltaV;
-    private Vector3 targetPosition;
-    private bool isMoving;
-    public float smoothSpeed = 0.125f; 
 
     private void Awake()
     {
@@ -28,7 +29,7 @@ public class MapCamera : MonoBehaviour
         HandleMouseInput();
 #endif
 
-        if (isMoving)
+        if (_isMoving)
         {
             SmoothMove();
         }
@@ -41,7 +42,7 @@ public class MapCamera : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Began)
             {
-                deltaV = Vector2.zero;
+                _deltaV = Vector2.zero;
                 _prevPosition = touch.position;
             }
             else if (touch.phase == TouchPhase.Moved)
@@ -52,13 +53,13 @@ public class MapCamera : MonoBehaviour
             }
             else if (touch.phase == TouchPhase.Ended)
             {
-                SetTargetPosition(deltaV.x / 30, deltaV.y / 30);
+                SetTargetPosition(_deltaV.x / 30, _deltaV.y / 30);
             }
         }
         else
         {
-            deltaV -= deltaV * Time.deltaTime * 10;
-            SetTargetPosition(deltaV.x / 30, deltaV.y / 30);
+            _deltaV -= _deltaV * Time.deltaTime * 10;
+            SetTargetPosition(_deltaV.x / 30, _deltaV.y / 30);
         }
     }
 
@@ -66,7 +67,7 @@ public class MapCamera : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            deltaV = Vector2.zero;
+            _deltaV = Vector2.zero;
             _prevPosition = Input.mousePosition;
         }
         else if (Input.GetMouseButton(0))
@@ -77,18 +78,18 @@ public class MapCamera : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            SetTargetPosition(deltaV.x / 30, deltaV.y / 30);
+            SetTargetPosition(_deltaV.x / 30, _deltaV.y / 30);
         }
         else
         {
-            deltaV -= deltaV * (Time.deltaTime * 10);
-            SetTargetPosition(deltaV.x / 30, deltaV.y / 30);
+            _deltaV -= _deltaV * (Time.deltaTime * 10);
+            SetTargetPosition(_deltaV.x / 30, _deltaV.y / 30);
         }
     }
 
     private void MoveCamera(Vector2 prevPosition, Vector2 curPosition)
     {
-        if (EventSystem.current.IsPointerOverGameObject(-1))
+        if (EventSystem.current.IsPointerOverGameObject())
             return;
 
         Vector3 move = camera.ScreenToWorldPoint(prevPosition) - camera.ScreenToWorldPoint(curPosition);
@@ -98,24 +99,24 @@ public class MapCamera : MonoBehaviour
     public void SetPosition(Vector2 position)
     {
         Vector2 validatedPosition = ApplyBounds(position);
-        targetPosition = new Vector3(validatedPosition.x, validatedPosition.y, _transform.position.z);
-        isMoving = true;
+        _targetPosition = new Vector3(validatedPosition.x, validatedPosition.y, _transform.position.z);
+        _isMoving = true;
     }
 
     private void SetTargetPosition(float x, float y)
     {
         Vector3 newTargetPosition = new Vector3(_transform.position.x + x, _transform.position.y + y, _transform.position.z);
-        targetPosition = ApplyBounds(new Vector2(newTargetPosition.x, newTargetPosition.y));
-        isMoving = true;
+        _targetPosition = ApplyBounds(new Vector2(newTargetPosition.x, newTargetPosition.y));
+        _isMoving = true;
     }
 
     private void SmoothMove()
     {
-        _transform.position = Vector3.Lerp(_transform.position, targetPosition, smoothSpeed * Time.deltaTime * 10f);
-        if (Vector3.Distance(_transform.position, targetPosition) < 0.01f)
+        _transform.position = Vector3.Lerp(_transform.position, _targetPosition, smoothSpeed * Time.deltaTime * 10f);
+        if (Vector3.Distance(_transform.position, _targetPosition) < 0.01f)
         {
-            _transform.position = targetPosition;
-            isMoving = false;
+            _transform.position = _targetPosition;
+            _isMoving = false;
         }
     }
 

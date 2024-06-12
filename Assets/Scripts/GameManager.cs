@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
     public GameObject undesroyableBlockPrefab;
     public GameObject thrivingBlockPrefab;
     public LifeShop lifeShop;
-    public Transform GameField;
+    public Transform gameField;
     public bool enableInApps;
     public int maxRows = 9;
     public int maxCols = 9;
@@ -148,13 +148,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    SquareBlocks[] levelSquaresFile = new SquareBlocks[81];
+    SquareBlocks[] _levelSquaresFile = new SquareBlocks[81];
     public int targetBlocks;
 
     public GameObject[] itemExplPool = new GameObject[20];
     public static int Score;
     public int stars;
-    private int linePoint;
+    private int _linePoint;
     public int star1;
     public int star2;
     public int star3;
@@ -176,7 +176,7 @@ public class GameManager : MonoBehaviour
     public GameObject ingrObject;
     public GameObject blocksObject;
     public GameObject scoreTargetObject;
-    private bool matchesGot;
+    private bool _matchesGot;
     bool _ingredientFly;
     public GameObject[] gratzWords;
 
@@ -446,8 +446,8 @@ public class GameManager : MonoBehaviour
         EnableMap(false);
 
 
-        GameField.transform.position = Vector3.zero;
-        firstSquarePosition = GameField.transform.position;
+        gameField.transform.position = Vector3.zero;
+        firstSquarePosition = gameField.transform.position;
         squaresArray = new Square[maxCols * maxRows];
         
         LoadLevel();
@@ -456,9 +456,9 @@ public class GameManager : MonoBehaviour
         {
             for (int col = 0; col < maxCols; col++)
             {
-                if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.BLOCK)
+                if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.BLOCK)
                     TargetBlocks++;
-                else if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
+                else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
                     TargetBlocks += 2;
             }
         }
@@ -495,7 +495,7 @@ public class GameManager : MonoBehaviour
             StopCoroutine(TimeTick());
             StartCoroutine(TimeTick());
         }
-        GameField.gameObject.SetActive(true);
+        gameField.gameObject.SetActive(true);
     }
     public void LoadLevel()
     {
@@ -547,11 +547,11 @@ public class GameManager : MonoBehaviour
         level.SetActive(!enable);
 
         if (enable)
-            GameField.gameObject.SetActive(false);
+            gameField.gameObject.SetActive(false);
 
         if (!enable)
             Camera.main.transform.position = new Vector3(0, 0, -10);
-        foreach (Transform item in GameField.transform)
+        foreach (Transform item in gameField.transform)
         {
             Destroy(item.gameObject);
         }
@@ -1077,15 +1077,15 @@ public class GameManager : MonoBehaviour
                 maxCols = int.Parse(sizes[0]);
                 maxRows = int.Parse(sizes[1]);
                 squaresArray = new Square[maxCols * maxRows];
-                levelSquaresFile = new SquareBlocks[maxRows * maxCols];
-                for (int i = 0; i < levelSquaresFile.Length; i++)
+                _levelSquaresFile = new SquareBlocks[maxRows * maxCols];
+                for (int i = 0; i < _levelSquaresFile.Length; i++)
                 {
 
                     SquareBlocks sqBlocks = new SquareBlocks();
                     sqBlocks.Block = SquareTypes.EMPTY;
                     sqBlocks.Obstacle = SquareTypes.NONE;
 
-                    levelSquaresFile[i] = sqBlocks;
+                    _levelSquaresFile[i] = sqBlocks;
                 }
             }
             else if (line.StartsWith("LIMIT"))
@@ -1140,8 +1140,8 @@ public class GameManager : MonoBehaviour
                 string[] st = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < st.Length; i++)
                 {
-                    levelSquaresFile[mapLine * maxCols + i].Block = (SquareTypes)int.Parse(st[i][0].ToString());
-                    levelSquaresFile[mapLine * maxCols + i].Obstacle = (SquareTypes)int.Parse(st[i][1].ToString());
+                    _levelSquaresFile[mapLine * maxCols + i].Block = (SquareTypes)int.Parse(st[i][0].ToString());
+                    _levelSquaresFile[mapLine * maxCols + i].Obstacle = (SquareTypes)int.Parse(st[i][1].ToString());
                 }
                 mapLine++;
             }
@@ -1176,21 +1176,22 @@ public class GameManager : MonoBehaviour
     }
     private void AnimateField(Vector3 pos)
     {
-
         float yOffset = 0;
         if (target == Target.INGREDIENT)
             yOffset = 0.3f;
-        Animation anim = GameField.GetComponent<Animation>();
+        
+        Animation anim = gameField.GetComponent<Animation>();
         AnimationClip clip = new AnimationClip();
         AnimationCurve curveX = new AnimationCurve(new Keyframe(0, pos.x + 15), new Keyframe(0.7f, pos.x - 0.2f), new Keyframe(0.8f, pos.x));
         AnimationCurve curveY = new AnimationCurve(new Keyframe(0, pos.y + yOffset), new Keyframe(1, pos.y + yOffset));
         clip.legacy = true;
         clip.SetCurve("", typeof(Transform), "localPosition.x", curveX);
         clip.SetCurve("", typeof(Transform), "localPosition.y", curveY);
+        
         clip.AddEvent(new AnimationEvent() { time = 1, functionName = "EndAnimGamField" });
         anim.AddClip(clip, "appear");
         anim.Play("appear");
-        GameField.transform.position = new Vector2(pos.x + 15, pos.y + yOffset);
+        gameField.transform.position = new Vector2(pos.x + 15, pos.y + yOffset);
 
     }
     private void CreateSquare(int col, int row, bool chessColor = false)
@@ -1201,23 +1202,23 @@ public class GameManager : MonoBehaviour
         {
             square.GetComponent<SpriteRenderer>().sprite = squareSprite1;
         }
-        square.transform.SetParent(GameField);
+        square.transform.SetParent(gameField);
         square.transform.localPosition = firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight);
         squaresArray[row * maxCols + col] = square.GetComponent<Square>();
         square.GetComponent<Square>().row = row;
         square.GetComponent<Square>().col = col;
         square.GetComponent<Square>().type = SquareTypes.EMPTY;
-        if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.EMPTY)
+        if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.EMPTY)
         {
             CreateObstacles(col, row, square, SquareTypes.NONE);
         }
-        else if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.NONE)
+        else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.NONE)
         {
             square.GetComponent<SpriteRenderer>().enabled = false;
             square.GetComponent<Square>().type = SquareTypes.NONE;
 
         }
-        else if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.BLOCK)
+        else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.BLOCK)
         {
             GameObject block = Instantiate(blockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1227,7 +1228,7 @@ public class GameManager : MonoBehaviour
             
             CreateObstacles(col, row, square, SquareTypes.NONE);
         }
-        else if (levelSquaresFile[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
+        else if (_levelSquaresFile[row * maxCols + col].Block == SquareTypes.DOUBLEBLOCK)
         {
             GameObject block = Instantiate(blockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1450,7 +1451,7 @@ public class GameManager : MonoBehaviour
     }
     private void CreateObstacles(int col, int row, GameObject square, SquareTypes type)
     {
-        if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.WIREBLOCK && type == SquareTypes.NONE) || type == SquareTypes.WIREBLOCK)
+        if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.WIREBLOCK && type == SquareTypes.NONE) || type == SquareTypes.WIREBLOCK)
         {
             GameObject block = Instantiate(wireBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1459,7 +1460,7 @@ public class GameManager : MonoBehaviour
             square.GetComponent<Square>().type = SquareTypes.WIREBLOCK;
             block.GetComponent<SpriteRenderer>().sortingOrder = 3;
         }
-        else if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.SOLIDBLOCK && type == SquareTypes.NONE) || type == SquareTypes.SOLIDBLOCK)
+        else if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.SOLIDBLOCK && type == SquareTypes.NONE) || type == SquareTypes.SOLIDBLOCK)
         {
             GameObject block = Instantiate(solidBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1469,7 +1470,7 @@ public class GameManager : MonoBehaviour
             square.GetComponent<Square>().type = SquareTypes.SOLIDBLOCK;
             
         }
-        else if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.UNDESTROYABLE && type == SquareTypes.NONE) || type == SquareTypes.UNDESTROYABLE)
+        else if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.UNDESTROYABLE && type == SquareTypes.NONE) || type == SquareTypes.UNDESTROYABLE)
         {
             GameObject block = Instantiate(undesroyableBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1478,7 +1479,7 @@ public class GameManager : MonoBehaviour
             square.GetComponent<Square>().type = SquareTypes.UNDESTROYABLE;
             
         }
-        else if ((levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.THRIVING && type == SquareTypes.NONE) || type == SquareTypes.THRIVING)
+        else if ((_levelSquaresFile[row * maxCols + col].Obstacle == SquareTypes.THRIVING && type == SquareTypes.NONE) || type == SquareTypes.THRIVING)
         {
             GameObject block = Instantiate(thrivingBlockPrefab, firstSquarePosition + new Vector2(col * squareWidth, -row * squareHeight), Quaternion.identity) as GameObject;
             block.transform.SetParent(square.transform);
@@ -1582,8 +1583,8 @@ public class GameManager : MonoBehaviour
          ingr[1] = ingrObject.transform.Find("Ingr2").gameObject;
          if (targetBlocks > 0)
          {
-             ingr[0] = blocksObject.transform.gameObject;
-             ingr[1] = blocksObject.transform.gameObject;
+             ingr[0] = blocksObject.gameObject;
+             ingr[1] = blocksObject.gameObject;
          }
          AnimationCurve curveX = new AnimationCurve(new Keyframe(0, item.transform.localPosition.x), new Keyframe(0.4f, pos.x));
          AnimationCurve curveY = new AnimationCurve(new Keyframe(0, item.transform.localPosition.y), new Keyframe(0.5f, pos.y));

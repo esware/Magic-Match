@@ -145,9 +145,9 @@ public class LevelsMap : MonoBehaviour
 
 	private void CompleteLevelInternal (int number, int starsCount) {
 		if (IsLevelLocked (number)) {
-			Debug.Log (string.Format ("Can't complete locked level {0}.", number));
+			Debug.Log ($"Can't complete locked level {number}.");
 		} else if (starsCount < 1 || starsCount > 3) {
-			Debug.Log (string.Format ("Can't complete level {0}. Invalid stars count {1}.", number, starsCount));
+			Debug.Log ($"Can't complete level {number}. Invalid stars count {starsCount}.");
 		} else {
 			int curStarsCount = _mapProgressManager.LoadLevelStarsCount (number);
 			int maxStarsCount = Mathf.Max (curStarsCount, starsCount);
@@ -161,7 +161,7 @@ public class LevelsMap : MonoBehaviour
 	private void TeleportToLevelInternal (int number, bool isQuietly) {
 		MapLevel mapLevel = GetLevel (number);
 		if (mapLevel.isLocked) {
-			Debug.Log (string.Format ("Can't jump to locked level number {0}.", number));
+			Debug.Log ($"Can't jump to locked level number {number}.");
 		} else {
 			waypointsMover.transform.position = mapLevel.pathPivot.transform.position; 
 			characterLevel = mapLevel;
@@ -173,7 +173,7 @@ public class LevelsMap : MonoBehaviour
 	private void WalkToLevelInternal (int number) {
 		MapLevel mapLevel = GetLevel (number);
 		if (mapLevel.isLocked) {
-			Debug.Log (string.Format ("Can't go to locked level number {0}.", number));
+			Debug.Log ($"Can't go to locked level number {number}.");
 		} else {
 			waypointsMover.Move (characterLevel.pathPivot, mapLevel.pathPivot,
 				() => {

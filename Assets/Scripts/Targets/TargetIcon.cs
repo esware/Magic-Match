@@ -12,42 +12,42 @@ public class TargetIcon : MonoBehaviour
         public int count;
         public Sprite[] checkUncheck;
         public Image checkObject;
-        private TargetObject targetObject;
+        private TargetObject _targetObject;
 
-        public TargetObject target
+        public TargetObject TargetObj
         {
             get
             {
-                if (targetObject == null)
+                if (_targetObject == null)
                 {
                     if (GameManager.Instance != null)
-                        targetObject = GameManager.Instance.targetObject.First(i => i.icon.name == imageRenderer.sprite.name);
+                        _targetObject = GameManager.Instance.targetObject.First(i => i.icon.name == imageRenderer.sprite.name);
                 }
-                return targetObject;
+                return _targetObject;
             }
-            set => targetObject = value;
+            set => _targetObject = value;
         }
 
-        public void SetTarget(TargetObject target)
+        public void SetTarget(TargetObject t)
         {
             checkObject.gameObject.SetActive(false);
-            imageRenderer.sprite = target.icon;
-            count = target.targetCount;
-            textObj.text = target.targetCount.ToString();
-            if (target.type == Target.SCORE)
+            imageRenderer.sprite = t.icon;
+            count = t.targetCount;
+            textObj.text = t.targetCount.ToString();
+            if (t.type == Target.SCORE)
             {
                 count = GameManager.Instance.star1;
                 textObj.text = "1";
             }
-            else if(target.type == Target.BLOCKS)
+            else if(t.type == Target.BLOCKS)
             {
                 textObj.GetComponent<TargetText>().TextUpdate = GetCount;
             }
-            else if(target.type == Target.INGREDIENT)
+            else if(t.type == Target.INGREDIENT)
             {
                 textObj.GetComponent<TargetText>().TextUpdate = GetCount;
             }
-            else if(target.type == Target.COLLECT)
+            else if(t.type == Target.COLLECT)
             {
                 textObj.GetComponent<TargetText>().TextUpdate = GetCount;
             }
@@ -55,9 +55,9 @@ public class TargetIcon : MonoBehaviour
 
         private void Update()
         {
-            if(target?.Done() ?? false) SetCheck();
+            if(TargetObj?.Done() ?? false) SetCheck();
             else if(GameManager.Instance.GetState<PreFailed>() || GameManager.Instance.GetState<GameOver>()) SetFailed();
-            else if((!target?.Done() ?? false) && checkObject.gameObject.activeSelf) SetContinue();
+            else if((!TargetObj?.Done() ?? false) && checkObject.gameObject.activeSelf) SetContinue();
         }
 
         void SetCheck()
@@ -82,7 +82,7 @@ public class TargetIcon : MonoBehaviour
         
         string GetBlocks() => GameManager.Instance.TargetBlocks.ToString();
 
-        string GetCount() => target?.GetCount().ToString();
+        string GetCount() => TargetObj?.GetCount().ToString();
 
         int GetScoreTarget() => count - GameManager.Score;
     }

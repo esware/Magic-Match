@@ -50,19 +50,19 @@ public class Square : MonoBehaviour
     {
         if (IsNone() && !CanGoInto())
             return null;
-        GameObject item = Instantiate(GameManager.Instance.itemPrefab) as GameObject;
-        item.transform.localScale = Vector2.one * 0.6f;
-        item.GetComponent<Item>().square = this;
+        GameObject i = Instantiate(GameManager.Instance.itemPrefab) as GameObject;
+        i.transform.localScale = Vector2.one * 0.6f;
+        i.GetComponent<Item>().square = this;
 
-        item.transform.SetParent(transform.parent);
+        i.transform.SetParent(transform.parent);
         if (falling)
         {
-            item.transform.position = transform.position + Vector3.back * 0.2f + Vector3.up * 3f;
-            item.GetComponent<Item>().justCreatedItem = true;
+            i.transform.position = transform.position + Vector3.back * 0.2f + Vector3.up * 3f;
+            i.GetComponent<Item>().justCreatedItem = true;
         }
         else
-            item.transform.position = transform.position + Vector3.back * 0.2f;
-        this.item = item.GetComponent<Item>();
+            i.transform.position = transform.position + Vector3.back * 0.2f;
+        this.item = i.GetComponent<Item>();
         return this.item;
     }
 

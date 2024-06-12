@@ -11,31 +11,14 @@ public enum CombineType
 
 public class AI : MonoBehaviour
 {
-	/// <summary>
-	/// The reference to this object
-	/// </summary>
 	public static AI THIS;
-	/// <summary>
-	/// have got a tip
-	/// </summary>
 	public bool gotTip;
-	/// <summary>
-	/// The allow show tip
-	/// </summary>
 	public bool allowShowTip;
-	/// <summary>
-	/// The tip identifier
-	/// </summary>
-	int tipID;
-	/// <summary>
-	/// The count of coroutines
-	/// </summary>
 	public int corCount;
-	/// <summary>
-	/// The tip items
-	/// </summary>
-	private List<Item> nextMoveItems;
-	// Use this for initialization
+	
+	private int _tipID;
+	private List<Item> _nextMoveItems;
+
 	void Start()
 	{
 		THIS = this;
@@ -72,10 +55,10 @@ public class AI : MonoBehaviour
 			{
 				if (moveThis && square.type != SquareTypes.WIREBLOCK)
 				{
-					nextMoveItems.Add(square.item);
+					_nextMoveItems.Add(square.item);
 				}
 				else if (!moveThis)
-					nextMoveItems.Add(square.item);
+					_nextMoveItems.Add(square.item);
 			}
 		}
 
@@ -83,7 +66,7 @@ public class AI : MonoBehaviour
 
 	public List<Item> GetCombine()
 	{
-		return nextMoveItems;
+		return _nextMoveItems;
 	}
 
 	/// <summary>
@@ -119,7 +102,7 @@ public class AI : MonoBehaviour
 		//if drag have not blocked and game status Playing - continue
 		if (!GameManager.Instance.DragBlocked && GameManager.Instance.GetState<Playing>())
 		{
-			nextMoveItems = new List<Item>();
+			_nextMoveItems = new List<Item>();
 
 			if (!GameManager.Instance.GetState<Playing>())
 				yield break;
@@ -148,16 +131,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row, col - 1), COLOR);
 							CheckSquare(GetSquare(row, col - 2), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							// StartCoroutine(showTip(nextMoveItems[0], Vector3.up));
-							showTip(nextMoveItems);
-							tipItem = nextMoveItems[0];
+							ShowTip(_nextMoveItems);
+							tipItem = _nextMoveItems[0];
 							vDirection = Vector3.up;
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//    o
 						//o-o x
@@ -167,16 +150,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row, col - 1), COLOR);
 							CheckSquare(GetSquare(row, col - 2), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							// StartCoroutine(showTip(nextMoveItems[0], Vector3.down));
 							vDirection = Vector3.down;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//x o o
 						//o
@@ -186,16 +169,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row, col + 1), COLOR);
 							CheckSquare(GetSquare(row, col + 2), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							// StartCoroutine(showTip(nextMoveItems[0], Vector3.up));
 							vDirection = Vector3.up;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//o
 						//x o o
@@ -205,16 +188,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row, col + 1), COLOR);
 							CheckSquare(GetSquare(row, col + 2), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//  StartCoroutine(showTip(nextMoveItems[0], Vector3.down));
 							vDirection = Vector3.down;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//o
 						//o
@@ -225,16 +208,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row - 1, col), COLOR);
 							CheckSquare(GetSquare(row - 2, col), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							// StartCoroutine(showTip(nextMoveItems[0], Vector3.left));
 							vDirection = Vector3.left;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//x o
 						//o
@@ -245,16 +228,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row + 1, col), COLOR);
 							CheckSquare(GetSquare(row + 2, col), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//  StartCoroutine(showTip(nextMoveItems[0], Vector3.left));
 							vDirection = Vector3.left;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//	o
 						//  o
@@ -265,16 +248,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row - 1, col), COLOR);
 							CheckSquare(GetSquare(row - 2, col), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//  StartCoroutine(showTip(nextMoveItems[0], Vector3.right));
 							vDirection = Vector3.right;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//o x
 						//  o
@@ -285,16 +268,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row + 1, col), COLOR);
 							CheckSquare(GetSquare(row + 2, col), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//  StartCoroutine(showTip(nextMoveItems[0], Vector3.right));
 							vDirection = Vector3.right;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//o-x-o-o
 						if (col < maxCol - 2 && col > 0)
@@ -303,16 +286,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row, col + 1), COLOR);
 							CheckSquare(GetSquare(row, col + 2), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//   StartCoroutine(showTip(nextMoveItems[0], Vector3.right));
 							vDirection = Vector3.right;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 						//o-o-x-o
 						if (col < maxCol - 1 && col > 1)
 						{
@@ -320,16 +303,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row, col - 1), COLOR);
 							CheckSquare(GetSquare(row, col - 2), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//   StartCoroutine(showTip(nextMoveItems[0], Vector3.left));
 							vDirection = Vector3.left;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 						//o
 						//x
 						//o
@@ -340,16 +323,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row + 1, col), COLOR);
 							CheckSquare(GetSquare(row + 2, col), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//  StartCoroutine(showTip(nextMoveItems[0], Vector3.down));
 							vDirection = Vector3.down;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 						//o
 						//o
@@ -361,16 +344,16 @@ public class AI : MonoBehaviour
 							CheckSquare(GetSquare(row - 1, col), COLOR);
 							CheckSquare(GetSquare(row - 2, col), COLOR);
 						}
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto())
 						{
 							//   StartCoroutine(showTip(nextMoveItems[0], Vector3.up));
 							vDirection = Vector3.up;
-							tipItem = nextMoveItems[0];
-							showTip(nextMoveItems);
+							tipItem = _nextMoveItems[0];
+							ShowTip(_nextMoveItems);
 							yield break;
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 						//  o
 						//o x o
 						//  o
@@ -382,13 +365,13 @@ public class AI : MonoBehaviour
 						{
 							square = GetSquare(row + 1, col);
 							if (square)
-							{//1.6
+							{
 								if (square.item != null)
 								{
 									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.up;
-										nextMoveItems.Add(square.item);
+										_nextMoveItems.Add(square.item);
 										v++;
 									}
 								}
@@ -398,13 +381,13 @@ public class AI : MonoBehaviour
 						{
 							square = GetSquare(row - 1, col);
 							if (square)
-							{//1.6
+							{
 								if (square.item != null)
 								{
 									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.down;
-										nextMoveItems.Add(square.item);
+										_nextMoveItems.Add(square.item);
 										v++;
 									}
 								}
@@ -414,13 +397,13 @@ public class AI : MonoBehaviour
 						{
 							square = GetSquare(row, col - 1);
 							if (square)
-							{//1.6
+							{
 								if (square.item != null)
 								{
 									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.right;
-										nextMoveItems.Add(square.item);
+										_nextMoveItems.Add(square.item);
 										h++;
 									}
 								}
@@ -430,13 +413,13 @@ public class AI : MonoBehaviour
 						{
 							square = GetSquare(row, col + 1);
 							if (square)
-							{//1.6
+							{
 								if (square.item != null)
 								{
 									if (square.item.Color == COLOR)
 									{
 										vDirection = Vector3.left;
-										nextMoveItems.Add(square.item);
+										_nextMoveItems.Add(square.item);
 										h++;
 									}
 								}
@@ -444,36 +427,35 @@ public class AI : MonoBehaviour
 						}
 
 						//if we found 3or more items and they not lock show tip
-						if (nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto() && GetSquare(row, col).type != SquareTypes.WIREBLOCK)
+						if (_nextMoveItems.Count == 3 && GetSquare(row, col).CanGoInto() && GetSquare(row, col).type != SquareTypes.WIREBLOCK)
 						{
-							if (v > h && nextMoveItems[2].square.type != SquareTypes.WIREBLOCK)
-							{ //StartCoroutine(showTip(nextMoveItems[2], new Vector3(Random.Range(-1f, 1f), 0, 0)));
-								tipItem = nextMoveItems[2];
-								if (tipItem.transform.position.x > nextMoveItems[0].transform.position.x)
+							if (v > h && _nextMoveItems[2].square.type != SquareTypes.WIREBLOCK)
+							{ 
+								tipItem = _nextMoveItems[2];
+								if (tipItem.transform.position.x > _nextMoveItems[0].transform.position.x)
 									vDirection = Vector3.left;
 								else
 									vDirection = Vector3.right;
-								showTip(nextMoveItems);
+								ShowTip(_nextMoveItems);
 								yield break;
 
 							}
-							else if (v < h && nextMoveItems[0].square.type != SquareTypes.WIREBLOCK)
-							{ // StartCoroutine(showTip(nextMoveItems[0], new Vector3(0, Random.Range(-1f, 1f), 0)));
-								tipItem = nextMoveItems[0];
-								if (tipItem.transform.position.y > nextMoveItems[0].transform.position.y)
+							if (v < h && _nextMoveItems[0].square.type != SquareTypes.WIREBLOCK)
+							{
+								tipItem = _nextMoveItems[0];
+								if (tipItem.transform.position.y > _nextMoveItems[0].transform.position.y)
 									vDirection = Vector3.down;
 								else
 									vDirection = Vector3.up;
 
-								showTip(nextMoveItems);
+								ShowTip(_nextMoveItems);
 								yield break;
 
 							}
-							else
-								nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 						}
 						else
-							nextMoveItems.Clear();
+							_nextMoveItems.Clear();
 
 					}
 				}
@@ -493,19 +475,15 @@ public class AI : MonoBehaviour
 		if (!GameManager.Instance.DragBlocked)
 			StartCoroutine(CheckPossibleCombines());
 
-		// }
 	}
-
-	//show tip function calls coroutine for
-	void showTip(List<Item> nextMoveItems)
+	
+	void ShowTip(List<Item> nextMoveItems)
 	{
-		//        print("show tip");
-		StopCoroutine(showTipCor(nextMoveItems));
-		StartCoroutine(showTipCor(nextMoveItems));
+		StopCoroutine(ShowTipCor(nextMoveItems));
+		StartCoroutine(ShowTipCor(nextMoveItems));
 	}
-
-	//show tip coroutine
-	IEnumerator showTipCor(List<Item> nextMoveItems)
+	
+	IEnumerator ShowTipCor(List<Item> nextMoveItems)
 	{
 		gotTip = true;
 		corCount++;
@@ -519,11 +497,11 @@ public class AI : MonoBehaviour
 			corCount--;
 			yield break;
 		}
-		tipID = GameManager.Instance.moveID;
+		_tipID = GameManager.Instance.moveID;
 		//while (!LevelManager.THIS.DragBlocked && allowShowTip)
 		//{
 		yield return new WaitForSeconds(1);
-		if (GameManager.Instance.DragBlocked && !allowShowTip && tipID != GameManager.Instance.moveID)
+		if (GameManager.Instance.DragBlocked && !allowShowTip && _tipID != GameManager.Instance.moveID)
 		{
 			corCount--;
 			yield break;

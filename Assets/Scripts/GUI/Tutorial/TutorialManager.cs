@@ -44,7 +44,6 @@ namespace Dev.Scripts.GUI.Tutorial
 
 	void ShowStarsTutorial ()
 	{
-		//canvas.transform.position = Vector3.down * FindMaxY(items);
 		tutorial.SetActive (true);
 		ChangeLayerNum (4);
 	}
@@ -52,12 +51,7 @@ namespace Dev.Scripts.GUI.Tutorial
 	IEnumerator WaitForCombine ()
 	{
 		yield return new WaitUntil (() => AI.THIS.GetCombine () != null);
-//		bool keepWaiting = true;
-//		while (keepWaiting) {
-//			yield return new WaitForFixedUpdate ();
-//			if (AI.THIS.GetCombine () != null)
-//				keepWaiting = false;
-//		}
+
 		items = AI.THIS.GetCombine ();
 
 
