@@ -30,7 +30,7 @@ Embark on a colorful journey with Magic Match, an engaging match-3 puzzle game d
 
 ## 🛠️ Development Setup
 
-1. **Clone:** `git clone https://github.com/yourusername/match-3-game.git`
+1. **Clone:** `[git clone https://github.com/yourusername/match-3-game.git](https://github.com/esware/Magic-Match.git)`
 2. **Open:** Launch the project in Unity Hub.
 3. **Integrate:** Follow setup guides for Firebase, PlayFab, Google Login, Unity IAP & Ads, and Google Ads.
 
