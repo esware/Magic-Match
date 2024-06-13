@@ -30,3 +30,38 @@ To get started with developing and running the game locally, follow these steps:
    ```bash
    git clone https://github.com/yourusername/match-3-game.git
    cd match-3-game
+2. **Open in Unity**:
+
+Open Unity Hub and add the project folder.
+Open the project in Unity.
+Setup Firebase:
+
+Follow the Firebase setup guide to configure your Firebase project and add the necessary configuration files to your Unity project.
+Setup PlayFab:
+
+Follow the PlayFab setup guide to configure your PlayFab title and add the necessary SDKs to your Unity project.
+Configure Google Login:
+
+Follow the Google Play Services setup guide to configure Google Login.
+In-App Purchases:
+
+Set up Unity IAP by following the official Unity documentation.
+Unity Ads:
+
+Follow the Unity Ads setup guide to integrate ads into your game.
+Google Ads:
+
+Follow the Google Ads setup guide to integrate Google Ads into your game.
+Screenshots & Videos
+
+
+Gameplay Video
+
+Contributing
+We welcome contributions from the community. Please read our Contributing Guidelines for more details.
+
+License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+Contact
+If you have any questions or need further assistance, feel free to open an issue or contact us at contact@yourgamecompany.com.
