@@ -800,7 +800,7 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     : FACEBOOK;GAMESPARKS;UNITY_INAPPS
-    Android: UNITY_POST_PROCESSING_STACK_V2
+    Android: UNITY_POST_PROCESSING_STACK_V2;GOOGLE_MOBILE_ADS
     EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2
     GameCoreXboxOne: UNITY_POST_PROCESSING_STACK_V2
     Lumin: UNITY_POST_PROCESSING_STACK_V2
@@ -810,7 +810,7 @@ PlayerSettings:
     Stadia: UNITY_POST_PROCESSING_STACK_V2
     Standalone: UNITY_POST_PROCESSING_STACK_V2
     WebGL: UNITY_POST_PROCESSING_STACK_V2
-    Windows Store Apps: UNITY_POST_PROCESSING_STACK_V2
+    Windows Store Apps: UNITY_POST_PROCESSING_STACK_V2;GOOGLE_MOBILE_ADS
     XboxOne: UNITY_POST_PROCESSING_STACK_V2
     iPhone: GOOGLE_MOBILE_ADS
     tvOS: UNITY_POST_PROCESSING_STACK_V2
@@ -906,7 +906,8 @@ PlayerSettings:
     Collab: 1
     ErrorHub: 0
     Hub: 0
-    Purchasing: 1
+    Legacy Analytics: 0
+    Purchasing: 0
     UNet: 1
     Unity Ads: 1
   luminIcon:

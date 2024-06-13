@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.unity.2d.spriteshape": "7.0.6",
+    "com.unity.2d.spriteshape": "7.0.7",
     "com.unity.ads": "4.4.2",
     "com.unity.analytics": "3.6.12",
     "com.unity.burst": "1.6.6",
@@ -11,7 +11,7 @@
     "com.unity.postprocessing": "3.2.2",
     "com.unity.profiling.core": "1.0.2",
     "com.unity.purchasing": "4.12.0",
-    "com.unity.recorder": "3.0.3",
+    "com.unity.recorder": "3.0.4",
     "com.unity.render-pipelines.universal": "12.1.8",
     "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.9",
