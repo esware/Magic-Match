@@ -73,25 +73,21 @@ namespace Dev.Scripts.GUI
         {
             if (PlayerPrefs.GetInt(PlayerPrefsKeys.Sound) == 0)
             {
-                transform.Find("Image/Sound/SoundOff").gameObject.SetActive(true);
-                transform.Find("Image/Sound/SoundOn").gameObject.SetActive(false);
+                transform.Find("Image/Sound/SoundOn/SoundOff").gameObject.SetActive(true);
             }
             else
             {
-                transform.Find("Image/Sound/SoundOff").gameObject.SetActive(false);
-                transform.Find("Image/Sound/SoundOn").gameObject.SetActive(true);
+                transform.Find("Image/Sound/SoundOn/SoundOff").gameObject.SetActive(false);
             }
 
 
             if (PlayerPrefs.GetInt(PlayerPrefsKeys.Music) == 0)
             {
-                transform.Find("Image/Music/MusicOff").gameObject.SetActive(true);
-                transform.Find("Image/Music/MusicOn").gameObject.SetActive(false);
+                transform.Find("Image/Music/MusicOn/MusicOff").gameObject.SetActive(true);
             }
             else
             {
-                transform.Find("Image/Music/MusicOff").gameObject.SetActive(false);
-                transform.Find("Image/Music/MusicOn").gameObject.SetActive(true);
+                transform.Find("Image/Music/MusicOn/MusicOff").gameObject.SetActive(false);
             }
         }
 
@@ -569,43 +565,42 @@ namespace Dev.Scripts.GUI
 
     #endregion
 
-    public void SoundOff(GameObject Off)
+    public void SoundOff(GameObject off)
     {
-        if (!Off.activeSelf)
+        if (!off.activeSelf)
         {
             SoundBase.Instance.GetComponent<AudioSource>().volume = 0;
             InitScript.Sound = false;
 
-            Off.SetActive(true);
+            off.SetActive(true);
         }
         else
         {
             SoundBase.Instance.GetComponent<AudioSource>().volume = 1;
             InitScript.Sound = true;
 
-            Off.SetActive(false);
-
+            off.SetActive(false);
         }
         PlayerPrefs.SetInt(PlayerPrefsKeys.Sound, (int)SoundBase.Instance.GetComponent<AudioSource>().volume);
         PlayerPrefs.Save();
 
     }
 
-    public void MusicOff(GameObject Off)
+    public void MusicOff(GameObject off)
     {
-        if (!Off.activeSelf)
+        if (!off.activeSelf)
         {
             GameObject.Find("Music").GetComponent<AudioSource>().volume = 0;
             InitScript.Music = false;
 
-            Off.SetActive(true);
+            off.SetActive(true);
         }
         else
         {
             GameObject.Find("Music").GetComponent<AudioSource>().volume = 1;
             InitScript.Music = true;
 
-            Off.SetActive(false);
+            off.SetActive(false);
 
         }
         PlayerPrefs.SetInt(PlayerPrefsKeys.Music, (int)GameObject.Find("Music").GetComponent<AudioSource>().volume);
