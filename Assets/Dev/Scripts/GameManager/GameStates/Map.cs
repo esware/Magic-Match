@@ -7,7 +7,6 @@ namespace GameStates
     {
         public override void EnterState()
         {
-            Debug.Log("Map State");
             if (PlayerPrefs.GetInt(PlayerPrefsKeys.OpenLevelTest) <= 0)
             {
                 MusicBase.Instance.GetComponent<AudioSource>().Stop();

@@ -324,6 +324,11 @@ namespace Dev.Scripts.GUI
                 GameManager.Instance.ChangeState<WaitAfterClose>();
             }
         }
+
+        if (gameObject.name == "MenuLogout")
+        {
+            gameObject.SetActive(false);
+        }
         SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.swish[1]);
 
         gameObject.SetActive(false);
@@ -607,6 +612,15 @@ namespace Dev.Scripts.GUI
         PlayerPrefs.Save();
 
     }
+
+
+    public void Logout()
+    {
+        SoundBase.Instance.GetComponent<AudioSource>().PlayOneShot(SoundBase.Instance.click);
+        NetworkManager.Instance.Logout();
+        SceneManager.LoadScene(0);
+    }
+    
 
 }
 }

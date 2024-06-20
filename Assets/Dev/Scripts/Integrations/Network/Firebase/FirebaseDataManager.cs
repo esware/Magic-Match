@@ -117,14 +117,13 @@ namespace Integrations.Network.Firebase
                 }
                 else
                 {
-                    Callback(new Dictionary<string, int>()); // Hata durumunda boş sözlük
+                    Callback(new Dictionary<string, int>());
                 }
             });
         }
 
         public void SetTotalStars()
         {
-            // Örnek olarak toplam yıldızları hesaplamak için
             GetStars(starsData =>
             {
                 int totalStars = 0;
@@ -172,14 +171,14 @@ namespace Integrations.Network.Firebase
                 }
                 else
                 {
-                    Callback(new Dictionary<string, int>()); // Hata durumunda boş sözlük
+                    Callback(new Dictionary<string, int>());
                 }
             });
         }
 
         public void Logout()
         {
-            // Kullanıcı oturumu kapatma işlemleri burada yapılabilir.
+           
         }
     }
 }

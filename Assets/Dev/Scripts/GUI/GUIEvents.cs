@@ -8,7 +8,8 @@ namespace Dev.Scripts.GUI
 {
     public class GUIEvents : MonoBehaviour
     {
-        public void Settings () {
+        public void Settings () 
+        {
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
             GameObject.Find ("CanvasGlobal").transform.Find ("Settings").gameObject.SetActive (true);
@@ -19,9 +20,8 @@ namespace Dev.Scripts.GUI
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
             transform.Find ("Loading").gameObject.SetActive (true);
-            SceneManager.LoadScene ("game");
+            SceneManager.LoadScene ("Game");
         }
-
         public void Pause () {
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
@@ -29,7 +29,12 @@ namespace Dev.Scripts.GUI
                 GameObject.Find ("CanvasGlobal").transform.Find ("MenuPause").gameObject.SetActive (true);
 
         }
+        public void LogoutPopup()
+        {
+            SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
 
+            GameObject.Find ("CanvasGlobal").transform.Find ("MenuLogout").gameObject.SetActive (true);
+        }
         public void LoginPopup()
         {
             SoundBase.Instance.GetComponent<AudioSource> ().PlayOneShot (SoundBase.Instance.click);
