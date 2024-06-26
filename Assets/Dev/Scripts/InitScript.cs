@@ -226,7 +226,7 @@ public class InitScript : MonoBehaviour
 
         GameObject.Find("Music").GetComponent<AudioSource>().volume = PlayerPrefs.GetInt("Music");
         SoundBase.Instance.GetComponent<AudioSource>().volume = PlayerPrefs.GetInt("Sound");
-
+/*
 #if UNITY_ADS
         enableUnityAds = true;
 #else
@@ -234,21 +234,19 @@ public class InitScript : MonoBehaviour
 #endif
         
 #if GOOGLE_MOBILE_ADS
-        enableGoogleMobileAds = true;//1.6.1
+        enableGoogleMobileAds = true;
 #if UNITY_ANDROID
         MobileAds.Initialize(admobUIDAndroid);//2.1.6
         interstitial = new InterstitialAd(admobUIDAndroid);
 #elif UNITY_IOS
-        MobileAds.Initialize(admobUIDIOS);//2.1.6
+        MobileAds.Initialize(admobUIDIOS);
         interstitial = new InterstitialAd(admobUIDIOS);
 #else
         MobileAds.Initialize(admobUIDAndroid);//2.1.6
 		interstitial = new InterstitialAd (admobUIDAndroid);
 #endif
-
-        // Create an empty ad request.
+        
         requestAdmob = new AdRequest.Builder().Build();
-        // Load the interstitial with the request.
         interstitial.LoadAd(requestAdmob);
         interstitial.OnAdLoaded += HandleInterstitialLoaded;
         interstitial.OnAdFailedToLoad += HandleInterstitialFailedToLoad;
@@ -259,7 +257,7 @@ public class InitScript : MonoBehaviour
         foreach (Transform item in canvas)
         {
             item.gameObject.SetActive(false);
-        }
+        }*/
     }
 
 
@@ -275,7 +273,7 @@ public class InitScript : MonoBehaviour
 
     public void HandleInterstitialFailedToLoad(object sender, AdFailedToLoadEventArgs args)
     {
-        print("HandleInterstitialFailedToLoad event received with message: " + args.Message);
+        print("HandleInterstitialFailedToLoad event received with message: " + args.LoadAdError);
     }
 #endif
     public bool GetRewardedUnityAdsReady()
@@ -325,8 +323,8 @@ public class InitScript : MonoBehaviour
 #endif
         if(stillShow)
         {
-            Debug.Log("show Admob Rewarded ads video in " + LevelManager.THIS.gameStatus);
-            RewAdmobManager.THIS.ShowRewardedAd(CheckRewardedAds);
+            Debug.Log("show Admob Rewarded ads video in " + "Write state");
+           // RewAdmobManager.This.ShowRewardedAd(CheckRewardedAds);
         }
 #endif
     }
@@ -388,6 +386,7 @@ public class InitScript : MonoBehaviour
     }
     private void ShowAds(bool chartboost = true)
     {
+        /*
 #if GOOGLE_MOBILE_ADS
             Debug.Log("show Google mobile ads Interstitial in " + LevelManager.THIS.gameStatus);
             if (interstitial.IsLoaded())
@@ -406,7 +405,7 @@ public class InitScript : MonoBehaviour
                 // Load the interstitial with the request.
                 interstitial.LoadAd(requestAdmob);
             }
-#endif
+#endif*/
     }
     
     private void CheckRewardedAds()
@@ -554,6 +553,7 @@ public class InitScript : MonoBehaviour
             GameObject.Find("CanvasGlobal").transform.Find("MenuPlay").gameObject.SetActive(true);
         }
     }
+    
     private void OnEnable()
     {
         GameEvents.OnLevelSelected += OnLevelClicked;
@@ -565,10 +565,13 @@ public class InitScript : MonoBehaviour
         PlayerPrefs.SetInt(PlayerPrefsKeys.Lifes, Lifes);
         PlayerPrefs.SetString(PlayerPrefsKeys.DateOfExit, DateTime.Now.ToString());
         PlayerPrefs.Save();
+        
+        /*
 #if GOOGLE_MOBILE_ADS
         interstitial.OnAdLoaded -= HandleInterstitialLoaded;
         interstitial.OnAdFailedToLoad -= HandleInterstitialFailedToLoad;
 #endif
+*/
 
     }
     private void SavePlayerPrefs()

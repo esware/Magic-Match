@@ -132,8 +132,8 @@ namespace Dev.Scripts.GUI
 #if UNITY_ADS
         stillShow = !InitScript.Instance.GetRewardedUnityAdsReady ();
 #endif
-			if (!InitScript.Instance.enableGoogleMobileAds || !RewAdmobManager.THIS.IsRewardedAdIsLoaded() || !stillShow)
-				videoAdsButton.gameObject.SetActive(false);
+			/*if (!InitScript.Instance.enableGoogleMobileAds || !RewAdmobManager.This.IsRewardedAdIsLoaded() || !stillShow)
+				videoAdsButton.gameObject.SetActive(false);*/
 #else
 			videoAdsButton.gameObject.SetActive(false);
 #endif
@@ -246,10 +246,10 @@ namespace Dev.Scripts.GUI
 #endif
 			if (InitScript.Instance.enableGoogleMobileAds && stillShow)
 			{
-				if (RewAdmobManager.THIS.IsRewardedAdIsLoaded())
+				/*if (RewAdmobManager.This.IsRewardedAdIsLoaded())
 				{
 					transform.Find("Video").gameObject.SetActive(true);
-				}
+				}*/
 			}
 
 #endif
